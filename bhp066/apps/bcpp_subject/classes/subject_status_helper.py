@@ -240,7 +240,7 @@ class SubjectStatusHelper(object):
                         (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                     pass
                 # You only have today's result and possibly an undocumented verbal_hiv_result
-                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not 
+                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not
                         (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                     new_pos = True
                 else:
@@ -269,10 +269,9 @@ class SubjectStatusHelper(object):
         """Returns an hiv result based on the confirmation of the verbal result by documentation."""
         if not self._documented_verbal_hiv_result:
             try:
-                #self._documented_verbal_hiv_result = self.hiv_result_documentation_instance.result_recorded
+                # self._documented_verbal_hiv_result = self.hiv_result_documentation_instance.result_recorded
                 self._documented_verbal_hiv_result = (POS if (self.indirect_hiv_documentation or
-                                                              self.direct_hiv_pos_documentation)
-                                                              else None)
+                                                              self.direct_hiv_pos_documentation) else None)
             except AttributeError:
                 self._documented_verbal_hiv_result = None
         return self._documented_verbal_hiv_result
@@ -282,7 +281,7 @@ class SubjectStatusHelper(object):
         """Returns an hiv result based on the confirmation of the verbal result by documentation."""
         if not self._documented_verbal_hiv_result_date:
             try:
-                self._documented_verbal_hiv_result_date = (self.hiv_result_documentation_instance.result_date if 
+                self._documented_verbal_hiv_result_date = (self.hiv_result_documentation_instance.result_date if
                                                            self.hiv_result_documentation_instance else
                                                            self.hiv_care_adherence_instance.first_arv)
             except AttributeError:
@@ -361,7 +360,7 @@ class SubjectStatusHelper(object):
         if not self._last_hiv_result_date:
             last_hiv_result_date = None
             last_hiv_result_date = self.previous_value(
-#                 attr_if_pos=('hiv_result_datetime', 'date'),
+                # attr_if_pos=('hiv_result_datetime', 'date'),
                 attr_if_pos=('hiv_result_datetime',),
                 value_if_not_pos=None)
             if not last_hiv_result_date:
@@ -405,7 +404,7 @@ class SubjectStatusHelper(object):
         """Returns an hiv result based on the last documented result."""
         if not self._recorded_hiv_result_date:
             recorded_hiv_result_date = self.previous_value(
-#                 attr_if_pos=('hiv_result_datetime', 'date'),
+                # attr_if_pos=('hiv_result_datetime', 'date'),
                 attr_if_pos=('hiv_result_datetime',),
                 value_if_not_pos=None)
             if not recorded_hiv_result_date:

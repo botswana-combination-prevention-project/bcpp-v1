@@ -21,7 +21,9 @@ class ElisaHivResultForm (BaseSubjectModelForm):
         instance.elisa_requisition_checks(forms.ValidationError)
 
         # testing done but not providing date
-        if (((cleaned_data.get('hiv_result', None) == 'POS') or (cleaned_data.get('hiv_result', None) == 'NEG')) and not cleaned_data.get('hiv_result_datetime', None)):
+        if(
+           ((cleaned_data.get('hiv_result', None) == 'POS') or (cleaned_data.get('hiv_result', None) == 'NEG')) and not
+           cleaned_data.get('hiv_result_datetime', None)):
             raise forms.ValidationError('If test has been performed, what is the test result date time?')
 
         return cleaned_data

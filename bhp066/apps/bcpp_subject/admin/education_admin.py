@@ -49,12 +49,12 @@ class EducationAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 #         'reason_unemployed',
 #         'job_description',
 #         'monthly_income')
-# 
+#
 #     annual_fields = (
 #         "subject_visit",
 #         'job_description',
 #         'monthly_income')
-# 
+#
 #     baseline_radio_fields = {
 #         "education": admin.VERTICAL,
 #         "working": admin.VERTICAL,
@@ -62,7 +62,7 @@ class EducationAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 #         'reason_unemployed': admin.VERTICAL,
 #         'job_description': admin.VERTICAL,
 #         "monthly_income": admin.VERTICAL, }
-# 
+#
 #     annual_radio_fields = {
 #         'job_description': admin.VERTICAL,
 #         "monthly_income": admin.VERTICAL, }

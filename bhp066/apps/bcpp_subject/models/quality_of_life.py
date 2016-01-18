@@ -13,7 +13,7 @@ class QualityOfLife (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about QOL"""
 
-    CONSENT_MODEL =SubjectConsent
+    CONSENT_MODEL = SubjectConsent
 
     mobility = models.CharField(
         verbose_name="Mobility",

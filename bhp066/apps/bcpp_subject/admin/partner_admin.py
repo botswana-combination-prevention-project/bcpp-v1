@@ -44,7 +44,7 @@ class RecentPartnerAdmin(SubjectVisitModelAdmin):
         "status_disclosure": admin.VERTICAL,
         "multiple_partners": admin.VERTICAL,
         "intercourse_type": admin.VERTICAL,
-        }
+    }
 admin.site.register(RecentPartner, RecentPartnerAdmin)
 
 
@@ -84,7 +84,7 @@ class SecondPartnerAdmin(SubjectVisitModelAdmin):
         "status_disclosure": admin.VERTICAL,
         "multiple_partners": admin.VERTICAL,
         "intercourse_type": admin.VERTICAL,
-        }
+    }
 admin.site.register(SecondPartner, SecondPartnerAdmin)
 
 
@@ -124,5 +124,5 @@ class ThirdPartnerAdmin(SubjectVisitModelAdmin):
         "status_disclosure": admin.VERTICAL,
         "multiple_partners": admin.VERTICAL,
         "intercourse_type": admin.VERTICAL,
-        }
+    }
 admin.site.register(ThirdPartner, ThirdPartnerAdmin)

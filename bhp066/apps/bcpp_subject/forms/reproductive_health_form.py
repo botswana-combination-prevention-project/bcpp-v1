@@ -19,7 +19,8 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
                                                        cleaned_data.get('pregnancy_hiv_retested') != 'N/A'))):
             raise forms.ValidationError(
                 'If participant did not get pregnant since last interview, then do not provide answers for \
-                questions from "At about what gestational age (in weeks) did you start arv\'s during this (or your last) pregnancy?"')
+                questions from "At about what gestational age (in weeks) did you start arv\'s during this '
+                '(or your last) pregnancy?"')
         if cleaned_data.get('menopause') == 'Yes' and cleaned_data.get('family_planning'):
             raise forms.ValidationError(
                 'if participant has reached menopause, you should not be giving details about family planning')

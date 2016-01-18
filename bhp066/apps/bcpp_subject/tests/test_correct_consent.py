@@ -57,7 +57,9 @@ class TestCorrectConsent(TestCase):
         self.female_last_name = 'WAXON'
         self.female_initials = "EW"
 
-        self.household_member_female_T0 = HouseholdMemberFactory(household_structure=self.household_structure, gender='F', age_in_years=self.female_age_in_years, first_name=self.female_first_name, initials=self.female_initials)
+        self.household_member_female_T0 = HouseholdMemberFactory(
+            household_structure=self.household_structure, gender='F', age_in_years=self.female_age_in_years,
+            first_name=self.female_first_name, initials=self.female_initials)
         self.household_member_female_T0.member_status = 'BHS_SCREEN'
         self.household_member_female_T0.save()
         self.assertEqual(self.household_member_female_T0.member_status, 'BHS_SCREEN')
@@ -69,15 +71,23 @@ class TestCorrectConsent(TestCase):
             guardian='No',
             initials=self.household_member_female_T0.initials,
             part_time_resident='Yes')
-        self.subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=self.study_site, gender='F', dob=self.female_dob, first_name=self.female_first_name, last_name=self.female_last_name, initials=self.female_initials)
-        self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=self.subject_consent_female.subject_identifier)
+        self.subject_consent_female = SubjectConsentFactory(
+            household_member=self.household_member_female_T0,
+            study_site=self.study_site, gender='F', dob=self.female_dob, first_name=self.female_first_name,
+            last_name=self.female_last_name, initials=self.female_initials)
+        self.registered_subject_female = RegisteredSubject.objects.get(
+            subject_identifier=self.subject_consent_female.subject_identifier)
 
         enumeration_helper = EnumerationHelper(self.household_structure.household, survey, next_survey)
         self.household_member_female = enumeration_helper.create_member_on_target(self.household_member_female_T0)
-        self.appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T1')
-        self.appointment_female_T0 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T0')
-        self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
-        self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.appointment_female = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T1')
+        self.appointment_female_T0 = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T0')
+        self.subject_visit_female_T0 = SubjectVisitFactory(
+            appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
+        self.subject_visit_female = SubjectVisitFactory(
+            appointment=self.appointment_female, household_member=self.household_member_female)
 
     def test_lastname_and_initials(self):
         CorrectConsentFactory(

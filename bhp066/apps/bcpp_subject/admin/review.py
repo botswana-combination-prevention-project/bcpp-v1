@@ -101,7 +101,7 @@ admin.site.register(GrantReview, GrantReviewAdmin)
 #     def __init__(self, *args, **kwargs):
 #         super(CeaEnrollmentChecklistReviewAdmin, self).__init__(*args, **kwargs)
 #         self.readonly_fields = [field.name for field in CeaEnrollmentChecklistReview._meta.fields]
-# 
+#
 # admin.site.register(CeaEnrollmentChecklistReview, CeaEnrollmentChecklistReviewAdmin)
 
 

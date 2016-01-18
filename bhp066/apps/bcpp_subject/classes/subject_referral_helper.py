@@ -13,7 +13,6 @@ from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..choices import REFERRAL_CODES
 from ..constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
-from ..constants import BASELINE_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
 from ..utils import convert_to_nullboolean
 
@@ -86,9 +85,9 @@ class SubjectReferralHelper(object):
             self.__init__()
         self._subject_referral = subject_referral
         # prepare a queryset of visits previous to visit_instance
+        internal_identifier = subject_referral.subject_visit.household_member.internal_identifier
         self.previous_subject_referrals = SubjectReferral.objects.filter(
-            subject_visit__household_member__internal_identifier=\
-            subject_referral.subject_visit.household_member.internal_identifier,
+            subject_visit__household_member__internal_identifier=internal_identifier,
             report_datetime__lt=subject_referral.report_datetime).order_by('report_datetime')
 
     @property
@@ -181,62 +180,85 @@ class SubjectReferralHelper(object):
         self._subject_referral_tuple = Tpl(self.subject_visit, *self.subject_referral.values())
         return self._subject_referral_tuple
 
+    def male_refferal_code(self):
+        """ docstring is required"""
+        if self.circumcised:
+            self._referral_code_list.append('TST-HIV')  # refer if status unknown
+        else:
+            if self.circumcised is False:
+                self._referral_code_list.append('SMC-UNK')  # refer if status unknown
+            else:
+                self._referral_code_list.append('SMC?UNK')  # refer if status unknown
+
+    def refferal_code_neg(self):
+        if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
+            self._referral_code_list.append('NEG!-PR')
+        elif self.gender == 'M' and self.circumcised is False:  # only refer M if not circumcised
+            self._referral_code_list.append('SMC-NEG')
+        elif self.gender == 'M' and self.circumcised is None:  # only refer M if not circumcised
+            self._referral_code_list.append('SMC?NEG')
+
+    def refferal_code_pos_not_on_art(self):
+        if not self.cd4_result:
+            self._referral_code_list.append('TST-CD4')
+        elif self.cd4_result > (500 if self.intervention else 350):
+            self._referral_code_list.append(
+                'POS!-HI') if self.new_pos else self._referral_code_list.append('POS#-HI')
+        elif self.cd4_result <= (500 if self.intervention else 350):
+            self._referral_code_list.append(
+                'POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
+
+    def refferal_code_pos_on_art(self):
+        """ Docstring is required"""
+        self._referral_code_list.append('MASA-CC')
+        if self.defaulter:
+            self._referral_code_list = [
+                'MASA-DF' for item in self._referral_code_list if item == 'MASA-CC']
+        if self.pregnant:
+            self._referral_code_list = [
+                'POS#-AN' for item in self._referral_code_list if item == 'MASA-CC']
+        if self.visit_code in ANNUAL_CODES:  # do not refer to MASA-CC except if BASELINE
+            try:
+                self._referral_code_list.remove('MASA-CC')
+            except ValueError:
+                pass
+
+    def refferal_code_pos(self):
+        """ Docstring is required"""
+        if self.gender == 'F' and self.pregnant and self.on_art:
+            self._referral_code_list.append('POS#-AN')
+        elif self.gender == 'F' and self.pregnant and not self.on_art:
+            self._referral_code_list.append(
+                'POS!-PR') if self.new_pos else self._referral_code_list.append('POS#-PR')
+        elif not self.on_art:
+            self.refferal_code_pos_not_on_art()
+        elif self.on_art:
+            self.refferal_code_pos_on_art()
+
+    def refferal_code_list_with_hiv_result(self):
+        if self.hiv_result == 'IND':
+            # do not set referral_code_list to IND
+            pass
+        elif self.hiv_result == NEG:
+            self.refferal_code_neg()
+        elif self.hiv_result == POS:
+            self.refferal_code_pos()
+        else:
+            self._referral_code_list.append('TST-HIV')
+
     @property
     def referral_code_list(self):
         """Returns a list of referral codes by reviewing the conditions for referral."""
         if not self._referral_code_list:
             if not self.hiv_result:
                 if self.gender == 'M':
-                    if self.circumcised:
-                        self._referral_code_list.append('TST-HIV')  # refer if status unknown
-                    else:
-                        if self.circumcised is False:
-                            self._referral_code_list.append('SMC-UNK')  # refer if status unknown
-                        else:
-                            self._referral_code_list.append('SMC?UNK')  # refer if status unknown
+                    self.male_refferal_code()
                 elif self.pregnant:
                     self._referral_code_list.append('UNK?-PR')
                 else:
                     self._referral_code_list.append('TST-HIV')
             else:
-                if self.hiv_result == 'IND':
-                    # do not set referral_code_list to IND
-                    pass
-                elif self.hiv_result == NEG:
-                    if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
-                        self._referral_code_list.append('NEG!-PR')
-                    elif self.gender == 'M' and self.circumcised is False:  # only refer M if not circumcised
-                        self._referral_code_list.append('SMC-NEG')
-                    elif self.gender == 'M' and self.circumcised is None:  # only refer M if not circumcised
-                        self._referral_code_list.append('SMC?NEG')
-                elif self.hiv_result == POS:
-                    if self.gender == 'F' and self.pregnant and self.on_art:
-                        self._referral_code_list.append('POS#-AN')
-                    elif self.gender == 'F' and self.pregnant and not self.on_art:
-                        self._referral_code_list.append(
-                            'POS!-PR') if self.new_pos else self._referral_code_list.append('POS#-PR')
-                    elif not self.on_art:
-                        if not self.cd4_result:
-                            self._referral_code_list.append('TST-CD4')
-                        elif self.cd4_result > (500 if self.intervention else 350):
-                            self._referral_code_list.append(
-                                'POS!-HI') if self.new_pos else self._referral_code_list.append('POS#-HI')
-                        elif self.cd4_result <= (500 if self.intervention else 350):
-                            self._referral_code_list.append(
-                                'POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
-                    elif self.on_art:
-                        self._referral_code_list.append('MASA-CC')
-                        if self.defaulter:
-                            self._referral_code_list = ['MASA-DF' for item in self._referral_code_list if item == 'MASA-CC']
-                        if self.pregnant:
-                            self._referral_code_list = ['POS#-AN' for item in self._referral_code_list if item == 'MASA-CC']
-                        if self.visit_code in ANNUAL_CODES:  # do not refer to MASA-CC except if BASELINE
-                            try:
-                                self._referral_code_list.remove('MASA-CC')
-                            except ValueError:
-                                pass
-                else:
-                    self._referral_code_list.append('TST-HIV')
+                self.refferal_code_list_with_hiv_result()
             # refer if on art and known positive to get VL, and o get outsiders to transfer care
             # referal date is the next appointment date if on art
             if self._referral_code_list:
@@ -259,8 +281,9 @@ class SubjectReferralHelper(object):
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
         survey_slug = self.subject_visit.household_member.household_structure.survey.survey_slug
+        code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
         if (not self.intervention and survey_slug != BASELINE_SURVEY_SLUG):
-            referral_code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
+            referral_code = code
         return referral_code
 
     @property
@@ -477,4 +500,3 @@ class SubjectReferralHelper(object):
     @property
     def cd4_result_datetime(self):
         return self.subject_status_helper.cd4_result_datetime
-

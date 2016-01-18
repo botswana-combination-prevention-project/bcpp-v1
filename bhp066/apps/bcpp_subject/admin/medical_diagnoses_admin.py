@@ -41,5 +41,5 @@ class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
             " If you do not understand what I mean, please ask."
             " Also, please remember that your answers will be"
             " kept confidential. (annual)")]
-        }
+    }
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)

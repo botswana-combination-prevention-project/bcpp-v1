@@ -21,8 +21,9 @@ class Command(BaseCommand):
         self.update_clinic_registered_subject()
 
     def find_duplicates(self):
-        duplicates = RegisteredSubject.objects.raw('''SELECT *, count(identity) as duplicate_count 
-                                                from bhp_registration_registeredsubject GROUP BY identity having duplicate_count >1''')
+        duplicates = RegisteredSubject.objects.raw(
+            '''SELECT *, count(identity) as duplicate_count
+            from bhp_registration_registeredsubject GROUP BY identity having duplicate_count >1''')
         return duplicates
 
     def determine_bcpp_registered_subject(self, identity):
@@ -126,58 +127,70 @@ class Command(BaseCommand):
         except clinic_model.DoesNotExist:
             pass
 
+    def appointment_audit(self, bcpp_registered_subject, clinic_model):
+        try:
+            mymodel = clinic_model.history.get(
+                registered_subject__identity=bcpp_registered_subject.identity,
+                visit_definition__code='C0')
+            mymodel.registered_subject = bcpp_registered_subject
+            mymodel.save()
+        except clinic_model.DoesNotExist:
+            pass
+        except MultipleObjectsReturned:
+            for mymodel in clinic_model.history.filter(
+                    registered_subject__identity=bcpp_registered_subject.identity,
+                    visit_definition__code='C0'):
+                mymodel.registered_subject = bcpp_registered_subject
+                mymodel.save()
+
+    def clinichouseholdmember_audit(self, bcpp_registered_subject, clinic_model):
+        try:
+            mymodel = clinic_model.history.get(
+                Q(registered_subject__identity=bcpp_registered_subject.identity),
+                Q(household_structure__household__plot__status='bcpp_clinic'))
+            mymodel.registered_subject = bcpp_registered_subject
+            mymodel.save()
+        except clinic_model.DoesNotExist:
+            pass
+        except MultipleObjectsReturned:
+            for mymodel in clinic_model.history.filter(
+                    Q(registered_subject__identity=bcpp_registered_subject.identity),
+                    Q(household_structure__household__plot__status='bcpp_clinic')):
+                mymodel.registered_subject = bcpp_registered_subject
+                mymodel.save()
+
+    def clinicconsent_audit(self, bcpp_registered_subject, clinic_model):
+        try:
+            try:
+                mymodel = clinic_model.objects.get(
+                    Q(household_member__household_structure__household__plot__status='bcpp_clinic'),
+                    Q(identity=bcpp_registered_subject.identity))
+                mymodel.registered_subject = bcpp_registered_subject
+                mymodel.save()
+            except AttributeError as error:
+                print ('Error {}'.format(error))
+        except clinic_model.DoesNotExist:
+            pass
+
+    def clinicoffstudy_audit(self, bcpp_registered_subject, clinic_model):
+        mymodel = None
+        try:
+            mymodel = clinic_model.history.get(
+                Q(registered_subject__identity=bcpp_registered_subject.identity))
+            mymodel.registered_subject = bcpp_registered_subject
+            mymodel.save()
+        except clinic_model.DoesNotExist:
+            pass
+
     def replace_registered_subject_for_clinic_models_audit(self, bcpp_registered_subject, clinic_model):
         if clinic_model._meta.model_name == 'appointment':
-            mymodel = None
-            try:
-                mymodel = clinic_model.history.get(
-                    registered_subject__identity=bcpp_registered_subject.identity,
-                    visit_definition__code='C0')
-                mymodel.registered_subject = bcpp_registered_subject
-                mymodel.save()
-            except clinic_model.DoesNotExist:
-                pass
-            except MultipleObjectsReturned:
-                for mymodel in clinic_model.history.filter(
-                        registered_subject__identity=bcpp_registered_subject.identity,
-                        visit_definition__code='C0'):
-                    mymodel.registered_subject = bcpp_registered_subject
-                    mymodel.save()
+            self.appointment_audit(bcpp_registered_subject, clinic_model)
         elif clinic_model._meta.model_name == 'clinichouseholdmember':
-            try:
-                mymodel = clinic_model.history.get(
-                    Q(registered_subject__identity=bcpp_registered_subject.identity),
-                    Q(household_structure__household__plot__status='bcpp_clinic'))
-                mymodel.registered_subject = bcpp_registered_subject
-                mymodel.save()
-            except clinic_model.DoesNotExist:
-                pass
-            except MultipleObjectsReturned:
-                for mymodel in clinic_model.history.filter(
-                        Q(registered_subject__identity=bcpp_registered_subject.identity),
-                        Q(household_structure__household__plot__status='bcpp_clinic')):
-                    mymodel.registered_subject = bcpp_registered_subject
-                    mymodel.save()
+            self.clinichouseholdmember_audit(bcpp_registered_subject, clinic_model)
         elif clinic_model._meta.model_name == 'clinicconsent':
-            try:
-                try:
-                    mymodel = clinic_model.objects.get(
-                        Q(household_member__household_structure__household__plot__status='bcpp_clinic'),
-                        Q(identity=bcpp_registered_subject.identity))
-                    mymodel.registered_subject = bcpp_registered_subject
-                    mymodel.save()
-                except AttributeError as error:
-                    print ('Error {}'.format(error))
-            except clinic_model.DoesNotExist:
-                pass
+            self.clinicconsent_audit(bcpp_registered_subject, clinic_model)
         elif clinic_model._meta.model_name == 'clinicoffstudy':
-            try:
-                mymodel = clinic_model.history.get(
-                    Q(registered_subject__identity=bcpp_registered_subject.identity))
-                mymodel.registered_subject = bcpp_registered_subject
-                mymodel.save()
-            except clinic_model.DoesNotExist:
-                pass
+            self.clinicoffstudy_audit(bcpp_registered_subject, clinic_model)
 
     def track_outgoing_transactions(self):
         transact_list = [model_name._meta.model_name for model_name in self.get_all_clinic_models()]

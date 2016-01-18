@@ -49,6 +49,19 @@ class SubjectReferralApptHelper(object):
     def __str__(self):
         return '({0.referral_code!r})'.format(self)
 
+    def referral_appt_datetime_other(self):
+        """ Docstring is required """
+        referral_appt_datetime = None
+        try:
+            if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
+                referral_appt_datetime = self.scheduled_appt_datetime
+        except TypeError as error_msg:
+            if "can't compare datetime.datetime to NoneType" not in error_msg:
+                raise TypeError(error_msg)
+            pass
+        if not referral_appt_datetime and 'MASA' in self.referral_code:
+            referral_appt_datetime = self.masa_appt_datetime
+
     @property
     def referral_appt_datetime(self):
         """Returns a referral_appt_datetime which is conditionally
@@ -67,15 +80,7 @@ class SubjectReferralApptHelper(object):
         elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
             pass  # will be next clinic date and will ignore a scheduled_appt_date
         else:
-            try:
-                if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
-                    referral_appt_datetime = self.scheduled_appt_datetime
-            except TypeError as error_msg:
-                if "can't compare datetime.datetime to NoneType" not in error_msg:
-                    raise TypeError(error_msg)
-                pass
-            if not referral_appt_datetime and 'MASA' in self.referral_code:
-                referral_appt_datetime = self.masa_appt_datetime
+            self.referral_appt_datetime_other()
         return referral_appt_datetime or next_clinic_date(self.clinic_days,
                                                           self.base_datetime)
 

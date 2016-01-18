@@ -73,7 +73,8 @@ class BaseBaseSubjectConsent(BaseHouseholdMemberConsent):
         if not self.subject_identifier:
             self.subject_identifier = dummy
         if re_pk.match(self.subject_identifier):
-            raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
+            raise ConsentError(
+                "Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
 
     def insert_dummy_identifier(self):
         """Inserts a random uuid as a dummy identifier for a new instance.
@@ -177,11 +178,13 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
         exception_cls = exception_cls or ValidationError
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member__registered_subject=subject_consent.household_member.registered_subject, is_eligible=True)
+                household_member__registered_subject=subject_consent.household_member.registered_subject,
+                is_eligible=True)
             household_member = enrollment_checklist.household_member
         except EnrollmentChecklist.DoesNotExist:
             raise exception_cls(
-                'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before consent.')
+                'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before'
+                ' consent.')
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
@@ -230,14 +233,17 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
 
     @classmethod
     def get_consent_update_model(self):
-        raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
+        raise TypeError(
+            'The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to '
+            'return the ConsentUpdateModel class.')
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Allow bypass only if doing consent verification."""
         # requery myself
         obj = self.__class__.objects.using(using).get(pk=self.pk)
         # dont allow values in these fields to change if dispatched
-        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['is_verified_datetime', 'is_verified']]
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in [
+            'is_verified_datetime', 'is_verified']]
         for k, v in may_not_change_these_fields:
             if k[0] != '_':
                 if getattr(self, k) != v:

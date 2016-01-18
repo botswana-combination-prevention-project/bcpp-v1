@@ -15,7 +15,8 @@ from bhp066.apps.bcpp_household_member.models.enrollment_checklist import Enroll
 class Command(BaseCommand):
 
     args = ''
-    help = 'For Pair 1 data. Create EnrollmentChecklists and set household_structure enrolled and add Representative Eligibility'
+    help = 'For Pair 1 data. Create EnrollmentChecklists and set household_structure enrolled '
+    'and add Representative Eligibility'
 
     option_list = BaseCommand.option_list + (
         make_option(
@@ -76,7 +77,8 @@ class Command(BaseCommand):
                 household_residency=YES,
                 verbal_script=YES)
             try:
-                RepresentativeEligibility.objects.get(household_structure=subject_consent.household_member.household_structure)
+                RepresentativeEligibility.objects.get(
+                    household_structure=subject_consent.household_member.household_structure)
             except RepresentativeEligibility.DoesNotExist:
                 RepresentativeEligibility.objects.create(**options)
                 n += 1
@@ -101,7 +103,8 @@ class Command(BaseCommand):
             subject_consent.citizen = 'Yes' if subject_consent.citizen == '2' else subject_consent.citizen
             subject_consent.household_member.eligible_member = True
             try:
-                enrollment_checklist = EnrollmentChecklist.objects.get(household_member=subject_consent.household_member)
+                enrollment_checklist = EnrollmentChecklist.objects.get(
+                    household_member=subject_consent.household_member)
                 subject_consent.household_member.eligible_subject = True
                 if enrollment_checklist.citizen == '2':
                     enrollment_checklist.citizen = 'Yes'

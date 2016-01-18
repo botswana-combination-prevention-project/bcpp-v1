@@ -14,7 +14,8 @@ class ConsentHistoryManager(models.Manager):
         Survey = get_model('bcpp_survey', 'Survey')
         survey = Survey.objects.get_by_natural_key(survey_name)
         registered_subject = RegisteredSubject.objects.get_by_natural_key(subject_identifier_as_pk)
-        return self.get(consent_datetime__range=(consent_datetime - margin, consent_datetime + margin), survey=survey, registered_subject=registered_subject)
+        return self.get(consent_datetime__range=(
+            consent_datetime - margin, consent_datetime + margin), survey=survey, registered_subject=registered_subject)
 
     def update_consent_history(self, consent_inst, created, using):
         try:

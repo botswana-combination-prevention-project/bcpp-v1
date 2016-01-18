@@ -86,7 +86,8 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot,
-                'labour_market_wages__subject_visit__household_member__household_structure__household__plot__plot_identifier')
+                'labour_market_wages__subject_visit__household_member_'
+                '_household_structure__household__plot__plot_identifier')
 
     class Meta:
         app_label = 'bcpp_subject'

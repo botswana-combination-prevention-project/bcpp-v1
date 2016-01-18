@@ -73,16 +73,15 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
                          self.visit_attr, 'revision', 'hostname_created',
                          'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', ],
                 extra_fields=OrderedDict(
-                    {'subject_identifier': self.visit_attr + \
-                     '__appointment__registered_subject__subject_identifier',
+                    {'subject_identifier': self.visit_attr + '__appointment__registered_subject__subject_identifier',
                      'first_name': self.visit_attr + '__appointment__registered_subject__first_name',
                      'last_name': self.visit_attr + '__appointment__registered_subject__last_name',
                      'initials': self.visit_attr + '__appointment__registered_subject__initials',
                      'dob': self.visit_attr + '__appointment__registered_subject__dob',
                      'identity': self.visit_attr + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_attr + '__appointment__registered_subject__identity_type',
-                     'plot_identifier': self.visit_attr + \
-                     '__household_member__household_structure__household__plot__plot_identifier',
+                     'plot_identifier': self.visit_attr + '__household_member__household_structure__household_'
+                     '_plot__plot_identifier',
                      })
             ),
             'export_locator_for_cdc_action',

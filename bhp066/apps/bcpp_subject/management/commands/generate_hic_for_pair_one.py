@@ -36,7 +36,8 @@ class Command(BaseCommand):
         total_consents = subject_consents.count()
         for subject_consent in subject_consents:
             try:
-                hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=subject_consent.household_member)
+                hic_enrollment = HicEnrollment.objects.get(
+                    subject_visit__household_member=subject_consent.household_member)
                 enrolled += 1
                 print '{}. already enrolled'.format(n)
             except HicEnrollment.DoesNotExist:
@@ -49,7 +50,8 @@ class Command(BaseCommand):
                         subject_visit=subject_visit)
                     if residency_and_mobility.modified.year == 2013:
                         # this question has flipped after pair 1
-                        residency_and_mobility.intend_residency = YES if residency_and_mobility.intend_residency == NO else NO
+                        residency_and_mobility.intend_residency = YES if(
+                            residency_and_mobility.intend_residency == NO) else NO
                         residency_and_mobility.save()
                     subject_locator = SubjectLocator.objects.get(
                         subject_visit=subject_visit)
@@ -67,7 +69,7 @@ class Command(BaseCommand):
                             citizen_or_spouse=True,
                             locator_information=True,
                             consent_datetime=subject_consent.consent_datetime
-                            )
+                        )
                         created += 1
                         if verbose:
                             print '{}. created {}'.format(n, hic_enrollment)
@@ -77,7 +79,7 @@ class Command(BaseCommand):
                             residency_and_mobility.permanent_resident,
                             residency_and_mobility.intend_residency,
                             subject_locator.may_follow_up
-                            )
+                        )
                 except SubjectVisit.DoesNotExist:
                     if verbose:
                         print '{}.   missing SubjectVisit'.format(n)
@@ -88,4 +90,5 @@ class Command(BaseCommand):
                     if verbose:
                         print '{}.   missing SubjectLocator'.format(n)
         print 'Reviewed {} consents from Pair 1. Created {} HIC Enrollment forms. {} already enrolled'.format(
-            total_consents, created, enrolled)
+            total_consents, created, enrolled
+        )

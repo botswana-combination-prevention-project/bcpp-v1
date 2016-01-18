@@ -31,16 +31,16 @@ class TestPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2016, 1, 18),
+            start_date=date(2015, 1, 1),
             full_enrollment_date=date(2016, 1, 28),
-            end_date=date(2016, 1, 29),
+            end_date=date(2015, 1, 29),
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2016, 12, 8),
-            full_enrollment_date=date(2016, 5, 18),
-            end_date=date(2016, 5, 30),
-            smc_start_date=date(2016, 5, 7)),
+            start_date=date(2016, 1, 1),
+            full_enrollment_date=date(2016, 1, 18),
+            end_date=date(2016, 1, 30),
+            smc_start_date=date(2016, 1, 7)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=date(2016, 6, 20),

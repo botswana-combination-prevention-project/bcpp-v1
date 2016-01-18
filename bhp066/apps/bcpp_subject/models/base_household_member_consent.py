@@ -123,12 +123,12 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuid
         abstract = True
 
 # change subclassing. Clinic Does not use BaseDispatchSyncUuidModel, BaseSyncUuidModel
-# 
-# 
+#
+#
 # class BaseSyncHouseholdMemberConsent(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
-# 
+#
 #     def dispatch_container_lookup(self, using=None):
 #         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-# 
+#
 #     class Meta:
 #         abstract = True

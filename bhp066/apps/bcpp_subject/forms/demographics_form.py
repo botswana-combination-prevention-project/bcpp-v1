@@ -20,12 +20,19 @@ class DemographicsForm(BaseSubjectModelForm):
             if cleaned_data.get('live_with').count() > 1:
                 for item in cleaned_data.get('live_with'):
                     if str(item) == "Alone" or str(item) == 'Don\'t want to answer':
-                        raise forms.ValidationError("\"Don't want to answer\" or \"Alone\" options can only be selected singularly")
+                        raise forms.ValidationError(
+                            "\"Don't want to answer\" or \"Alone\" options can only be selected singularly")
         # validating unmarried
         if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('num_wives', None):
             raise forms.ValidationError('If participant is not married, do not give number of wives')
         if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('husband_wives', None):
             raise forms.ValidationError('If participant is not married, the number of wives is not required')
+        self.marital_status_married()
+
+        return cleaned_data
+
+    def marital_status_married(self):
+        cleaned_data = self.cleaned_data
         # validating if married
         if cleaned_data.get('marital_status') == 'Married':
             husband_wives = cleaned_data.get('husband_wives', 0)
@@ -33,9 +40,9 @@ class DemographicsForm(BaseSubjectModelForm):
             if husband_wives > 0 and num_wives > 0:
                 raise forms.ValidationError('You CANNOT fill in both for WOMEN & MEN. Choose one')
             if not (husband_wives > 0 or num_wives > 0):
-                raise forms.ValidationError('If participant is married, write the number of wives for the husband [WOMEN:] OR the number of wives he is married to [MEN:].')
-
-        return cleaned_data
+                raise forms.ValidationError(
+                    'If participant is married, write the number of wives for the husband [WOMEN:] OR the number '
+                    'of wives he is married to [MEN:].')
 
     class Meta:
         model = Demographics

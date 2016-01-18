@@ -62,11 +62,13 @@ class ReproductiveHealth (BaseScheduledVisitModel):
     )
 
     gestational_weeks = models.IntegerField(
-        verbose_name="At about what gestational age (in weeks) did you start arv's during this (or your last) pregnancy?",
+        verbose_name="At about what gestational age (in weeks) did you start arv's during "
+        "this (or your last) pregnancy?",
         null=True,
         blank=True,
         max_length=2,
-        help_text="gestational age in WEEKS. Among HIV-infected women who took/started ARVs during their last (or current pregnancy).",
+        help_text="gestational age in WEEKS. Among HIV-infected women who took/started ARVs during their last"
+        " (or current pregnancy).",
     )
 
     pregnancy_hiv_tested = models.CharField(
@@ -78,7 +80,8 @@ class ReproductiveHealth (BaseScheduledVisitModel):
     )
 
     pregnancy_hiv_retested = models.CharField(
-        verbose_name="If you tested HIV-negative during the most recent (or this current) pregnancy, were you re-tested for HIV in the last 3 months of your pregnancy or at delivery? ",
+        verbose_name="If you tested HIV-negative during the most recent (or this current) pregnancy, were you"
+        " re-tested for HIV in the last 3 months of your pregnancy or at delivery? ",
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
         max_length=3,

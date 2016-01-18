@@ -45,22 +45,28 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         WIDGET = 1
         form = super(SubjectVisitModelAdmin, self).get_form_post(form, request, obj, **kwargs)
         if form.optional_attrs:
-            try:
-                self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-                if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
-                    for fld in form.base_fields.iteritems():
-                        try:
-                            fld[WIDGET].label = form.optional_attrs[ANNUAL]['label'][fld[NAME]]
-                        except KeyError:
-                            pass
-                        try:
-                            fld[WIDGET].help_text = form.optional_attrs[ANNUAL]['help_text'][fld[NAME]]
-                        except KeyError:
-                            pass
-                        try:
-                            fld[WIDGET].required = form.optional_attrs[ANNUAL]['required'][fld[NAME]]
-                        except KeyError:
-                            pass
-            except SubjectVisit.DoesNotExist:
-                pass
+            self.subject_visit_custom_labels(request, form, NAME, WIDGET)
         return form
+
+    def subject_visit_custom_labels(self, request, form, NAME, WIDGET):
+        try:
+            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
+            if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+                self.set_labels(form)
+        except SubjectVisit.DoesNotExist:
+            pass
+
+    def set_labels(self, form, WIDGET, NAME):
+        for fld in form.base_fields.iteritems():
+            try:
+                fld[WIDGET].label = form.optional_attrs[ANNUAL]['label'][fld[NAME]]
+            except KeyError:
+                pass
+            try:
+                fld[WIDGET].help_text = form.optional_attrs[ANNUAL]['help_text'][fld[NAME]]
+            except KeyError:
+                pass
+            try:
+                fld[WIDGET].required = form.optional_attrs[ANNUAL]['required'][fld[NAME]]
+            except KeyError:
+                pass

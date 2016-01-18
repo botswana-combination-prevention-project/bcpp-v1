@@ -1,19 +1,19 @@
 # import copy
 # import csv
 # import os
-# 
+#
 # from django.core.management.base import BaseCommand, CommandError
-# 
+#
 # from bhp066.apps.bcpp_household_member.models import HouseholdMember
 # from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
-# 
-# 
+#
+#
 # class Command(BaseCommand):
-# 
+#
 #     args = 'csv_filename'
 #     help = ('Import subject_identifier corrections from the given filename. '
 #             'Format is subject_identifier, community, subject_identifier_aka, dm_comment')
-# 
+#
 #     def handle(self, *args, **options):
 #         try:
 #             import_filename = args[0]
@@ -25,7 +25,7 @@
 #         COMMUNITY = 1
 #         SUBJECT_IDENTIFIER_AKA = 2
 #         DM_COMMENT = 3
-# 
+#
 #         filename = os.path.expanduser('~/subject_identifier_{}.csv')
 #         with open(filename.format(import_filename), 'w') as file_object:
 #             rows = csv.reader(file_object, delimiter=',')
@@ -34,7 +34,9 @@
 #                     # set the header row list
 #                     header_row = [item for item in copy.deepcopy(row)]
 #                     if header_row != ['subject_identifier', 'community', 'subject_identifier_aka', 'dm_comment']:
-#                         raise CommandError('Expected header of {}'.format(', '.join(['subject_identifier', 'community', 'subject_identifier_aka', 'dm_comment'])))
+#                         raise CommandError(
+#                             'Expected header of {}'.format(', '.join([
+#                                 'subject_identifier', 'community', 'subject_identifier_aka', 'dm_comment'])))
 #                 else:
 #                     # confirm subject_identifier not in edc
 #                     RegisteredSubject.objects.get(subject_identifier=row[SUBJECT_IDENTIFIER])

@@ -12,11 +12,11 @@ from edc.device.sync.models.outgoing_transaction import OutgoingTransaction
 
 
 class ClinicRegisteredSubjectHelper(object):
-    
 
     def find_duplicates(self):
-        duplicates = RegisteredSubject.objects.raw('''SELECT *, count(identity) as duplicate_count 
-                                                from bhp_registration_registeredsubject GROUP BY identity having duplicate_count >1''')
+        duplicates = RegisteredSubject.objects.raw(
+            '''SELECT *, count(identity) as duplicate_count
+            from bhp_registration_registeredsubject GROUP BY identity having duplicate_count >1''')
         return duplicates
 
     def determine_bcpp_registered_subject(self, identity):
@@ -102,7 +102,7 @@ class ClinicRegisteredSubjectHelper(object):
                     Q(household_structure__household__plot__status='bcpp_clinic')):
                 mymodel.registered_subject = bcpp_registered_subject
                 mymodel.save()
-        
+
     def update_clinic_household_member_audit(self, bcpp_registered_subject):
         try:
             mymodel = ClinicHouseholdMember.history.get(
@@ -127,7 +127,7 @@ class ClinicRegisteredSubjectHelper(object):
             mymodel.save()
         except ClinicOffStudy.DoesNotExist:
             pass
-    
+
     def update_clinic_off_study_audit(self, bcpp_registered_subject):
         try:
             mymodel = ClinicOffStudy.history.get(
@@ -136,7 +136,7 @@ class ClinicRegisteredSubjectHelper(object):
             mymodel.save()
         except ClinicOffStudy.DoesNotExist:
             pass
-    
+
     def update_clinic_consent(self, bcpp_registered_subject):
         try:
             try:

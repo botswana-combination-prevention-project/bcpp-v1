@@ -40,7 +40,9 @@ class SexualBehaviourForm (BaseSubjectModelForm):
 
         if cleaned_data.get('more_sex') == 'Yes':
             if not cleaned_data.get('last_year_partners'):
-                raise forms.ValidationError('If participant has ever had sex with somebody living outside of the community, CANNOT have 0 last year partners.')
+                raise forms.ValidationError(
+                    'If participant has ever had sex with somebody living outside of the '
+                    'community, CANNOT have 0 last year partners.')
 
         # If number of sexual partners in past 12months is more than zero, did
         # participant have sex with anyone outside the community 12months ago
@@ -58,7 +60,8 @@ class SexualBehaviourForm (BaseSubjectModelForm):
                 'drink alcohol before sex last time?')
 
         if cleaned_data.get('last_year_partners') > cleaned_data.get('lifetime_sex_partners'):
-            raise forms.ValidationError('Number of partners in the past 12months CANNOT exceed number of life time partners')
+            raise forms.ValidationError(
+                'Number of partners in the past 12months CANNOT exceed number of life time partners')
         return cleaned_data
 
     def validate_no_sex(self, field, cleaned_data):

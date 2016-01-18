@@ -173,7 +173,7 @@ class TestCorrectConsent(TestCase):
             old_dob=old_dob if new_dob else None,
             new_dob=new_dob,
         )
-        #call signal
+        # call signal
         # update_or_create_registered_subject_on_post_save(Consent, consent, False False)
         consent = Consent.objects.get(pk=consent.pk)
         member = Member.objects.get(pk=member.pk)

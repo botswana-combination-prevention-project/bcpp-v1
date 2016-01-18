@@ -34,7 +34,10 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'in_clinic_flag',
     ]
 
-    list_filter = ['exported', 'in_clinic_flag', SubjectReferralIsReferredListFilter, SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
+    list_filter = ['exported', 'in_clinic_flag',
+                   SubjectReferralIsReferredListFilter,
+                   SubjectCommunityListFilter,
+                   'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
     fields = (
         'subject_visit',
@@ -92,8 +95,8 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                     'user_created',
                     'user_modified'],
                 extra_fields=OrderedDict(
-                    {'plot_identifier': self.visit_attr + \
-                     '__household_member__household_structure__household__plot__plot_identifier',
+                    {'plot_identifier': self.visit_attr + '''__household_member__household_structure__household_'''
+                     '''_plot__plot_identifier''',
                      'dob': self.visit_attr + '__appointment__registered_subject__dob',
                      'first_name': self.visit_attr + '__appointment__registered_subject__first_name',
                      'identity': self.visit_attr + '__appointment__registered_subject__identity',

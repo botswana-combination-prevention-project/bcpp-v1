@@ -1,4 +1,4 @@
-from .main import *
+from .main import (SubstanceUseAdmin, StiAdmin, TubercolosisAdmin, CancerAdmin, HeartAttackAdmin, HivMedicalCareAdmin)
 
 from .access_to_care_admin import AccessToCareAdmin
 from .call_log_admin import CallLogAdmin, CallLogEntryAdmin
@@ -18,7 +18,7 @@ from .hiv_testing_history_admin import HivTestingHistoryAdmin
 from .hiv_untested_admin import HivUntestedAdmin
 from .labour_market_wages_admin import LabourMarketWagesAdmin
 from .medical_diagnoses_admin import MedicalDiagnosesAdmin
-from .months_partner_admin import *
+from .months_partner_admin import MonthsThirdPartnerAdmin, MonthsSecondPartnerAdmin, MonthsRecentPartnerAdmin
 from .non_pregnancy_admin import NonPregnancyAdmin
 from .pima_admin import PimaAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
@@ -40,7 +40,21 @@ from .participation_admin import ParticipationAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .rbd_demographics_admin import RbdDemographicsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
-from .review import *
+from .review import (RbdDemographicsReviewAdmin, ParticipationReviewAdmin, TbSymptomsReviewAdmin,
+                     ClinicQuestionnaireReviewAdmin, Cd4HistoryReviewAdmin, PimaReviewAdmin,
+                     HivResultDocumentationReviewAdmin, NonPregnancyReviewAdmin, PregnancyReviewAdmin,
+                     HivResultReviewAdmin, AccessToCareReviewAdmin, PositiveParticipantReviewAdmin,
+                     StigmaOpinionReviewAdmin, StigmaReviewAdmin, SubstanceUseReviewAdmin, StiReviewAdmin,
+                     TubercolosisReviewAdmin, CancerReviewAdmin, HeartAttackReviewAdmin, MedicalDiagnosesReviewAdmin,
+                     ReproductiveHealthReviewAdmin, UncircumcisedReviewAdmin, CircumcisedReviewAdmin,
+                     CircumcisionReviewAdmin, HivMedicalCareReviewAdmin, HivCareAdherenceReviewAdmin,
+                     MonthsThirdPartnerReviewAdmin, MonthsSecondPartnerReviewAdmin, SexualBehaviourReviewAdmin,
+                     HivUntestedReviewAdmin, HivTestedReviewAdmin, HivTestReviewReviewAdmin,
+                     HivTestingHistoryReviewAdmin, EducationReviewAdmin, CommunityEngagementReviewAdmin,
+                     DemographicsReviewAdmin, ResidencyMobilityReviewAdmin, GrantReviewAdmin,
+                     LabourMarketWagesReviewAdmin, HivHealthCareCostsReviewAdmin, HospitalAdmissionReviewAdmin,
+                     OutpatientCareReviewAdmin, ResourceUtilizationReviewAdmin, QualityOfLifeReviewAdmin,
+                     SubjectLocatorReviewAdmin, HicEnrollmentReviewAdmin, SubjectReferralReviewAdmin)
 from .correct_consent_admin import CorrectConsentAdmin
 from .quality_of_life_admin import QualityOfLifeAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin

@@ -31,18 +31,19 @@ class MedicalDiagnosesForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has ever had a heart attack, is there a record available?')
         # cancer
         if 'Cancer' in diagnoses_list and not cleaned_data.get('cancer_record'):
-            raise forms.ValidationError('If participant has ever been diagnosed with cancer, is there a record available?')
+            raise forms.ValidationError(
+                'If participant has ever been diagnosed with cancer, is there a record available?')
         # TB
         if 'Tubercolosis' in diagnoses_list and not cleaned_data.get('tb_record'):
             raise forms.ValidationError('If participant has ever been diagnosed with TB, is there a record available?')
-        if ((cleaned_data.get('heart_attack_record') and 'Heart Disease or Stroke' not in diagnoses_list)
-            or (cleaned_data.get('cancer_record') and 'Cancer' not in diagnoses_list)
-                or (cleaned_data.get('tb_record') and 'Tubercolosis' not in diagnoses_list)):
+        if(
+           (cleaned_data.get('heart_attack_record') and 'Heart Disease or Stroke' not in diagnoses_list) or
+           (cleaned_data.get('cancer_record') and 'Cancer' not in diagnoses_list) or
+           (cleaned_data.get('tb_record') and 'Tubercolosis' not in diagnoses_list)):
             raise forms.ValidationError('You cannot enter a record for a diagnosis you did not specify')
-        if ('None' in diagnoses_list and
-            (cleaned_data.get('heart_attack_record')
-             or cleaned_data.get('cancer_record')
-             or cleaned_data.get('tb_record'))):
+        if(
+           'None' in diagnoses_list and (cleaned_data.get('heart_attack_record') or
+                                         cleaned_data.get('cancer_record') or cleaned_data.get('tb_record'))):
             raise forms.ValidationError('If the diagnosis is None, then all \'records\' have to be None')
 
         return cleaned_data
