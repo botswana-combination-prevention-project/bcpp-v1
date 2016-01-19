@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 
-from bhp066.apps.bcpp_household.models.notebook_plot_list import NotebookPlotList
 from django.db.models import get_model
 
 from bhp066.apps.bcpp_survey.models import Survey

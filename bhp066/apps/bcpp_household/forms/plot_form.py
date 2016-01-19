@@ -37,7 +37,41 @@ class PlotForm(BaseModelForm):
         if not self.instance.validate_plot_accessible:
             raise forms.ValidationError('You cannot confirm a plot, plot log entry is set to inacccessible.')
 
-        # verify gps to target before the save() method does
+        if not (cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']):
+            raise forms.ValidationError(
+                'Invalid number of households. Only plots that are residential habitable can have households.')
+
+        self.household_count_and_status(cleaned_data)
+        self.status_and_eligible_member(cleaned_data)
+        self.gps_coordinates_filled(cleaned_data)
+        self.gps_verification(cleaned_data)
+        self.complete_plot_log_entry(cleaned_data)
+        self.best_time_to_visit(cleaned_data)
+
+        return cleaned_data
+
+    def household_count_and_status(self, cleaned_data):
+        """Check if a residential_habitable plot has a household count greater than zero."""
+
+        if (cleaned_data.get('household_count') == 0 and
+                cleaned_data.get('status') in ['residential_habitable']) or (
+                    cleaned_data.get('household_count') and not
+                    cleaned_data.get('status') in ['residential_habitable']):
+            raise forms.ValidationError('Invalid number of households for plot that is '
+                                        '{0}. Got {1}.'.format(cleaned_data.get('status'),
+                                                               cleaned_data.get('household_count')))
+
+    def status_and_eligible_member(self, cleaned_data):
+        """Check if the plot status is not residential_habitable number of eligible member is 0."""
+
+        if not cleaned_data.get('status') == 'residential_habitable' and cleaned_data.get('eligible_members') > 0:
+            raise forms.ValidationError('If the residence is not residential_habitable, '
+                                        'number of eligible members should be 0. Got '
+                                        '{0}'.format(cleaned_data.get('eligible_members')))
+
+    def gps_coordinates_filled(self, cleaned_data):
+        """Check of gps verification coordinates g=have been filled."""
+
         if (not cleaned_data.get('gps_degrees_s') and not cleaned_data.get('gps_minutes_s') and
                 not cleaned_data.get('gps_degrees_e') and not cleaned_data.get('gps_minutes_e')):
             raise forms.ValidationError('The following fields must all be filled '
@@ -47,6 +81,10 @@ class PlotForm(BaseModelForm):
                                                      cleaned_data.get('gps_minutes_s'),
                                                      cleaned_data.get('gps_degrees_e'),
                                                      cleaned_data.get('gps_minutes_e')))
+
+    def gps_verification(self, cleaned_data):
+        """Verify gps target location and check within community radius."""
+
         mapper_cls = site_mappers.registry.get(self.instance.community)
         mapper = mapper_cls()
         self.instance.verify_plot_community_with_current_mapper(
@@ -58,7 +96,9 @@ class PlotForm(BaseModelForm):
                                     self.instance.gps_target_lon, self.instance.target_radius,
                                     forms.ValidationError)
 
-        # Check for plot log entry completion before allowing plot confirmation
+    def complete_plot_log_entry(self, cleaned_data):
+        """Check if a plot log entry has been created before confirming a plot."""
+
         if (cleaned_data.get('gps_degrees_s') and
                 cleaned_data.get('gps_minutes_s') and
                 cleaned_data.get('gps_degrees_e') and
@@ -68,32 +108,20 @@ class PlotForm(BaseModelForm):
             except PlotLog.DoesNotExist:
                 raise forms.ValidationError(
                     'Please add a plot log entry before saving')
-        if not (cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']):
-            raise forms.ValidationError('Invalid number of households. Only plots that are residential habitable can have households.')
 
-        if (cleaned_data.get('household_count') == 0 and
-                cleaned_data.get('status') in ['residential_habitable']) or (
-                    cleaned_data.get('household_count') and not
-                    cleaned_data.get('status') in ['residential_habitable']):
-            raise forms.ValidationError('Invalid number of households for plot that is '
-                                        '{0}. Got {1}.'.format(cleaned_data.get('status'),
-                                                               cleaned_data.get('household_count')))
-
-        if not cleaned_data.get('status') == 'residential_habitable' and cleaned_data.get('eligible_members') > 0:
-            raise forms.ValidationError('If the residence is not residential_habitable, '
-                                        'number of eligible members should be 0. Got '
-                                        '{0}'.format(cleaned_data.get('eligible_members')))
-
-        if cleaned_data.get('status') == 'residential_habitable' and (
-                not cleaned_data.get('time_of_week') or not cleaned_data.get('time_of_day')):
-            raise forms.ValidationError('If the residence is residential_habitable, provide '
-                                        'the best time to visit (e.g time of week, time of day).')
+    def best_time_to_visit(self, cleaned_data):
+        """Raise an error if time of the day is specified if residence is NOT residential_habitable or not specific
+         if residential_habitable.
+         """
 
         if not cleaned_data.get('status') == 'residential_habitable' and (
                 cleaned_data.get('time_of_week') or cleaned_data.get('time_of_day')):
             raise forms.ValidationError('If the residence is NOT residential_habitable, '
                                         'do not provide the best time to visit (e.g time of week, time of day).')
-        return cleaned_data
+        if cleaned_data.get('status') == 'residential_habitable' and (
+                not cleaned_data.get('time_of_week') or not cleaned_data.get('time_of_day')):
+            raise forms.ValidationError('If the residence is residential_habitable, provide '
+                                        'the best time to visit (e.g time of week, time of day).')
 
     class Meta:
         model = Plot

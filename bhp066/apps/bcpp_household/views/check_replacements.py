@@ -49,6 +49,6 @@ def check_replacements(request):
             'replacement_count': len(replaceables),
             'producer_name': producer_name,
             'producer': Producer,
-            },
+        },
         context_instance=RequestContext(request)
-        )
+    )

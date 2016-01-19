@@ -21,7 +21,7 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help=('Enter site_code')),
-        )
+    )
 
     def handle(self, *args, **options):
         if len(args) == 1:

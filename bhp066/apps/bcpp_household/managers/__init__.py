@@ -2,7 +2,7 @@ from .base_household_structure_manager import BaseHouseholdStructureManager
 from .community_manager import CommunityManager
 from .gps_device_manager import GpsDeviceManager
 from .household_assessment_manager import HouseholdAssessmentManager
-from .household_log_manager import *
+from .household_log_manager import HouseholdLogEntryManager, HouseholdLogManager
 from .household_manager import HouseholdManager
 from .household_refusal_history_manager import HouseholdRefusalHistoryManager
 from .household_refusal_manager import HouseholdRefusalManager

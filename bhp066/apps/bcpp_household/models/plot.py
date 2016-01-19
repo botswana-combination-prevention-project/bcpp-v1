@@ -326,11 +326,11 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             return None
 
     def create_household(self, count, instance=None, using=None):
+        Household = models.get_model('bcpp_household', 'Household')
         instance = instance or self
         using = using or 'default'
         if instance.pk:
             for _ in range(0, count):
-                Household = models.get_model('bcpp_household', 'Household')
                 Household.objects.create(**{
                     'plot': instance,
                     'gps_target_lat': instance.gps_target_lat,

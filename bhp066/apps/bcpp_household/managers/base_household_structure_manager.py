@@ -20,9 +20,9 @@ class BaseHouseholdStructureManager(models.Manager):
                 return super(BaseHouseholdStructureManager, self).get_queryset().filter(
                     household_structure__household__plot__community=community,
                     household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
-                    )
+                )
             else:
                 return super(BaseHouseholdStructureManager, self).get_queryset().filter(
                     household_structure__household__plot__community=community
-                    )
+                )
         return super(BaseHouseholdStructureManager, self).get_queryset()
