@@ -23,7 +23,9 @@ class RbdDemographicsForm (BaseSubjectModelForm):
             if husband_wives > 0 and num_wives > 0:
                 raise forms.ValidationError('You CANNOT fill in both for WOMEN & MEN. Choose one')
             if not (husband_wives > 0 or num_wives > 0):
-                raise forms.ValidationError('If participant is married, write the number of wives for the husband [WOMEN:] OR the number of wives he is married to [MEN:].')
+                raise forms.ValidationError(
+                    'If participant is married, write the number of wives for the husband [WOMEN:] OR the number of '
+                    'wives he is married to [MEN:].')
 
         return cleaned_data
 

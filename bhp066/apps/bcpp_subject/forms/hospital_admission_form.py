@@ -7,14 +7,8 @@ from .base_subject_model_form import BaseSubjectModelForm
 
 class HospitalAdmissionForm (BaseSubjectModelForm):
 
-    def clean(self):
-        cleaned_data = super(HospitalAdmissionForm, self).clean()
-        # if zero, don't answer next questions
-        self.validate_cleaned_data('facility_hospitalized', cleaned_data)
-        self.validate_cleaned_data('nights_hospitalized', cleaned_data)
-        self.validate_cleaned_data('healthcare_expense', cleaned_data)
-
-        # if zero nights and not NONE
+    def validate_admission_nights_value_eq_zero(self):
+        cleaned_data = self.cleaned_data
         if cleaned_data.get('admission_nights') == 0 and cleaned_data.get('reason_hospitalized') != 'None':
             raise forms.ValidationError(
                 'If hospitalization is ZERO then response to reason hospitalized should be NONE?')
@@ -25,14 +19,8 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                 'If hospitalization is ZERO then response to hospitalization costs should be NONE?')
 
-        # expenses > 0
-        if cleaned_data.get('healthcare_expense') > 0 and not cleaned_data.get('hospitalization_costs'):
-            raise forms.ValidationError(
-                'If health care expenses are greater than zero, answer hospitalization costs')
-        if cleaned_data.get('total_expenses') > 0 and not cleaned_data.get('hospitalization_costs'):
-            raise forms.ValidationError(
-                'If total expenses are greater than zero, answer hospitalization costs')
-
+    def validate_admission_nights_value_gt_zero(self):
+        cleaned_data = self.cleaned_data
         # if greater than zero
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('reason_hospitalized'):
             raise forms.ValidationError(
@@ -49,6 +37,25 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('travel_hours'):
             raise forms.ValidationError(
                 'How many hours did it take you to get to the hospital?')
+
+    def clean(self):
+        cleaned_data = super(HospitalAdmissionForm, self).clean()
+        # if zero, don't answer next questions
+        self.validate_cleaned_data('facility_hospitalized', cleaned_data)
+        self.validate_cleaned_data('nights_hospitalized', cleaned_data)
+        self.validate_cleaned_data('healthcare_expense', cleaned_data)
+
+        # if zero nights and not NONE
+        self.admission_nights_value_eq_zero()
+        # expenses > 0
+        if cleaned_data.get('healthcare_expense') > 0 and not cleaned_data.get('hospitalization_costs'):
+            raise forms.ValidationError(
+                'If health care expenses are greater than zero, answer hospitalization costs')
+        if cleaned_data.get('total_expenses') > 0 and not cleaned_data.get('hospitalization_costs'):
+            raise forms.ValidationError(
+                'If total expenses are greater than zero, answer hospitalization costs')
+
+        self.validate_admission_nights_value_gt_zero()
 #         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('hospitalization_costs'):
 #             raise forms.ValidationError(
 #                 'Did anyone else besides you cover the hospitalization costs?')

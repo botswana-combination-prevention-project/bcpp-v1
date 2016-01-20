@@ -64,9 +64,10 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
                 # The PLOT is now enrolled so re-save all household_members in the PLOT
                 # to re-calculated member_status (excluding the current
                 # instance.household_member)
+                plot = instance.household_member.household_structure.household.plot
                 if instance.household_member.household_structure.enrolled:
                     household_members = instance.household_member.__class__.objects.filter(
-                        household_structure__household__plot=instance.household_member.household_structure.household.plot,
+                        household_structure__household__plot=plot,
                         household_structure__survey=instance.household_member.household_structure.survey,
                         household_structure__household__replaced_by__isnull=True).exclude(is_consented=True)
                     for household_member in household_members:

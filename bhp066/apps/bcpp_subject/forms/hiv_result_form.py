@@ -50,6 +50,21 @@ class HivResultForm (BaseSubjectModelForm):
            (cleaned_data.get('hiv_result', None) == 'NEG') or
            (cleaned_data.get('hiv_result', None) == 'IND')) and not (cleaned_data.get('hiv_result_datetime', None)):
             raise forms.ValidationError('If test has been performed, what is the test result date time?')
+        self.validate_hiv_status_nd_blood_draw_type()
+        if(
+           cleaned_data.get('hiv_result') not in ['POS', 'NEG', 'IND'] and
+           cleaned_data.get('insufficient_vol') in ['Yes', 'No']):
+            raise forms.ValidationError(
+                'No blood drawn.  You do not need to indicate if volume '
+                'is sufficient. Got {0}'.format(cleaned_data.get('insufficient_vol')))
+        if(
+           cleaned_data.get('hiv_result') in ['POS', 'NEG', 'IND'] and
+           cleaned_data.get('blood_draw_type') not in ['capillary', 'venous']):
+            raise forms.ValidationError('Blood was drawn. Please indicate the type.')
+        return cleaned_data
+
+    def validate_hiv_status_nd_blood_draw_type(self):
+        cleaned_data = self.cleaned_data
         if(
            cleaned_data.get('hiv_result') not in ['POS', 'NEG', 'IND'] and
            cleaned_data.get('blood_draw_type') in ['capillary', 'venous']):
@@ -63,17 +78,6 @@ class HivResultForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                 'Venous blood drawn.  You do not need to indicate if volume is '
                 'sufficient. Got {0}'.format(cleaned_data.get('insufficient_vol')))
-        if(
-           cleaned_data.get('hiv_result') not in ['POS', 'NEG', 'IND'] and
-           cleaned_data.get('insufficient_vol') in ['Yes', 'No']):
-            raise forms.ValidationError(
-                'No blood drawn.  You do not need to indicate if volume '
-                'is sufficient. Got {0}'.format(cleaned_data.get('insufficient_vol')))
-        if(
-           cleaned_data.get('hiv_result') in ['POS', 'NEG', 'IND'] and
-           cleaned_data.get('blood_draw_type') not in ['capillary', 'venous']):
-            raise forms.ValidationError('Blood was drawn. Please indicate the type.')
-        return cleaned_data
 
     class Meta:
         model = HivResult

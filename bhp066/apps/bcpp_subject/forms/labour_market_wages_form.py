@@ -21,15 +21,7 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
                     but now reports to be \'Not Working\'. Either correct this form or change answer in the Locator')
         except SubjectLocator.DoesNotExist:
             pass
-        employed = ['government sector', 'private sector', 'self-employed working on my own',
-                    'self-employed with own employees']
-        employed_none = ['occupation', 'monthly_income', 'salary_payment']
-        if cleaned_data.get('employed') in employed:
-            for response in employed_none:
-                if cleaned_data.get(response) == 'None':
-                    self._errors[response] = ErrorList[(u'The field cannot be none')]
-                    raise forms.ValidationError('If participant is employed. The response cannot be None')
-
+        self.validate_employed_reason()
         monthly_answer = 0
         for i in range(len(MONTHLY_INCOME)):
             if MONTHLY_INCOME[i][1] == cleaned_data.get('monthly_income'):
@@ -44,6 +36,17 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
             raise forms.ValidationError('Amount in household cannot be less than monthly income')
 
         return cleaned_data
+
+    def validate_employeed_reason(self):
+        cleaned_data = self.cleaned_data
+        employed = ['government sector', 'private sector', 'self-employed working on my own',
+                    'self-employed with own employees']
+        employed_none = ['occupation', 'monthly_income', 'salary_payment']
+        if cleaned_data.get('employed') in employed:
+            for response in employed_none:
+                if cleaned_data.get(response) == 'None':
+                    self._errors[response] = ErrorList[(u'The field cannot be none')]
+                    raise forms.ValidationError('If participant is employed. The response cannot be None')
 
     class Meta:
         model = LabourMarketWages

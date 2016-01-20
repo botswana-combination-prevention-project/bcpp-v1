@@ -31,7 +31,15 @@ class PimaVlForm (BaseSubjectModelForm):
             if not cleaned_data.get('time_of_test') or not cleaned_data.get('time_of_result'):
                 raise forms.ValidationError('Time of test and time of result should be provided.')
 
-        return cleaned_data
+    def validate_poc_vl_today_no(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('poc_vl_today') == NO:
+            if not cleaned_data.get('poc_vl_today_other'):
+                raise forms.ValidationError('If POC VL NOT done today, please explain why not?')
+            if cleaned_data.get('pima_id'):
+                raise forms.ValidationError('Do not provide the PIMA machine id if the POC VL was not performed')
+            if cleaned_data.get('poc_vl_value'):
+                raise forms.ValidationError('POC VL was not performed, do not provide the POC viral load count')
 
     def check_preorder_exists(self, cleaned_data):
         """Check if preorder exists."""

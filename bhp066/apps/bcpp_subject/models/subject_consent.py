@@ -185,6 +185,14 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
             raise exception_cls(
                 'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before'
                 ' consent.')
+        self.validate_guardian_dob(enrollment_checklist)
+        self.validate_citizen_literacy_nd_legal_marriage(enrollment_checklist, subject_consent, exception_cls)
+        if not household_member.eligible_subject:
+            raise exception_cls('Subject is not eligible or has not been confirmed eligible '
+                                'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
+        return True
+
+    def validate_guardian_dob(self, enrollment_checklist, subject_consent, exception_cls):
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
@@ -197,6 +205,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
                                         'available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
+
+    def validate_citizen_literacy_nd_legal_marriage(self, enrollment_checklist, subject_consent, exception_cls):
         if enrollment_checklist.citizen != subject_consent.citizen:
             raise exception_cls(
                 'You wrote subject is a %(citizen)s citizen. This does not match the enrollment checklist.',
@@ -213,10 +223,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
             raise exception_cls('Enrollment Checklist indicates that this subject is married '
                                 'to a citizen with a valid marriage certificate, but the '
                                 'consent does not indicate this.')
-        if not household_member.eligible_subject:
-            raise exception_cls('Subject is not eligible or has not been confirmed eligible '
-                                'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
-        return True
 
     @property
     def survey_of_consent(self):

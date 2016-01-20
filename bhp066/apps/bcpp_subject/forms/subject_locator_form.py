@@ -35,12 +35,7 @@ class SubjectLocatorForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                 'If participant has allowed you to sms her on followup, what is their cell number?')
         # may call work
-        if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_place', None):
-            raise forms.ValidationError(
-                'If participant has allowed you to call them at work, name work place location?')
-        if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_phone', None):
-            raise forms.ValidationError(
-                'If participant has allowed you to call them at work, give the work phone number?')
+        self.validate_may_call_work_yes()
         # Contact next-of-kin
         if(
            cleaned_data.get('may_contact_someone', None) == 'No' and not
@@ -53,17 +48,7 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         if cleaned_data.get('has_alt_contact', None) == 'Yes' and not cleaned_data.get('alt_contact_rel', None):
             raise forms.ValidationError('If participant has allowed you to contact next-of-kin, how are they related?')
         # may contact someone else
-        if cleaned_data.get('may_contact_someone', None) == 'Yes' and not cleaned_data.get('contact_name', None):
-            raise forms.ValidationError(
-                'If participant has allowed you to contact someone else, what is the contact name?')
-        if cleaned_data.get('may_contact_someone', None) == 'Yes' and not cleaned_data.get('contact_rel', None):
-            raise forms.ValidationError(
-                'If participant has allowed you to contact someone else, how are they related to this person?')
-        if(
-           cleaned_data.get('may_contact_someone', None) == 'Yes' and not
-           cleaned_data.get('contact_physical_address', None)):
-            raise forms.ValidationError(
-                'If participant has allowed you to contact someone else, what is this persons physical address?')
+        self.validate_may_contact_someone_yes()
         # validating work_place
         self.validate_work_place('subject_work_place', cleaned_data)
         self.validate_work_place('subject_work_phone', cleaned_data)
@@ -86,6 +71,29 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         self.validate_contact_someone('contact_phone', cleaned_data)
 
         return cleaned_data
+
+    def validate_may_call_work_yes(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_place', None):
+            raise forms.ValidationError(
+                'If participant has allowed you to call them at work, name work place location?')
+        if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_phone', None):
+            raise forms.ValidationError(
+                'If participant has allowed you to call them at work, give the work phone number?')
+
+    def validate_may_contact_someone_yes(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('may_contact_someone', None) == 'Yes' and not cleaned_data.get('contact_name', None):
+            raise forms.ValidationError(
+                'If participant has allowed you to contact someone else, what is the contact name?')
+        if cleaned_data.get('may_contact_someone', None) == 'Yes' and not cleaned_data.get('contact_rel', None):
+            raise forms.ValidationError(
+                'If participant has allowed you to contact someone else, how are they related to this person?')
+        if(
+           cleaned_data.get('may_contact_someone', None) == 'Yes' and not
+           cleaned_data.get('contact_physical_address', None)):
+            raise forms.ValidationError(
+                'If participant has allowed you to contact someone else, what is this persons physical address?')
 
     def validate_call_follow_up(self, field, cleaned_data):
         msg = 'If participant has not given permission for follow-up, do not give follow-up details'
