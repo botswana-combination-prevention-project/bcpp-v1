@@ -2215,3 +2215,22 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 #         )
 #         self.assertEqual(ScheduledEntryMetaData.objects.filter(
 #             entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
+
+    def hiv_pos_at_bhs_and_hiv_care_adherence_is_required(self):
+        """Enrollees at t0 who are HIV-positive and on ART at the time of enrollment.
+           Pima and POC VL NOT required. RBD, VL required.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+
+        hiv_care_adherence_options = {}
+        hiv_care_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(
+            entry_status=REQUIRED, **hiv_care_adherence_options).count(), 1)
