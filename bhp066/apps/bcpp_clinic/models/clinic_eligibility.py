@@ -99,7 +99,6 @@ class ClinicEligibility (BaseSyncUuidModel):
 
     identity = IdentityField(
         verbose_name="Identity number (OMANG, etc)",
-        unique=True,
         null=True,
         blank=True,
         help_text=("Use Omang, Passport number, driver's license number or Omang receipt number")

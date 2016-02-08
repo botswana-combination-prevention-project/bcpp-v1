@@ -1,6 +1,7 @@
 from django import forms
 
 from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from edc_constants.constants import YES
 
 
 from ..models import ClinicEligibility
@@ -22,7 +23,7 @@ class ClinicEligibilityForm(BaseModelForm):
         if cleaned_data.get('has_identity') == 'Yes' and not cleaned_data.get('identity'):
             raise forms.ValidationError('You indicated the patient did has provided '
                                         'an identity but no identity has been provided. Please correct.')
-        if cleaned_data.get('identity'):
+        if cleaned_data.get('identity') == YES:
             if not self.instance:
                 self._meta.model.check_for_known_identity(cleaned_data.get('identity'), forms.ValidationError)
 
