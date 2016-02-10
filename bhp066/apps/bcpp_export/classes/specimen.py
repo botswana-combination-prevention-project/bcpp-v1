@@ -83,18 +83,18 @@ class Specimen(Base):
         try:
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE, timeout=3) as cnxn:
                 with cnxn.cursor() as cursor:
-                    for edc_specimen_identifier, lis_specimen_identifier, lis_subject_identifier, lis_received_datetime in fetchall(cursor):
-                        if lis_subject_identifier != self.subject_identifier:
+                    for specimen_identifier, lis_specimen_idntfr, lis_identifier, received_datetime in fetchall(cursor):
+                        if lis_identifier != self.subject_identifier:
                             print ("Warning! LIS pat_ref differs with EDC subject_identifier for {}. Got {}"
-                                   ).format(self.subject_identifier, lis_subject_identifier)
-                        if edc_specimen_identifier in self.aliquots and lis_subject_identifier == self.subject_identifier:
+                                   ).format(self.subject_identifier, lis_identifier)
+                        if specimen_identifier in self.aliquots and lis_identifier == self.subject_identifier:
                             self.lis_receive.update({
-                                edc_specimen_identifier: ReceivedTuple(
-                                    edc_specimen_identifier,
+                                specimen_identifier: ReceivedTuple(
+                                    specimen_identifier,
                                     self.drawn_datetime,
-                                    lis_specimen_identifier,
-                                    lis_subject_identifier,
-                                    lis_received_datetime)
+                                    lis_specimen_idntfr,
+                                    lis_identifier,
+                                    received_datetime)
                             })
             self.lis_results = {edc_specimen_identifier: [] for edc_specimen_identifier in self.lis_receive}
         except pyodbc.Error as e:

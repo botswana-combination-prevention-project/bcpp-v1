@@ -26,20 +26,20 @@ class HtcSubjectVisitAdmin(BaseAppointmentModelAdmin):
         'reason',
         'appointment__appt_status',
         'appointment__visit_definition__code',
-        )
+    )
 
     search_fields = (
         'appointment__registered_subject__subject_identifier',
         'appointment__registered_subject__registration_identifier',
         'appointment__registered_subject__first_name',
         'appointment__registered_subject__identity',
-        )
+    )
 
     fields = (
         'household_member',
         "appointment",
         "report_datetime",
         "comments"
-        )
+    )
 
 admin.site.register(HtcSubjectVisit, HtcSubjectVisitAdmin)

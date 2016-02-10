@@ -28,7 +28,9 @@ class OperationalAnnual(BaseOperationalReport):
         if self.ra_username.find('----') != -1:
             self.ra_username = ''
         self.date_to += datetime.timedelta(days=1)
-        current_annual_survey = (Survey.objects.current_survey() if Survey.objects.current_survey().survey_slug != 'bcpp_year_1' else Survey.objects.next_survey())
+        current_annual_survey = (
+            Survey.objects.current_survey()
+            if Survey.objects.current_survey().survey_slug != 'bcpp_year_1' else Survey.objects.next_survey())
         previous_survey = Survey.objects.previous_survey()
         targeted_members_baseline = HouseholdMember.objects.filter(
             household_structure__household__plot__community__icontains=self.community,
@@ -98,7 +100,9 @@ class AnnualMember(threading.Thread):
             subject_visit__household_member__internal_identifier__in=annual_internal_identifiers,
             created__gte=self.date_from,
             created__lte=self.date_to,
-            user_created__icontains=self.ra_username).exclude(subject_visit__household_member__internal_identifier__in=self.targeted_members_internal_identifiers).count()
+            user_created__icontains=self.ra_username).exclude(
+                subject_visit__household_member__internal_identifier__in=self.targeted_members_internal_identifiers
+        ).count()
         self.data_dict['91. Annual BHS members newly eligible for HIC'] = annual_new_hic_eligible
         annual_new_hic_enrolled = HicEnrollment.objects.filter(
             subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
@@ -107,7 +111,8 @@ class AnnualMember(threading.Thread):
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             hic_permission='Yes').exclude(
-                subject_visit__household_member__internal_identifier__in=self.targeted_members_internal_identifiers).count()
+                subject_visit__household_member__internal_identifier__in=self.targeted_members_internal_identifiers
+        ).count()
         self.data_dict['92. Annual BHS members newly eligible for HIC that enrolled'] = annual_new_hic_enrolled
 
 
@@ -134,11 +139,11 @@ class TargetedMember(threading.Thread):
 #         targeted_members_internal_identifiers = [mem.internal_identifier for mem in self.targeted_members]
         targeted_members_unreached = self.targeted_members.exclude(member_status=ANNUAL).count()
         self.data_dict['3. Targeted BHS only members not reached'] = targeted_members_unreached
-        targeted_members_relocated = self.targeted_members.filter(eligible_member=True).count()
+        # targeted_members_relocated = self.targeted_members.filter(eligible_member=True).count()
         self.data_dict['4. Targeted BHS only members that relocated'] = 'N/A'
         targeted_members_deceased = self.targeted_members.filter(survival_status='dead').count()
         self.data_dict['5. Targeted BHS only members that are now deceased'] = targeted_members_deceased
-        targeted_members_incarcerated = self.targeted_members.filter(eligible_member=True).count()
+        # targeted_members_incarcerated = self.targeted_members.filter(eligible_member=True).count()
         self.data_dict['6. Targeted BHS only targeted_members are now incarcerated'] = 'N/A'
         targeted_eligible_retesting = 'N/A'
         self.data_dict['7. Targeted BHS members eligible for re-testing'] = targeted_eligible_retesting
@@ -148,7 +153,8 @@ class TargetedMember(threading.Thread):
             subject_visit__household_member__household_structure__survey=self.current_annual_survey,
             created__gte=self.date_from,
             created__lte=self.date_to,
-            user_created__icontains=self.ra_username).exclude(hiv_result='Declined').exclude(hiv_result='Not performed').count()
+            user_created__icontains=self.ra_username).exclude(hiv_result='Declined').exclude(hiv_result='Not performed'
+                                                                                             ).count()
         self.data_dict['8. Targeted BHS members that tested'] = targeted_members_tested
         annual_declined_testing = HivResult.objects.filter(
             subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
@@ -183,7 +189,8 @@ class NewMember(threading.Thread):
             household_structure__household__plot__community__icontains=self.community,
             household_structure__survey=self.current_annual_survey,
             modified__gte=self.date_from, modified__lte=self.date_to,
-            user_modified__icontains=self.ra_username).values('internal_identifier').annotate(dcount=Count('internal_identifier'))
+            user_modified__icontains=self.ra_username).values('internal_identifier').annotate(
+                dcount=Count('internal_identifier'))
         new_member_internal_indentifiers = []
         for mem in new_members_aggregate:
             if mem.get('dcount') == 1:

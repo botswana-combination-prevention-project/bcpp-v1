@@ -31,7 +31,7 @@ class ClinicRefusalAdmin(BaseModelAdmin):
 
     radio_fields = {
         "reason": admin.VERTICAL,
-        }
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

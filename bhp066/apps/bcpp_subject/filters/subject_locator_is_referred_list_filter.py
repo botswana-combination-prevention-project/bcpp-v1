@@ -24,7 +24,7 @@ class SubjectLocatorIsReferredListFilter(SimpleListFilter):
                     locators.append(qs.get_subject_identifier())
             queryset = SubjectLocator.objects.filter(
                 subject_visit__appointment__registered_subject__subject_identifier__in=locators)
-        if self.value() == False:
+        if not self.value():
             for qs in queryset:
                 refferal = SubjectReferral.objects.filter(
                     subject_visit__appointment__registered_subject__subject_identifier=qs.get_subject_identifier(),

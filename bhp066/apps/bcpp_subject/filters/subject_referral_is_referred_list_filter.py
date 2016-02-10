@@ -14,5 +14,5 @@ class SubjectReferralIsReferredListFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.exclude(referral_code__in=['NOT-REF', 'ERROR'])
-        if self.value() == False:
+        if not self.value():
             return queryset.filter(referral_code__in=['NOT-REF', 'ERROR'])

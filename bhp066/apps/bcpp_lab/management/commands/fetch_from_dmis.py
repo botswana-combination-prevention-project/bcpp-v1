@@ -1,12 +1,12 @@
 # from optparse import make_option
-# 
+#
 # from django.core.management.base import BaseCommand, CommandError
-# 
+#
 # # from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
-# 
+#
 # # from ...classes import Dmis
-# 
-# 
+#
+#
 # class Command(BaseCommand):
 #     """ thsi has not been tested, yet. But the class Dmis works."""
 #     args = ''
@@ -31,7 +31,7 @@
 #             default=False,
 #             help=('Identifier column name in DMIS. Defaults to \'edc_specimen_identifier\'' )),
 #         )
-# 
+#
 #     def handle(self, *args, **options):
 #         """See class docstring for usage."""
 #         filename = None

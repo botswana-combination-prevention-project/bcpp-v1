@@ -18,7 +18,9 @@ ReceivedTuple = namedtuple(
     'edc_specimen_identifier, lis_specimen_identifier, lis_patient_ref, received_datetime')
 ResultTuple = namedtuple(
     'ResultTuple',
-    'edc_specimen_identifier, lis_specimen_identifier, lis_patient_ref, received_datetime, report_date, panel_id, sample_assay_date, utestid, result, result_quantifier lis_result_id')
+    'edc_specimen_identifier,'
+    ' lis_specimen_identifier, lis_patient_ref, received_datetime, report_date, panel_id, sample_assay_date,'
+    ' utestid, result, result_quantifier lis_result_id')
 
 
 class Lab(Base):
@@ -34,13 +36,13 @@ class Lab(Base):
         self.dmis_column = 'edc_specimen_identifier'
         self.subject_requisition = SubjectRequisition.objects.get(specimen_identifier=self.aliquot_identifiers[0][:-4])
         self.specimen_identifier = self.subject_requisition.specimen_identifier
-        self.survey = self.subject_requisition.subject_visit.household_member.household_structure.survey.survey_abbrev.lower()
+        self.survey = self.subject_requisition.subject_visit.household_member.household_structure.survey.survey_abbrev
         self.subject = Subject(self.subject_requisition.subject_visit.household_member, verbose=False)
         self.subject_identifier = self.subject_requisition.subject_visit.get_subject_identifier()
         self.gender = self.subject.gender
         self.age = self.subject.age_in_years
-        self.hiv_status = getattr(self.subject, '{}_{}'.format('hiv_result', self.survey))
-        self.hiv_result_datetime = getattr(self.subject, '{}_{}'.format('hiv_result_date', self.survey))
+        self.hiv_status = getattr(self.subject, '{}_{}'.format('hiv_result', self.survey.lower()))
+        self.hiv_result_datetime = getattr(self.subject, '{}_{}'.format('hiv_result_date', self.survey.lower()))
         self.community = self.subject.community
         self.survey_consented = self.subject.survey_consented
         self.survey_pair = self.subject.survey.pair
@@ -96,7 +98,9 @@ class Lab(Base):
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
                 with cnxn.cursor() as cursor:
                     for lis_specimen_identifier, lis_subject_identifier, lis_received_datetime in fetchall(cursor):
-                        self.lis_received.update({lis_specimen_identifier: (lis_specimen_identifier, lis_subject_identifier, lis_received_datetime)})
+                        self.lis_received.update(
+                            {lis_specimen_identifier: (
+                                lis_specimen_identifier, lis_subject_identifier, lis_received_datetime)})
                         if lis_specimen_identifier == self.aliquot_identifier:
                             self.lis_specimen_identifier = lis_specimen_identifier
                             if not self.lis_received_datetime:
@@ -104,13 +108,13 @@ class Lab(Base):
                             if not self.lis_subject_identifier:
                                 self.lis_subject_identifier = self.subject_identifier
                                 if self.lis_subject_identifier != self.subject_identifier:
-                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier for {}. Got {}".format(
-                                        self.subject_identifier, self.lis_subject_identifier)
+                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier "
+                                    "for {}. Got {}".format(self.subject_identifier, self.lis_subject_identifier)
                             if not self.specimen_identifier:
                                 self.lis_subject_identifier = self.subject_identifier
                                 if self.lis_subject_identifier != self.subject_identifier:
-                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier for {}. Got {}".format(
-                                        self.subject_identifier, self.lis_subject_identifier)
+                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier for {}. "
+                                    "Got {}".format(self.subject_identifier, self.lis_subject_identifier)
 
         except pyodbc.Error as e:
             raise pyodbc.Error(e)
@@ -120,7 +124,8 @@ class Lab(Base):
         def fetchall(cursor):
             self.sql.update(
                 resulted_items=(
-                    'select PID as sample_id, reportdate, panel_id, sample_assay_date, utestid, result, result_quantifier, L21.id as lis_result_id '
+                    'select PID as sample_id, reportdate, panel_id, sample_assay_date, utestid, '
+                    'result, result_quantifier, L21.id as lis_result_id '
                     'from BHPLAB.DBO.LAB21Response as L21 '
                     'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
                     'where PID=\'{lis_specimen_identifier}\'').format(
@@ -131,7 +136,7 @@ class Lab(Base):
         try:
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
                 with cnxn.cursor() as cursor:
-                    for lis_specimen_identifier, report_date, panel_id, sample_assay_date, utestid, result, result_quantifier, lis_result_id in fetchall(cursor):
+                    for report_date, sample_assay_date, utestid, result, quantifier, lis_result_id in fetchall(cursor):
                         try:
                             report_date = parse(report_date, dayfirst=True)
                         except AttributeError:
@@ -150,11 +155,12 @@ class Lab(Base):
                             sample_assay_date,
                             utestid,
                             result,
-                            result_quantifier,
+                            quantifier,
                             lis_result_id)
                         self.lis_results.append(result_tuple)
                         if not self.lis_result:
-                            self.lis_result = '{}{}'.format(result_quantifier if result_quantifier in '<>' else '', result)
+                            self.lis_result = '{}{}'.format(
+                                quantifier if quantifier in '<>' else '', result)
                             try:
                                 self.lis_result_int = int(result)
                             except TypeError:

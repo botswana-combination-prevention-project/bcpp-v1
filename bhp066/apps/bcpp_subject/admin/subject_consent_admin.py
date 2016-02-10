@@ -81,7 +81,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             "consent_copy": admin.VERTICAL,
             "is_literate": admin.VERTICAL,
         }
-
+        self.exclude = ('subject_type', 'is_incarcerated',)
         self.search_fields = list(self.search_fields)
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')

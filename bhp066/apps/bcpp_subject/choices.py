@@ -172,7 +172,8 @@ CARE_REASON = (
     ('HIV-related care', _('HIV-related care, including TB and other opportunistic infections')),
     ('Pregnancy', _('Pregnancy-related care, including delivery')),
     ('Injuries', _('Injuries or accidents')),
-    ('Chronic disease', _('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
+    ('Chronic disease', _(
+        'Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
     ('Other', _('Other')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
     ('None', _('None')),

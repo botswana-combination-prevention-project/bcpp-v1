@@ -1,7 +1,5 @@
-import re
-import uuid
-
 from django.db import models
+
 from edc.map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc.subject.registration.models import RegisteredSubject

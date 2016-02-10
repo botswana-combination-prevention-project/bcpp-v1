@@ -1,4 +1,3 @@
-import pprint
 from datetime import datetime
 
 from django.db.models.signals import post_save, post_delete
@@ -33,7 +32,8 @@ def clinic_eligibility_on_post_save(sender, instance, raw, created, using, **kwa
             clinic_household_member.save()
             clinic_household_member.registered_subject.identity = instance.identity
             clinic_household_member.registered_subject.identity_type = instance.identity_type
-            clinic_household_member.registered_subject.additional_key = None if instance.identity else instance.additional_key
+            additional_key = None if instance.identity else instance.additional_key
+            clinic_household_member.registered_subject.additional_key = additional_key
             clinic_household_member.registered_subject.save()
             if not instance.is_eligible:
                 try:

@@ -11,34 +11,34 @@ class LastHivRecord (BaseScheduledModel):
     recorded_test = models.DateField(
         verbose_name=_("Recorded date of previous test:"),
         help_text="",
-        )
+    )
 
     recorded_result = models.CharField(
         verbose_name=_("Recorded result of previous test:"),
         max_length=15,
         choices=POS_NEG_ONLY,
         help_text="",
-        )
+    )
 
     attended_hiv_care = models.CharField(
         verbose_name=_("Have you ever attended a health clinic for HIV care?"),
         max_length=15,
         choices=YES_NO_DECLINED,
-        )
+    )
 
     hiv_care_clinic = models.CharField(
         verbose_name=_("What is the name of the clinic most recently visited for HIV care?"),
         max_length=25,
         null=True,
         blank=True,
-        )
+    )
 
     hiv_care_card = models.CharField(
         verbose_name=_("Do you have an ART card or HIV care enrollment card available to review today?"),
         max_length=25,
         choices=YES_NO_DECLINED,
         help_text="Check yes if client shows card to counselor, check no if client does not show card.",
-        )
+    )
 
     history = AuditTrail()
 

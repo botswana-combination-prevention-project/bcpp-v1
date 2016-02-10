@@ -13,7 +13,7 @@ class HtcHivTestingHistory (BaseScheduledModel):
         max_length=3,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     testing_place = models.CharField(
         verbose_name=_("Where did you last undergo HIV testing?"),
@@ -22,7 +22,7 @@ class HtcHivTestingHistory (BaseScheduledModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     hiv_record = models.CharField(
         verbose_name=_("Is a record of your last HIV test available to review today?"),
@@ -30,7 +30,7 @@ class HtcHivTestingHistory (BaseScheduledModel):
         null=True,
         blank=True,
         choices=YES_NO_DECLINED,
-        )
+    )
 
     result_obtained = models.CharField(
         verbose_name=_("Was HIV- test result obtained in the past 3 months?"),
@@ -39,7 +39,7 @@ class HtcHivTestingHistory (BaseScheduledModel):
         blank=True,
         choices=YES_NO_DECLINED,
         help_text="do not read aloud, use date recorded in card",
-        )
+    )
 
     history = AuditTrail()
 

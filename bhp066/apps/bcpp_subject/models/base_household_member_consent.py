@@ -30,7 +30,8 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuid
         StudySite,
         verbose_name='Site',
         null=True,
-        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+        help_text="This refers to the site or 'clinic area' where the subject is being consented.",
+        editable=False,
     )
 
     is_minor = models.CharField(
@@ -41,9 +42,11 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuid
         default='-',
         choices=YES_NO,
         help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
-                   'HIV status may NOT be revealed in the household.'))
+                   'HIV status may NOT be revealed in the household.'),
+        editable=False,
+    )
 
-    is_signed = models.BooleanField(default=False)
+    is_signed = models.BooleanField(default=False, editable=False)
 
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 

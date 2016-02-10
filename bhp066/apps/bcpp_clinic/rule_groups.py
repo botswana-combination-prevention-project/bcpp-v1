@@ -24,7 +24,8 @@ class MasaRuleGroup(RuleGroup):
 
     is_drawn = ScheduledDataRule(
         logic=Logic(
-            predicate=(('registration_type', 'equals', 'masa_vl_scheduled'), ('registration_type', 'equals', 'etc_scheduled', 'or')),
+            predicate=(('registration_type', 'equals', 'masa_vl_scheduled'),
+                       ('registration_type', 'equals', 'etc_scheduled', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=['viralloadtracking'])

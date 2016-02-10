@@ -43,4 +43,5 @@ class {model_name}(BaseCdc):
 
     {attributes}
 
-{meta}""".format(model_name=model_name, attributes='\n    '.join(attr), meta='    class Meta:\n        app_label = \'bcpp_stats\'')
+{meta}""".format(model_name=model_name,
+                 attributes='\n    '.join(attr), meta='    class Meta:\n        app_label = \'bcpp_stats\'')

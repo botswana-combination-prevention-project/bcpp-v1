@@ -17,7 +17,8 @@ class HouseholdMember(Base):
         try:
             self.household_member = HouseholdMemberModel.objects.get(internal_identifier=household_member)
         except MultipleObjectsReturned:
-            self.household_member = HouseholdMemberModel.objects.filter(internal_identifier=household_member).order_by('created')[0]
+            self.household_member = HouseholdMemberModel.objects.filter(
+                internal_identifier=household_member).order_by('created')[0]
         except HouseholdMemberModel.DoesNotExist:
             try:
                 self.household_member = HouseholdMemberModel.objects.get(id=household_member)

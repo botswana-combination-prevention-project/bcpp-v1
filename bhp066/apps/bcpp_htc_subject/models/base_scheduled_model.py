@@ -13,12 +13,11 @@ class BaseScheduledModel(BaseConsentedUuidModel):
 
     htc_subject_visit = models.OneToOneField(HtcSubjectVisit)
 
-    report_datetime = models.DateTimeField("Today's date",
-        validators=[
-            datetime_not_before_study_start,
-            datetime_not_future, ],
+    report_datetime = models.DateTimeField(
+        "Today's date",
+        validators=[datetime_not_before_study_start, datetime_not_future, ],
         default=datetime.today(),
-        )
+    )
 
     objects = ScheduledModelManager()
 

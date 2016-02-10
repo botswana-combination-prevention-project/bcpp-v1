@@ -4,4 +4,4 @@ from .htc_subject_off_study import HtcSubjectOffStudy
 
 class SubjectOffStudyMixin(OffStudyMixin):
 
-    OFF_STUDY_MODEL =  HtcSubjectOffStudy
+    OFF_STUDY_MODEL = HtcSubjectOffStudy

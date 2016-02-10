@@ -70,4 +70,5 @@ EDC_APPS = (
     'edc_consent',
     'edc_audit',
     'edc_constants',
+    #'edc_export',
 )

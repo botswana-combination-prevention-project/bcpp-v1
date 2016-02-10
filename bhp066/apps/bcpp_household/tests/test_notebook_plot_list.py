@@ -63,3 +63,18 @@ class TestNotebookPlotAllocation(TestCase):
 
         allocation.create_notebook_plot_list(0)
         self.assertEqual(NotebookPlotList.objects.all().count(), 7)
+
+    def test_generate_notebook_identifiers(self):
+        machines = []
+        host = 'bcpp'
+        plot_identifier = '10101-0'
+        survey = surveys.filter(survey_slug='bcpp-year-2').first()
+        for i in range(5):
+            NotebookPlotList.create(
+                plot_identifier=plot_identifier + str(i), community='test_community',
+                notebook=host + str(i), survey=survey)
+        for i in range(5):
+            PlotFactory(plot_identifier=plot_identifier + str(i))
+            
+        for j in range(5):
+            self.assertEqual(Plot.objects.filter(plot_identifier=))

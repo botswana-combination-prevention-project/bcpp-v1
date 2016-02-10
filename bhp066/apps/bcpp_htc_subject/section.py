@@ -7,4 +7,4 @@ class SectionHtcSubjectView(BaseSectionForDashboardView):
     section_display_index = 40
     section_template = 'section_htc_subject.html'
 
-#site_sections.register(SectionHtcSubjectView)
+# site_sections.register(SectionHtcSubjectView)

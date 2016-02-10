@@ -76,7 +76,7 @@ class CommunityComparisonPDF(object):
             row_no += 1
             extra_styles.append(('BACKGROUND', (0, row_no), (2, row_no), colors.HexColor('#ffeb94')))
             extra_styles.append(('LINEBELOW', (0, row_no), (2, row_no), 1, colors.HexColor('#1f8dd6')))
-            extra_styles.append(('FONT', (0, row_no), (1, row_no),  'Helvetica-Bold'))
+            extra_styles.append(('FONT', (0, row_no), (1, row_no), 'Helvetica-Bold'))
             for comm1_row, comm2_row in izip(sect1.data, sect2.data):
                 row_no += 1
                 if row_no % 2 != 0:

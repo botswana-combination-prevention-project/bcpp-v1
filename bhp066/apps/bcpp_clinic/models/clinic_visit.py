@@ -57,7 +57,6 @@ class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, 
         """Confirms the visit code and visit reason before
         updating the VL requisition metadata status to NEW."""
         lab_model = ['clinicrequisition']
-        from ...bcpp_clinic.models import ClinicConsent
         check_consent = ClinicConsent.objects.filter(
             subject_identifier=self.registered_subject.subject_identifier)
         if check_consent[0]:

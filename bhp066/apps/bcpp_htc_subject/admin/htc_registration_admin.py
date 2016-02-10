@@ -21,15 +21,12 @@ class HtcRegistrationAdmin(BaseModelAdmin):
         'gender',
         "is_pregnant",
         "testing_counseling_site",
-#         "legal_marriage",
-#         "marriage_certificate",
-#         "marriage_certificate_no",
-        )
+    )
 
     list_display = (
         'household_member',
         "report_datetime",
-        )
+    )
 
     list_filter = ["report_datetime"]
 
@@ -39,8 +36,6 @@ class HtcRegistrationAdmin(BaseModelAdmin):
         "is_dob_estimated": admin.VERTICAL,
         "gender": admin.VERTICAL,
         "citizen": admin.VERTICAL,
-#         "legal_marriage": admin.VERTICAL,
-#         "marriage_certificate": admin.VERTICAL,
         "is_pregnant": admin.VERTICAL,
         "testing_counseling_site": admin.VERTICAL}
 

@@ -16,7 +16,7 @@ class HivTestingConsentAdmin(HtcSubjectVisitModelAdmin):
     radio_fields = {
         "testing_today": admin.VERTICAL,
         "reason_not_testing": admin.VERTICAL,
-        }
+    }
     instructions = [("Request consent for HIV testing and counseling"
                      " from all age-eligible (16-64 years) clients who:"
                      " Do not have documentation of an HIV test within the last three months"

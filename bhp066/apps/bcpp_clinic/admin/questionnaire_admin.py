@@ -22,7 +22,7 @@ class QuestionnaireAdmin(ClinicVisitModelAdmin):
         "registration_type": admin.VERTICAL,
         "on_arv": admin.VERTICAL,
         "knows_last_cd4": admin.VERTICAL,
-        }
+    }
     list_display = ('clinic_visit', 'registration_type', 'on_arv', 'cd4_count', 'report_datetime')
     list_filter = ('on_arv', ClinicCommunityListFilter, 'report_datetime')
     search_fields = ('on_arv',)

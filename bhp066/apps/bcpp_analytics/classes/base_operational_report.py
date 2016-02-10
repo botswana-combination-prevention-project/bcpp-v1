@@ -44,7 +44,7 @@ class BaseOperationalReport():
 
     def configure_filtering(self):
         communities = []
-        if (self.previous_community.find('----') == -1) and (not self.previous_community == ''):  # Passing filtered results
+        if (self.previous_community.find('----') == -1) and (not self.previous_community == ''):
             # communities = [community[0].lower() for community in  COMMUNITIES]
             for community in COMMUNITIES:
                 if community[0].lower() != self.previous_community:

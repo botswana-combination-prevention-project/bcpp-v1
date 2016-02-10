@@ -15,7 +15,7 @@ class CircumcisionAppointmentAdmin(HtcSubjectVisitModelAdmin):
     )
     radio_fields = {
         "circumcision_ap": admin.VERTICAL,
-        }
+    }
     instructions = [("For male negative and uncircumcised")]
 
 admin.site.register(CircumcisionAppointment, CircumcisionAppointmentAdmin)

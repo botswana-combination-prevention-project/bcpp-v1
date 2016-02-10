@@ -12,7 +12,7 @@ class Cd4Test(BaseScheduledModel):
         verbose_name=_("Date CD4 test performed"),
         validators=[date_not_future],
         help_text=_("Format is YYYY-MM-DD"),
-        )
+    )
 
     cd4_result = models.DecimalField(
         verbose_name=("What is the 'CD4' test result?"),
@@ -20,19 +20,19 @@ class Cd4Test(BaseScheduledModel):
         decimal_places=2,
         validators=[MinValueValidator(0), MaxValueValidator(3000)],
         help_text="",
-        )
+    )
 
     referral_clinic = models.CharField(
         verbose_name=_("Name of clinic referred to"),
         max_length=75,
         help_text='',
-        )
+    )
 
     appointment_date = models.DateField(
         verbose_name=_("Appointment date"),
         validators=[date_not_future],
         help_text=_("Format is YYYY-MM-DD"),
-        )
+    )
 
     history = AuditTrail()
 

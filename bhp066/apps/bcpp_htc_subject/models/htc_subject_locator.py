@@ -24,15 +24,16 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         help_text="",
         blank=True,
         null=True,
-        )
+    )
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=_("If we are unable to contact the person indicated above, is there another"
-                      " individual (including next of kin) with whom the study team can get"
-                      " in contact with?"),
+        verbose_name=_(
+            "If we are unable to contact the person indicated above, is there another"
+            " individual (including next of kin) with whom the study team can get"
+            " in contact with?"),
         help_text="",
-        )
+    )
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
@@ -40,7 +41,7 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         help_text="include first name and surname",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
@@ -48,7 +49,7 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         blank=True,
         null=True,
         help_text="",
-        )
+    )
     alt_contact_cell = EncryptedCharField(
         max_length=8,
         verbose_name=_("Cell number"),
@@ -56,7 +57,7 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     other_alt_contact_cell = EncryptedCharField(
         max_length=8,
@@ -65,7 +66,7 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_tel = EncryptedCharField(
         max_length=8,
@@ -74,7 +75,7 @@ class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     history = AuditTrail()
 

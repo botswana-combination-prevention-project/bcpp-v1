@@ -46,8 +46,8 @@ class TestCorrectConsent(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.household_structure = HouseholdStructure.objects.get(household=plot.household, survey=survey)
-        self.household_structure_y2 = HouseholdStructure.objects.get(household=plot.household, survey=next_survey)
+        self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
+        self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
         RepresentativeEligibilityFactory(household_structure=self.household_structure)
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
 
@@ -58,7 +58,7 @@ class TestCorrectConsent(TestCase):
         self.female_initials = "EW"
 
         self.household_member_female_T0 = HouseholdMemberFactory(
-            household_structure=self.household_structure, gender='F', age_in_years=self.female_age_in_years,
+            household_structure=self.household_structure, gender='F', age_in_years=self.female_age_in_years, 
             first_name=self.female_first_name, initials=self.female_initials)
         self.household_member_female_T0.member_status = 'BHS_SCREEN'
         self.household_member_female_T0.save()

@@ -21,14 +21,14 @@ class HtcRegistration (BaseAppointmentMixin):
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
         validators=[datetime_not_before_study_start, datetime_not_future],
-        )
+    )
 
     is_resident = models.CharField(
         verbose_name="Is this your community of residence?",
         choices=YES_NO,
         max_length=3,
         help_text="Community of residence is where an individual spends on average >=14 nights per month",
-        )
+    )
 
     your_community = models.CharField(
         verbose_name="What is your community of residence?",
@@ -36,49 +36,21 @@ class HtcRegistration (BaseAppointmentMixin):
         choices=COMMUNITIES,
         null=True,
         blank=True,
-        )
+    )
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     omang = IdentityField(
         verbose_name="Identity number (OMANG, etc)",
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number"
-        )
+    )
 
-#Does Tebelopele have these as per new protocol? They need to update their form
-#     legal_marriage = models.CharField(
-#         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
-#         max_length=3,
-#         choices=YES_NO,
-#         null=True,
-#         blank=True,
-#         validators=[eligible_if_yes, ],
-#         help_text=" if 'NO,' STOP participant cannot be enrolled",
-#         )
-#
-#     marriage_certificate = models.CharField(
-#         verbose_name=("Has the participant produced the marriage certificate, as proof? "),
-#         max_length=3,
-#         choices=YES_NO,
-#         null=True,
-#         blank=True,
-#         validators=[eligible_if_yes, ],
-#         help_text=" if 'NO,' STOP participant cannot be enrolled",
-#         )
-#
-#     marriage_certificate_no = models.CharField(
-#         verbose_name=("What is the marriage certificate number?"),
-#         max_length=9,
-#         null=True,
-#         blank=True,
-#         help_text="e.g. 000/YYYY",
-#         )
     is_pregnant = models.CharField(
         verbose_name=("Are you pregnant?"),
         max_length=15,
@@ -86,7 +58,7 @@ class HtcRegistration (BaseAppointmentMixin):
         null=True,
         blank=True,
         help_text=" For female participants only",
-        )
+    )
 
     testing_counseling_site = models.CharField(
         verbose_name=("Testing and Counseling Site"),
@@ -95,7 +67,7 @@ class HtcRegistration (BaseAppointmentMixin):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

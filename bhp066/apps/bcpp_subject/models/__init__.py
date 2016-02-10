@@ -59,8 +59,23 @@ from .participation import Participation
 from .tb_symptoms import TbSymptoms
 from .call_log import CallLog, CallLogEntry
 from .call_list import CallList
-from .signals import *
+from .signals import (
+    subject_consent_on_post_save, update_or_create_registered_subject_on_post_save,
+    update_subject_referral_on_post_save, time_point_status_on_post_save, call_log_entry_on_post_save,
+    update_pocvl_preorder_status_post_save)
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
-from .review import *
+from .review import (
+    MedicalDiagnosesReview, HeartAttackReview, CancerReview, TubercolosisReview, StiReview, SubstanceUseReview,
+    StigmaReview, HivCareAdherenceReview, HivMedicalCareReview, CircumcisionReview, CircumcisedReview,
+    UncircumcisedReview, ReproductiveHealthReview, HivUntestedReview, SexualBehaviourReview, MonthsRecentPartnerReview,
+    MonthsSecondPartnerReview, MonthsThirdPartnerReview, SubjectOffStudyReview, SubjectVisitReview,
+    HicEnrollmentReview, SubjectConsentHistoryReview, SubjectConsentReview, PimaReview, Cd4HistoryReview,
+    ClinicQuestionnaireReview, TbSymptomsReview, SubjectReferralReview, ParticipationReview, RbdDemographicsReview,
+    SubjectLocatorReview, QualityOfLifeReview, ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview,
+    HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview, CeaEnrollmentChecklistReview,
+    ResidencyMobilityReview, StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview,
+    HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview,
+    DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview,
+    HivTestReviewReview, HivTestedReview)
 from .correct_consent import CorrectConsent

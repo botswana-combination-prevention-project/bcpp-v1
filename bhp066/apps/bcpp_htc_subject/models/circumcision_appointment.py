@@ -13,7 +13,7 @@ class CircumcisionAppointment (BaseScheduledModel):
         max_length=15,
         choices=YES_NO,
         help_text='If male, negative and uncircumcised',
-        )
+    )
 
     circumcision_ap_date = models.DateField(
         verbose_name=_("Male circumcision appointment date"),
@@ -21,7 +21,7 @@ class CircumcisionAppointment (BaseScheduledModel):
         null=True,
         blank=True,
         help_text=_("Format is YYYY-MM-DD (If male, negative and uncircumcised)"),
-        )
+    )
 
     history = AuditTrail()
 

@@ -36,7 +36,8 @@ class Command(BaseCommand):
         except IndexError:
             pass
         header_row = None
-        system_fields = ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']
+        system_fields = [
+            'id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified']
         additional_fields = ['_community', '_title', '_import_datetime', '_description', '_filename']
         empty_fields = []  # fields in the model but not in the header row
         print 'Importing file ' + source_path
@@ -50,11 +51,14 @@ class Command(BaseCommand):
                     header_row = [strip_underscore(item) for item in copy.deepcopy(row)]
                     # check for duplicate field names
                     if [x for x, y in collections.Counter(header_row).items() if y > 1]:
-                        raise TypeError('Duplicate field names detected in header_row. Got {0}'.format([x for x, y in collections.Counter(header_row).items() if y > 1]))
+                        lst = [x for x, y in collections.Counter(header_row).items() if y > 1]
+                        raise TypeError('Duplicate field names detected in header_row. Got {0}'.format(lst))
                 else:
                     # confirm that the row is correctly split, e.g. formatted correctly without CR, LF etc
                     if len(header_row) != len(row):
-                        raise TypeError('Header row length must be the same as the data row. Got {0} != {1}'.format(len(header_row), len(row)))
+                        raise TypeError(
+                            'Header row length must be the same as the data row. '
+                            'Got {0} != {1}'.format(len(header_row), len(row)))
                     for field in model_cls._meta.fields:
                         # check that field exists in the target model. If not skip it. This may occur if CSV files
                         # with partially matching fields are merged into the same model.
@@ -66,7 +70,8 @@ class Command(BaseCommand):
                             # we ignore the auto-fill Edc system fields
                             if field.name not in system_fields + additional_fields:
                                 try:
-                                    if not row[header_row.index(field.name)] or row[header_row.index(field.name)] == '.':
+                                    row_val = row[header_row.index(field.name)]
+                                    if not row_val or row[header_row.index(field.name)] == '.':
                                             # the cell is empty, set to None, Noticed some have '.' instead of a blank.
                                             row[header_row.index(field.name)] = None
                                     else:
@@ -74,45 +79,64 @@ class Command(BaseCommand):
                                             # model field is DateField or DateTime field
                                             try:
                                                 # try to convert to a date YYYY-MM-DD or fail
-                                                row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%Y-%m-%d')
+                                                val = datetime.strptime(row[header_row.index(field.name)], '%Y-%m-%d')
+                                                row[header_row.index(field.name)] = val
                                             except ValueError:
                                                 try:
                                                     # try to convert to a date YYYY-MM-DD HH:MM:SS or fail
-                                                    row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%Y-%m-%d %H:%M:%S')
+                                                    value = datetime.strptime(
+                                                        row[header_row.index(field.name)], '%Y-%m-%d %H:%M:%S')
+                                                    row[header_row.index(field.name)] = value
                                                 except ValueError:
                                                     try:
-                                                        # try to convert to a date YYYY-MM-DDTHH:MM:SS or fail (saw this in an SMC file, not quite timezone aware)
-                                                        row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%Y-%m-%dT%H:%M:%S')
+                                                        # try to convert to a date YYYY-MM-DDTHH:MM:SS or
+                                                        # fail (saw this in an SMC file, not quite timezone aware)
+                                                        value = datetime.strptime(
+                                                            row[header_row.index(field.name)], '%Y-%m-%dT%H:%M:%S')
+                                                        row[header_row.index(field.name)] = value
                                                     except ValueError:
                                                         try:
                                                             # this is the bad date e.g. 23NOV13 and assume century
-                                                            row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                                                            value = datetime.strptime(
+                                                                row[header_row.index(field.name)], '%d%b%y')
+                                                            row[header_row.index(field.name)] = value
                                                         except ValueError as error_msg:
                                                             # failed so print a warning and show the value
-                                                            raise ValueError('In {4} Row {0}. Unable to convert date string {1} to DateTime. Got {2}. {3}.'.format(
-                                                                i, field.name, row[header_row.index(field.name)] or None, error_msg, model_name))
+                                                            x = row[header_row.index(field.name)]
+                                                            raise ValueError(
+                                                                'In {4} Row {0}. Unable to convert date string {1} '
+                                                                'to DateTime. Got {2}. {3}.'.format(
+                                                                    i, field.name, x or None, error_msg, model_name))
                                         elif 'Integer' in field.get_internal_type():
                                             # model field is an IntegerField
                                             try:
-                                                row[header_row.index(field.name)] = int(row[header_row.index(field.name)] or None)
+                                                row[header_row.index(field.name)] = int(
+                                                    row[header_row.index(field.name)] or None)
                                             except ValueError as error_mgs:
                                                 # conversion of cell value to integer failed
-                                                raise ValueError('In {3}, {0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)], model_name))
+                                                x = row[header_row.index(field.name)]
+                                                raise ValueError('In {3}, {0}. (value={2}) {1}'.format(
+                                                    field.name, error_mgs, x, model_name))
                                         elif 'Char' in field.get_internal_type():
                                             # model field is an CharField
                                             # accept anything that is in the cell
                                             # row[header_row.index(field.name)] = row[header_row.index(field.name)]
-                                            row[header_row.index(field.name)] = ''.join([i if ord(i) < 128 else ' ' for i in row[header_row.index(field.name)]])
+                                            row[header_row.index(field.name)] = ''.join(
+                                                [i if ord(i) < 128 else ' ' for i in row[header_row.index(field.name)]])
                                         elif 'Float' in field.get_internal_type():
                                             # model field is an FloatField
                                             try:
-                                                row[header_row.index(field.name)] = float(row[header_row.index(field.name)])
+                                                row[header_row.index(field.name)] = float(
+                                                    row[header_row.index(field.name)])
                                             except ValueError as error_mgs:
                                                 # conversion of cell value to integer failed
-                                                raise ValueError('in {3}, {0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)], model_name))
+                                                x = row[header_row.index(field.name)]
+                                                raise ValueError('in {3}, {0}. (value={2}) {1}'.format(
+                                                    field.name, error_mgs, x, model_name))
                                         else:
                                             # model field is an of an unhandled type, so fail
-                                            raise TypeError('In {1}, {0}. Unknown field type. Got. {1}'.format(field.name, field.get_internal_type(), model_name))
+                                            raise TypeError('In {1}, {0}. Unknown field type. Got. {1}'.format(
+                                                field.name, field.get_internal_type(), model_name))
                                 except IndexError as error_mgs:
                                     # field name is not in the header!
                                     raise IndexError('{0}. {1}'.format(field.name, error_mgs))
@@ -131,10 +155,14 @@ class Command(BaseCommand):
             print '  not updating {0}.'.format(empty_field)
         # Done
         # Print a description/summary of the process
-        print '  Detected {0} rows by {1} columns in the source CSV file (not including the header_row).'.format(i, len(header_row))
-        print '  Imported {0} records into model {1} from the source CSV file.\n'.format(model_cls.objects.count() - start_count, model_cls._meta.object_name)
+        print '  Detected {0} rows by {1} columns in the source CSV file (not including the header_row).'.format(
+            i, len(header_row))
+        print '  Imported {0} records into model {1} from the source CSV file.\n'.format(
+            model_cls.objects.count() - start_count, model_cls._meta.object_name)
         summarize_model_data(model_cls, header_row)
         if export_prefix:
-            destination_path = '/'.join(source_path.split('/')[:-1]) + '/' + export_prefix + '-' + source_path.split('/')[-1:][0]
-            export_model_as_csv('bcpp_stats', model_name, destination_path, exclude_system_fields=True, additional_exclude_fields=['_community', '_title', '_description'])
+            dest = '/'.join(source_path.split('/')[:-1]) + '/' + export_prefix + '-' + source_path.split('/')[-1:][0]
+            export_model_as_csv(
+                'bcpp_stats', model_name, dest, exclude_system_fields=True,
+                additional_exclude_fields=['_community', '_title', '_description'])
         print '  Done.'

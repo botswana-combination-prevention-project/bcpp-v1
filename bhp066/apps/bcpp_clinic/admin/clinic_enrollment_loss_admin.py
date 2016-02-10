@@ -12,7 +12,8 @@ class ClinicEnrollmentLossAdmin(BaseModelAdmin):
 
     fields = ('household_member', 'report_datetime', 'reason')
 
-    list_display = ('household_member', 'report_datetime', 'reason', 'user_created', 'user_modified', 'hostname_created')
+    list_display = (
+        'household_member', 'report_datetime', 'reason', 'user_created', 'user_modified', 'hostname_created')
 
     list_filter = ('community', 'report_datetime', 'reason', 'user_created', 'user_modified', 'hostname_created')
 

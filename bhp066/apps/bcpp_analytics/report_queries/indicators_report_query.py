@@ -18,7 +18,8 @@ class IndicatorsReportQuery(TwoColumnReportQuery):
         data.append(DataRow('Number of HIV positive individuals identified', self.positive_participants_count()))
         data.append(DataRow('Percentage of HIV positive individuals identified', self.positive_percentage()))
         data.append(DataRow('', ''))
-        data.append(DataRow('Proportion of Eligible BHS participants versus all Eligible', self.participants_percentage()))
+        data.append(DataRow(
+            'Proportion of Eligible BHS participants versus all Eligible', self.participants_percentage()))
         return data
 
     def eligible_participants_count(self):

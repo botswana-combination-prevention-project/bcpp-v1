@@ -24,5 +24,6 @@ class ClinicVlResultAdmin(BaseModelAdmin):
 
     list_display = ('clinic_visit', 'clinician_initials', 'collection_datetime', 'result_value', 'validated_by')
     list_filter = ('collection_datetime', ClinicCommunityListFilter, )
-    search_fields = ('clinic_visit__appointment__registered_subject__subject_identifier', 'clinician_initials', 'result_value', )
+    search_fields = (
+        'clinic_visit__appointment__registered_subject__subject_identifier', 'clinician_initials', 'result_value', )
 admin.site.register(ClinicVlResult, ClinicVlResultAdmin)

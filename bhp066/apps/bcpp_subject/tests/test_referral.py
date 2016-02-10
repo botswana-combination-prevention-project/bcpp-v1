@@ -38,7 +38,7 @@ class TestReferral(BaseScheduledModelTestCase):
     site_code = '01'
 
     @override_settings(
-        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-1',
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
         CURRENT_COMMUNITY_CHECK=False,
         LIMIT_EDIT_TO_CURRENT_SURVEY=True,
         LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
@@ -194,8 +194,8 @@ class TestReferral(BaseScheduledModelTestCase):
         export_plan.target_path = '~/'
         export_plan.save()
         self.assertEqual(0, Notification.objects.all().count())
-        #call_command('export_transactions bcpp_subject.subjectreferral')
-        #self.assertEqual(1, Notification.objects.all().count())
+        #  call_command('export_transactions bcpp_subject.subjectreferral')
+        #  self.assertEqual(1, Notification.objects.all().count())
 
     def tests_referred_smc3a(self):
         """if new POS and male and  NOT circumcised, do not refer for SMC"""

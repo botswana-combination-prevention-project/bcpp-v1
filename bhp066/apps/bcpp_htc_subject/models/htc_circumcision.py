@@ -15,14 +15,14 @@ class HtcCircumcision (BaseScheduledModel):
         max_length=3,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     circumcision_year = models.DateField(
         verbose_name=_("What year were you circumcised? "),
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

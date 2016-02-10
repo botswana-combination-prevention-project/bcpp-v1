@@ -55,7 +55,8 @@ urlpatterns = patterns(
 
 urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
         additional_requisition, name="add_requisition"),
 )

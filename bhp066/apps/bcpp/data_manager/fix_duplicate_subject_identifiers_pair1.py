@@ -70,9 +70,11 @@ def fix_duplicate_subject_identifiers_pair1(run=False):
             n += 1
             registered_subject.subject_identifier_aka = registered_subject.subject_identifier
             registered_subject.subject_identifier = duplicates[registered_subject.subject_identifier]
-            print '{} has replaced {}'.format(registered_subject.subject_identifier, registered_subject.subject_identifier_aka)
+            print '{} has replaced {}'.format(
+                registered_subject.subject_identifier, registered_subject.subject_identifier_aka)
             if run:
-                registered_subject.save_base(raw=True, update_fields='subject_identifier', 'subject_identifier_aka')
+                registered_subject.save_base(
+                    raw=True, update_fields='subject_identifier', subject_identifier_aka='subject_identifier_aka')
 
     # fix 40 instances in SubjectConsent
     m = 0
@@ -81,8 +83,10 @@ def fix_duplicate_subject_identifiers_pair1(run=False):
             m += 1
             subject_consent.subject_identifier_aka = subject_consent.subject_identifier
             subject_consent.subject_identifier = duplicates[subject_consent.subject_identifier]
-            print '{} has replaced {}'.format(subject_consent.subject_identifier, subject_consent.subject_identifier_aka)
+            print '{} has replaced {}'.format(
+                subject_consent.subject_identifier, subject_consent.subject_identifier_aka)
             if run:
-                subject_consent.save_base(raw=True, update_fields='subject_identifier', 'subject_identifier_aka')
+                subject_consent.save_base(
+                    raw=True, update_fields='subject_identifier', subject_identifier_aka='subject_identifier_aka')
 
     print 'Done. Replaced {} subject_identifiers in RegisteredSubject and {} in SubjectConsent.'.format(n, m)

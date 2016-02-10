@@ -1,10 +1,12 @@
+import socket
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
+
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from bhp066.apps.bcpp_household.models import Plot
-from bhp066.apps.bcpp_survey.models import Survey
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -13,6 +15,7 @@ from edc_device import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
+from edc.core.bhp_variables.models import StudySpecific, StudySite
 from edc_consent.models import ConsentType
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
@@ -20,6 +23,7 @@ from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
 from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.models.notebook_plot_list import NotebookPlotList
 
 try:
     from config.labels import aliquot_label
@@ -198,51 +202,54 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
 
-    labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'localhost', '127.0.0.1', True),
-                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'bcpplab1', None, False),
-                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'localhost', None, False),
-                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'bcpplab1', None, False),
-                                        LabelPrinterTuple('Zebra_Technologies_QLn320', 'localhost', '127.0.0.1', False)],
-                      'client': [ClientTuple(hostname='bcpplab1',
-                                             printer_name='Zebra_Technologies_ZTC_GK420t',
-                                             cups_hostname='bcpplab1',
-                                             ip=None,
-                                             aliases=None), ],
-                      'zpl_template': [
-                          aliquot_label or ZplTemplateTuple(
-                              'aliquot_label', (
-                                  ('^XA\n'
-                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
-                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
-                                   '^BY^FD${aliquot_identifier}^FS\n'
-                                   '^FO300,92^A0N,20,20^FD${aliquot_identifier}^FS\n'
-                                   '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
-                                   '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
-                                   '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
-                                   '^XZ')), True),
-                          ZplTemplateTuple(
-                              'requisition_label', (
-                                  ('^XA\n'
-                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
-                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
-                                   '^BY^FD${requisition_identifier}^FS\n'
-                                   '^FO300,92^A0N,20,20^FD${requisition_identifier} ${panel}^FS\n'
-                                   '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
-                                   '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
-                                   '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
-                                   '^XZ')), False),
-                          ZplTemplateTuple(
-                              'referral_label', (
-                                  ('^XA\n'
-                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}^FS\n'
-                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
-                                   '^BY^FD${subject_identifier}^FS\n'
-                                   '^FO300,92^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
-                                   '^FO300,112^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
-                                   '^FO300,132^A0N,25,20^FDAPPT: ${referral_appt_datetime}^FS\n'
-                                   '^FO300,152^A0N,25,20^FDCLINIC: ${referral_clinic}^FS\n'
-                                   '^XZ')), False)]
-                      }
+    labeling_setup = {
+        'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'localhost', '127.0.0.1', True),
+                          LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'bcpplab1', None, False),
+                          LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'localhost', None, False),
+                          LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'bcpplab1', None, False),
+                          LabelPrinterTuple('Zebra_Technologies_QLn320', 'localhost', '127.0.0.1', False)],
+        'client': [ClientTuple(hostname='bcpplab1',
+                               printer_name='Zebra_Technologies_ZTC_GK420t',
+                               cups_hostname='bcpplab1',
+                               ip=None,
+                               aliases=None), ],
+        'zpl_template': [
+            aliquot_label or ZplTemplateTuple(
+                'aliquot_label', (
+                    ('^XA\n'
+                     '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} '
+                     '${aliquot_count}${primary}^FS\n'
+                     '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                     '^BY^FD${aliquot_identifier}^FS\n'
+                     '^FO300,92^A0N,20,20^FD${aliquot_identifier}^FS\n'
+                     '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                     '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                     '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
+                     '^XZ')), True),
+            ZplTemplateTuple(
+                'requisition_label', (
+                    ('^XA\n'
+                     '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} '
+                     '${aliquot_count}${primary}^FS\n'
+                     '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                     '^BY^FD${requisition_identifier}^FS\n'
+                     '^FO300,92^A0N,20,20^FD${requisition_identifier} ${panel}^FS\n'
+                     '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                     '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                     '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
+                     '^XZ')), False),
+            ZplTemplateTuple(
+                'referral_label', (
+                    ('^XA\n'
+                     '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}^FS\n'
+                     '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                     '^BY^FD${subject_identifier}^FS\n'
+                     '^FO300,92^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                     '^FO300,112^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                     '^FO300,132^A0N,25,20^FDAPPT: ${referral_appt_datetime}^FS\n'
+                     '^FO300,152^A0N,25,20^FDCLINIC: ${referral_clinic}^FS\n'
+                     '^XZ')), False)]
+    }
 
     export_plan_setup = {
         'bcpp_subject.subjectreferral': {
@@ -326,9 +333,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'referral_file_to_cdc': {
             'name': 'referral_file_to_cdc',
             'friendly_name': 'BCPP Participant Referral File Transfer to Clinic',
-            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Referral File Transfer {timestamp}',
-            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
-                            'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
+            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Referral File Transfer'
+            ' {timestamp}',
+            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a '
+                            'member '
+                            'of the BCPP file transfer monitoring group. If you have any questions or comments '
+                            'regarding the contents '
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'File transfer status for {export_datetime} is as follows:\n\n') + (
@@ -346,9 +356,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'locator_file_to_cdc': {
             'name': 'locator_file_to_cdc',
             'friendly_name': 'BCPP Participant Locator File Transfer to Clinic',
-            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Locator File Transfer {timestamp}',
-            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
-                            'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
+            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Locator File '
+            'Transfer {timestamp}',
+            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a '
+                            'member '
+                            'of the BCPP file transfer monitoring group. If you have any questions or comments '
+                            'regarding the contents '
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'File transfer status for {export_datetime} is as follows:\n\n') + (
@@ -365,12 +378,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         }
     }
 
-    quota_client_setup = ['bcpp001', 'bcpp005', 'bcpp007', 'bcpp008', 'bcpp009', 'bcpp010', 'bcpp011', 'bcpp012', 'bcpp014',
-                          'bcpp015', 'bcpp016', 'bcpp018', 'bcpp019', 'bcpp022', 'bcpp023', 'bcpp024', 'bcpp025', 'bcpp027',
-                          'bcpp028', 'bcpp030', 'bcpp031', 'bcpp034', 'bcpp035', 'bcpp037', 'bcpp038', 'bcpp039', 'bcpp040',
-                          'bcpp043', 'bcpp048', 'bcpp049', 'bcpp050', 'bcpp051', 'bcpp052', 'bcpp053', 'bcpp054', 'bcpp055',
-                          'bcpp056', 'bcpp062', 'bcpp063', 'bcpp064', 'bcpp065'
-                          ]
+    quota_client_setup = [
+        'bcpp001', 'bcpp005', 'bcpp007', 'bcpp008', 'bcpp009', 'bcpp010', 'bcpp011', 'bcpp012', 'bcpp014',
+        'bcpp015', 'bcpp016', 'bcpp018', 'bcpp019', 'bcpp022', 'bcpp023', 'bcpp024', 'bcpp025', 'bcpp027',
+        'bcpp028', 'bcpp030', 'bcpp031', 'bcpp034', 'bcpp035', 'bcpp037', 'bcpp038', 'bcpp039', 'bcpp040',
+        'bcpp043', 'bcpp048', 'bcpp049', 'bcpp050', 'bcpp051', 'bcpp052', 'bcpp053', 'bcpp054', 'bcpp055',
+        'bcpp056', 'bcpp062', 'bcpp063', 'bcpp064', 'bcpp065'
+    ]
 
     @property
     def study_site_setup(self):
@@ -399,8 +413,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
             map_area = 'BHP'
         if self.confirm_community_in_settings:  # default is True, set to False for tests
             if map_area != settings.CURRENT_COMMUNITY:
-                raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
-                                           'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
+                raise ImproperlyConfigured(
+                    'Current community {} returned by mapper does not equal '
+                    'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
+        return self.validate_plot(map_area, map_code)
+
+    def validate_plot(self, map_area, map_code):
+        #map_code = site_mappers.get_current_mapper().map_code
         try:
             community_check = settings.CURRENT_COMMUNITY_CHECK
         except AttributeError:
@@ -552,47 +571,9 @@ class BcppAppConfiguration(BaseAppConfiguration):
         self.update_survey_year_2()
         self.update_survey_year_3()
 
-#     def create_quota(self):
-#         for ct in ContentType.objects.filter(app_label='bcpp_subject'):
-#             if ct is None:
-#                 continue
-#             if issubclass(ct.model_class(), QuotaMixin):
-#                 if device.is_community_server:
-#                     try:
-#                         ControllerQuota.objects.get(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                         )
-#                     except ControllerQuota.DoesNotExist:
-#                         ControllerQuota.objects.create(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                             target=100,
-#                             expiration_date=timezone.now().date() + timedelta(days=28),
-#                         )
-#                     for hostname in self.quota_client_setup:
-#                         try:
-#                             Client.objects.get(hostname=hostname)
-#                         except Client.DoesNotExist:
-#                             Client.objects.create(
-#                                 hostname=hostname,
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                             )
-#                 else:
-#                     if not device.is_central_server:
-#                         try:
-#                             Quota.objects.get(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                             )
-#                         except Quota.DoesNotExist:
-#                             Quota.objects.create(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                                 target=0,
-#                                 expiration_date=timezone.now()
-#                             )
+    @property
+    def notebook_plot_list(self):
+        if not (device.is_central_server and device.is_community_server):
+            return NotebookPlotList.objects.filter(notebook=socket.gethostname()).values_list('plot_identifer')
 
 bcpp_app_configuration = BcppAppConfiguration()
-

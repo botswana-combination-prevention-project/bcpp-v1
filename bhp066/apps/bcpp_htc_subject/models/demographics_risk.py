@@ -12,21 +12,21 @@ class DemographicsRisk (BaseScheduledModel):
         max_length=75,
         choices=EDUCATION,
         help_text="",
-        )
+    )
 
     employment = models.CharField(
         verbose_name=_("What is your current employment status?"),
         max_length=45,
         choices=EMPLOYMENT,
         help_text="",
-        )
+    )
 
     marital_status = models.IntegerField(
         verbose_name=_("What is your current marital status?"),
         max_length=35,
         choices=MARITAL_STATUS,
         help_text="",
-        )
+    )
 
     alcohol_intake = models.CharField(
         verbose_name=_("Now I would like to ask you about how frequently you drink alcohol."
@@ -35,7 +35,7 @@ class DemographicsRisk (BaseScheduledModel):
         max_length=25,
         choices=ALCOHOL_INTAKE,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

@@ -17,7 +17,7 @@ class HtcSubjectVisit(BaseVisitTracking):
         blank=True,
         null=True,
         choices=VISIT_UNSCHEDULED_REASON,
-        )
+    )
 
     history = AuditTrail()
 
@@ -30,7 +30,8 @@ class HtcSubjectVisit(BaseVisitTracking):
         return unicode(self.appointment)
 
     def dispatch_container_lookup(self):
-        return (('bcpp_household', 'Household'), 'household_member__household_structure__household__household_identifier')
+        return (
+            ('bcpp_household', 'Household'), 'household_member__household_structure__household__household_identifier')
 
     class Meta:
         app_label = "bcpp_htc_subject"

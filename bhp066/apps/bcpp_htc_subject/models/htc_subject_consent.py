@@ -17,7 +17,8 @@ class HtcSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         default='-',
         choices=YES_NO,
-        help_text='Subject is a minor if aged 16-17. A guardian must be present for consent. HIV status may NOT be revealed in the household.')
+        help_text='Subject is a minor if aged 16-17. A guardian must be present for consent. '
+        'HIV status may NOT be revealed in the household.')
 
     history = AuditTrail()
 

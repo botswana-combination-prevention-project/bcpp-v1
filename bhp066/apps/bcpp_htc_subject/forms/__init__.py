@@ -1,4 +1,3 @@
-from main import *
 from demographics_risk_form import DemographicsRiskForm
 from partners_form import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
 from htc_visit_form import HtcVisitForm
@@ -14,5 +13,3 @@ from circumcision_appointment_form import CircumcisionAppointmentForm
 from positive_followup_form import PositiveFollowupForm
 from male_followup_form import MaleFollowupForm
 from pregnant_followup_form import PregnantFollowupForm
-#from htc_subject_consent_form import HtcSubjectConsentForm
-#from htc_subject_locator_form import HtcSubjectLocatorForm

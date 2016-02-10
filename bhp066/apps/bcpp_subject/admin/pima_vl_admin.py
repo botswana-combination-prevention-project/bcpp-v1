@@ -22,7 +22,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'easy_of_use',
         'stability',
     )
-    exclude = ('poc_vl_type', 'quota_pk')
+    exclude = ('poc_vl_type', 'quota_pk', 'report_datetime')
     list_filter = ('subject_visit', 'time_of_test', 'pima_id')
     list_display = ('subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id', 'pre_order')
     radio_fields = {

@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-from __future__ import print_function
 from datetime import datetime
 from django.db.models import Q
 from django.core.exceptions import MultipleObjectsReturned

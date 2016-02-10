@@ -14,7 +14,7 @@ class HtcThirdPartner (BasePartner):
         choices=RELATIONSHIP_TYPE,
         max_length=45,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

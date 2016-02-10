@@ -17,7 +17,7 @@ class PositiveFollowup (BaseScheduledModel):
         max_length=3,
         choices=YES_NO,
         help_text='',
-        )
+    )
 
     contact_family = models.CharField(
         verbose_name=_("If we are unable to reach you, would you be willing to have me or"
@@ -26,7 +26,7 @@ class PositiveFollowup (BaseScheduledModel):
         max_length=3,
         choices=YES_NO,
         help_text=''
-        )
+    )
 
     history = AuditTrail()
 

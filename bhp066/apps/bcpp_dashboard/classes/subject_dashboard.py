@@ -27,7 +27,8 @@ class SubjectDashboard(BaseSubjectDashboard):
     urlpattern_view = 'apps.bcpp_dashboard.views'
     dashboard_url_name = 'subject_dashboard_url'
     urlpatterns = [
-        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'] + BaseSubjectDashboard.urlpatterns
+        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>'
+        '{appointment_code})/$'] + BaseSubjectDashboard.urlpatterns
     urlpattern_options = dict(BaseSubjectDashboard.urlpattern_options, appointment_code='T0|T1|T2|T3|T4')
 
     template_name = 'subject_dashboard.html'
@@ -50,7 +51,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             first_subject_consent = SubjectConsent.objects.filter(
                 subject_identifier=self.subject_identifier).order_by('created').first()
         except SubjectConsent.DoesNotExist:
-            first_consent_consent = None
+            first_subject_consent = None
         try:
             latest_subject_consent = SubjectConsent.objects.filter(
                 subject_identifier=self.subject_identifier).latest()
@@ -148,10 +149,13 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 survey_year = int(settings.CURRENT_SURVEY.split('-')[2])
-                if ((HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year) or (
-                        HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == 1 and
+                if ((HouseholdMember.objects.filter(
+                        registered_subject=self.registered_subject, is_consented=True).count() == survey_year) or (
+                        HouseholdMember.objects.filter(
+                            registered_subject=self.registered_subject, is_consented=True).count() == 1 and
                         self.household_member.household_structure.survey.survey_slug == 'bcpp-year-1')):
-                    # In this case you know for certain that the survey year in household member dashboard represents exactly the
+                    # In this case you know for certain that the survey year in household member dashboard
+                    # represents exactly the
                     # the settings.CURRENT_SURVEY in the system. Therefore just return the visit corresponding to
                     # household member's set survey.
                     visit_code = self.generate_visit_code_from_member(self.household_member)
@@ -166,19 +170,24 @@ class SubjectDashboard(BaseSubjectDashboard):
                         # When you end up here, it means you are a year 2 created member who either did not exists
                         # or was not consented in year 1. This means you are actually trying to create or view the T0
                         # appointment survey, even though you were created with year 2 survey.
-                        members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
+                        members = HouseholdMember.objects.filter(
+                            registered_subject=self.registered_subject, is_consented=True)
                         if members.count() == 1:
-                            self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                            self._appointment = Appointment.objects.get(
+                                registered_subject=self.registered_subject, visit_definition__code='T0')
                         else:
                             self._appointment = None
                     elif self.household_member.household_structure.survey.survey_slug == 'bcpp-year-3':
                         # In the case that you end up here, what it means is that you are a member created with
                         # the year 3 survey but you either trying to key or view T0 and T1 appointment surveys.
-                        members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
+                        members = HouseholdMember.objects.filter(
+                            registered_subject=self.registered_subject, is_consented=True)
                         if members.count() == 1:
-                            self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                            self._appointment = Appointment.objects.get(
+                                registered_subject=self.registered_subject, visit_definition__code='T0')
                         elif members.count() == 2:
-                            self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
+                            self._appointment = Appointment.objects.get(
+                                registered_subject=self.registered_subject, visit_definition__code='T1')
                         else:
                             self._appointment = None
                     else:

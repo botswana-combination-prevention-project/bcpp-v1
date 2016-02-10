@@ -219,12 +219,15 @@ class Plot(Base):
                 'member_count': self.household_members.filter(
                     household_structure__survey__survey_slug=self.survey.survey_slugs[index]).count(),
                 'members_eligible': self.household_members.filter(
-                    household_structure__survey__survey_slug=self.survey.survey_slugs[index], eligible_member=True).count()}
+                    household_structure__survey__survey_slug=self.survey.survey_slugs[index],
+                    eligible_member=True).count()}
             self.denormalize(attr_suffix, fieldattrs, instance=type('Instance', (object, ), attrs))
 
     def check_plot_enrollment(self):
         if self.plot:
-            if not SubjectConsent.objects.filter(household_member__household_structure__household__plot=self.plot).exists():
+            consent = SubjectConsent.objects.filter(
+                household_member__household_structure__household__plot=self.plot).exists()
+            if not consent:
                 if self.enrolled or not self.htc_plot:
                     print ('Warning! Plot {} ({}) is not Enrolled. Expected HTC=True. Got bhs={}, htc={}'
                            ).format(self.plot.plot_identifier, self.random_selection, self.bhs_plot, self.htc_plot)

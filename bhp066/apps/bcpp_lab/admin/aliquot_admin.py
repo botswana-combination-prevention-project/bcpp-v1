@@ -25,7 +25,8 @@ class AliquotAdmin(BaseModelAdmin):
     search_fields = ('aliquot_identifier', 'receive__receive_identifier',
                      'receive__registered_subject__subject_identifier')
 
-    list_filter = ('aliquot_type', 'aliquot_condition', AliquotCommunityFilter, 'created', 'user_created', 'hostname_created')
+    list_filter = (
+        'aliquot_type', 'aliquot_condition', AliquotCommunityFilter, 'created', 'user_created', 'hostname_created')
 
     list_per_page = 15
 

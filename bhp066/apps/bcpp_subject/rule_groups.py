@@ -45,7 +45,8 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
+        target_model=[
+            'hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
     pima_art_naive_enrollment_req_ahs = ScheduledDataRule(
         logic=Logic(

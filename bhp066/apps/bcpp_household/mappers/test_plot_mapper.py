@@ -37,10 +37,10 @@ class TestPlotMapper(BasePlotMapper):
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2016, 1, 1),
-            full_enrollment_date=date(2016, 1, 18),
-            end_date=date(2016, 1, 30),
-            smc_start_date=date(2016, 1, 7)),
+            start_date=date(2016, 1, 31),
+            full_enrollment_date=date(2016, 1, 31),
+            end_date=date(2016, 2, 29),
+            smc_start_date=date(2016, 2, 29)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=date(2016, 6, 20),

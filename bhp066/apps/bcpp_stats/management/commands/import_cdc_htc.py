@@ -26,23 +26,31 @@ class Command(BaseCommand):
                 if not header_row:
                     header_row = row
                     for field in CdcHtc._meta.fields:
-                        if field.name not in ['id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified'] and field.name not in header_row:
+                        value = [
+                            'id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created',
+                            'hostname_modified']
+                        if field.name not in value and field.name not in header_row:
                             header_row.append(field.name)
                 else:
                     # dates are in odd formats, try to convert or fail
                     for field in CdcHtc._meta.fields:
-                        if 'Date' in field.get_internal_type() and field.name not in ['created', 'modified', '_import_datetime']:
+                        _val = ['created', 'modified', '_import_datetime']
+                        if 'Date' in field.get_internal_type() and field.name not in _val:
                             try:
-                                row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                                dt = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                                row[header_row.index(field.name)] = dt
                             except IndexError:
                                 print field.name
                             except ValueError:
                                 try:
-                                    row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
+                                    dt = datetime.strptime(row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
+                                    row[header_row.index(field.name)] = dt
                                 except ValueError:
-                                    print 'Row {0}. Unable to convert date string {1} to DateTime. Got {2}'.format(i, field.name, row[header_row.index(field.name)] or None)
+                                    print 'Row {0}. Unable to convert date string {1} to DateTime. '
+                                    'Got {2}'.format(i, field.name, row[header_row.index(field.name)] or None)
                                     row[header_row.index(field.name)] = None
-                        if 'Integer' in field.get_internal_type() and field.name not in ['created', 'modified', '_import_datetime']:
+                        value = ['created', 'modified', '_import_datetime']
+                        if 'Integer' in field.get_internal_type() and field.name not in value:
                             try:
                                 row[header_row.index(field.name)] = int(row[header_row.index(field.name)])
                             except ValueError:

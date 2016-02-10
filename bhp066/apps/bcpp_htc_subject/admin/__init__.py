@@ -1,4 +1,3 @@
-from .main import *
 from .demographics_risk_admin import DemographicsRiskAdmin
 from .partners_admin import HtcRecentPartnerAdmin, HtcSecondPartnerAdmin, HtcThirdPartnerAdmin
 from .htc_subject_visit_admin import HtcSubjectVisitAdmin

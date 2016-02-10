@@ -13,6 +13,8 @@ from .clinic_subject_locator import ClinicSubjectLocator
 from .clinic_visit import ClinicVisit
 from .clinic_vl_result import ClinicVlResult
 from .questionnaire import Questionnaire
-from .signals import *
+from .signals import (
+    clinic_eligibility_on_post_save, clinic_consent_on_post_save, clinic_refusal_on_post_save,
+    clinic_refusal_on_post_delete)
 from .viral_load_tracking import ViralLoadTracking
 from .daily_log import DailyLog

@@ -33,8 +33,9 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return data
 
     def targeted_qs(self):
-        return Household.objects.filter(plot__action=CONFIRMED, created__gte=self.start_date, created__lte=self.end_date,
-                                        plot__status__istartswith='occupied', community=self.community)
+        return Household.objects.filter(
+            plot__action=CONFIRMED, created__gte=self.start_date, created__lte=self.end_date,
+            plot__status__istartswith='occupied', community=self.community)
 
     def visited_qs(self):
         return self.targeted_qs().filter(householdstructure__householdlog__isnull=False)
@@ -53,7 +54,8 @@ class HouseholdReportQuery(TwoColumnReportQuery):
 
     @staticmethod
     def enrolled_qs(community, start_date, end_date):
-        community_households = Household.objects.filter(community__iexact=community, created__gte=start_date, created__lte=end_date)
+        community_households = Household.objects.filter(
+            community__iexact=community, created__gte=start_date, created__lte=end_date)
         return community_households.filter(householdstructure__householdmember__subjectconsent__isnull=False).distinct()
 
     @staticmethod

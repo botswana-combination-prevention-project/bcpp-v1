@@ -41,7 +41,7 @@ communities = [item[0] for item in COMMUNITIES]
 
 def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
     # This is a throwaway variable to deal with a python _strptime import bug
-    throwaway = datetime.datetime.strptime('20110101', '%Y%m%d')
+    # throwaway = datetime.datetime.strptime('20110101', '%Y%m%d')
     return datetime.datetime.strptime(date_string, date_format).date()
 
 
@@ -190,9 +190,11 @@ def operational_report_plots_view(request, **kwargs):
 def operational_report_household_view(request, **kwargs):
     operational_household = OperationalHousehold(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_household.html', {'values': operational_household.build_report(),
-                                                        'communities': operational_household.return_communities(),
-                                                        'ra_usernames': operational_household.return_ra_usernames(),},
+        'bcpp_analytics/operational_report_household.html', {
+            'values': operational_household.build_report(),
+            'communities': operational_household.return_communities(),
+            'ra_usernames': operational_household.return_ra_usernames(),
+        },
         context_instance=RequestContext(request))
 
 
@@ -200,10 +202,11 @@ def operational_report_household_view(request, **kwargs):
 def operational_report_member_view(request, **kwargs):
     operational_member = OperationalMember(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_member.html', {'values': operational_member.build_report(),
-                                                        'communities': operational_member.return_communities(),
-                                                        'ra_usernames': operational_member.return_ra_usernames(),
-                                                        'surveys': operational_member.return_surveys()},
+        'bcpp_analytics/operational_report_member.html', {
+            'values': operational_member.build_report(),
+            'communities': operational_member.return_communities(),
+            'ra_usernames': operational_member.return_ra_usernames(),
+            'surveys': operational_member.return_surveys()},
         context_instance=RequestContext(request))
 
 
@@ -211,10 +214,11 @@ def operational_report_member_view(request, **kwargs):
 def operational_report_specimen_view(request, **kwargs):
     operational_specimen = OperationalSpecimen(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.build_report(),
-                                                        'communities': operational_specimen.return_communities(),
-                                                        'ra_usernames': operational_specimen.return_ra_usernames(),
-                                                        'surveys': operational_specimen.return_surveys()},
+        'bcpp_analytics/operational_report_specimen.html', {
+            'values': operational_specimen.build_report(),
+            'communities': operational_specimen.return_communities(),
+            'ra_usernames': operational_specimen.return_ra_usernames(),
+            'surveys': operational_specimen.return_surveys()},
         context_instance=RequestContext(request))
 
 
@@ -222,9 +226,10 @@ def operational_report_specimen_view(request, **kwargs):
 def operational_report_annual_view(request, **kwargs):
     operational_annual = OperationalAnnual(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_annual.html', {'values': operational_annual.build_report(),
-                                                        'communities': operational_annual.return_communities(),
-                                                        'ra_usernames': operational_annual.return_ra_usernames()},
+        'bcpp_analytics/operational_report_annual.html', {
+            'values': operational_annual.build_report(),
+            'communities': operational_annual.return_communities(),
+            'ra_usernames': operational_annual.return_ra_usernames()},
         context_instance=RequestContext(request))
 
 
@@ -281,13 +286,15 @@ def operational_report_view(request, **kwargs):
 
     date_to += datetime.timedelta(days=1)
     plt = Plot.objects.all()
-    reached = (plt.filter(action=CONFIRMED, community__icontains=community,
-                                    modified__gte=date_from, modified__lte=date_to,
-                                    user_modified__icontains=ra_username).count())
+    reached = (plt.filter(
+        action=CONFIRMED, community__icontains=community,
+        modified__gte=date_from, modified__lte=date_to,
+        user_modified__icontains=ra_username).count())
     values['1. Plots reached'] = reached
-    not_reached = (plt.filter(action=UNCONFIRMED, community__icontains=community,
-                                            modified__gte=date_from, modified__lte=date_to,
-                                            user_modified__icontains=ra_username).count())
+    not_reached = (plt.filter(
+        action=UNCONFIRMED, community__icontains=community,
+        modified__gte=date_from, modified__lte=date_to,
+        user_modified__icontains=ra_username).count())
     values['2. Plots not reached'] = not_reached
     members = (HouseholdMember.objects.filter(
         household_structure__household__plot__community__icontains=community,
@@ -319,42 +326,55 @@ def operational_report_view(request, **kwargs):
     undecided = (age_eligible_undecided.count())
     values['9. Age eligible members that where UNDECIDED'] = undecided
 
-    age_eligible_refused = SubjectRefusal.objects.filter(household_member__household_structure__household__plot__community__icontains=community)
+    age_eligible_refused = SubjectRefusal.objects.filter(
+        household_member__household_structure__household__plot__community__icontains=community)
     refused = age_eligible_refused.count()
     values['91. Age eligible members that REFUSED'] = refused
-    how_many_tested = (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                         created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).exclude(hiv_result__in=[DECLINED, NOT_PERFORMED]).count())
+    how_many_tested = (HivResult.objects.filter(
+        subject_visit__household_member__household_structure__household__plot__community__icontains=community,
+        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).exclude(
+            hiv_result__in=[DECLINED, NOT_PERFORMED]).count())
     values['92. Age eligible members that TESTED'] = how_many_tested
-    how_many_hic = (HicEnrollment.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                         created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username, hic_permission='Yes').count())
+    how_many_hic = (HicEnrollment.objects.filter(
+        subject_visit__household_member__household_structure__household__plot__community__icontains=community,
+        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username, hic_permission='Yes'
+    ).count())
     values['93. Age eligible members enrolled in to HIC'] = how_many_hic
     values = collections.OrderedDict(sorted(values.items()))
     members_tobe_visited = []
-    absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
+    absentee_undecided = members.filter(
+        eligible_member=True, visit_attempts__lte=3,
+        household_structure__household__plot__community__icontains=community,
+        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
     for mem in absentee_undecided:
         if mem.member_status == UNDECIDED:
-            undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
+            undecided_entries = SubjectUndecidedEntry.objects.filter(
+                subject_undecided__household_member=mem).order_by('next_appt_datetime')
             if undecided_entries and mem.visit_attempts < 3:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
+                members_tobe_visited.append(
+                    (str(mem), mem.member_status, mem.visit_attempts,
+                     str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
             elif mem.visit_attempts < 3:
                 members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
         elif mem.member_status == ABSENT:
-            absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
+            absentee_entries = SubjectAbsenteeEntry.objects.filter(
+                subject_absentee__household_member=mem).order_by('next_appt_datetime')
             if absentee_entries and mem.visit_attempts < 3:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
+                members_tobe_visited.append(
+                    (str(mem), mem.member_status, mem.visit_attempts,
+                     str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
             elif mem.visit_attempts < 3:
                 members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
     communities = []
     if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
         # communities = [community[0].lower() for community in  COMMUNITIES]
-        for community in  COMMUNITIES:
+        for community in COMMUNITIES:
             if community[0].lower() != previous_community:
                 communities.append(community[0])
         communities.insert(0, previous_community)
         communities.insert(1, '---------')
     else:
-        communities = [community[0].lower() for community in  COMMUNITIES]
+        communities = [community[0].lower() for community in COMMUNITIES]
         communities.insert(0, '---------')
     ra_usernames = []
     if (previous_ra.find('----') == -1) and (not previous_ra == ''):
@@ -394,7 +414,8 @@ def replacement_report_view(request, **kwargs):
     HouseholdLog = get_model('bcpp_household', 'HouseholdLog')
     HouseholdAssessment = get_model('bcpp_household', 'HouseholdAssessment')
     HouseholdRefusal = get_model('bcpp_household', 'HouseholdRefusal')
-    first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+    first_survey_start_datetime = Survey.objects.all().aggregate(
+        datetime_start=Min('datetime_start')).get('datetime_start')
     survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
     if request.POST.get('producer_name'):
         producer_name = request.POST.get('producer_name')
@@ -430,15 +451,19 @@ def replacement_report_view(request, **kwargs):
             replaced_households += 1
         # Number of household assessment forms to fill
         try:
-            report_datetime = HouseholdLogEntry.objects.filter(household_log=household_log).aggregate(Max('report_datetime')).get('report_datetime__max')
-            lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=household_structure, report_datetime=report_datetime)
+            report_datetime = HouseholdLogEntry.objects.filter(
+                household_log=household_log).aggregate(Max('report_datetime')).get('report_datetime__max')
+            lastest_household_log_entry = HouseholdLogEntry.objects.get(
+                household_log__household_structure=household_structure, report_datetime=report_datetime)
             household_status = lastest_household_log_entry.household_status
         except HouseholdLogEntry.DoesNotExist:
             household_status = None
+        hrf = HouseholdRefusal.objects.filter(household_structure=household_structure)
         if household_structure.failed_enumeration_attempts == 3:
-            if not HouseholdAssessment.objects.filter(household_structure=household_structure) and household_status == NO_HOUSEHOLD_INFORMANT:
+            hha = HouseholdAssessment.objects.filter(household_structure=household_structure)
+            if not hha and household_status == NO_HOUSEHOLD_INFORMANT:
                 accessment_forms_to_fill += 1
-        elif not HouseholdRefusal.objects.filter(household_structure=household_structure) and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
+        elif not hrf and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
             household_refusal_forms_to_fill += 1
 
     replacement_values['1. Total replaced households'] = replaced_households

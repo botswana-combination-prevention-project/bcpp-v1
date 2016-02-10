@@ -1,7 +1,7 @@
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch, mm
-from reportlab.platypus import SimpleDocTemplate,LongTable, Table, TableStyle, Paragraph
+from reportlab.platypus import SimpleDocTemplate, LongTable, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 
@@ -85,7 +85,7 @@ class AccrualPDFReport(object):
         story.append(Spacer(0, 5 * mm))
         report_data = []
         empty_column = " "
-        #report_spacer = ["   ", "   "]
+        # report_spacer = ["   ", "   "]
         report_headers = [Paragraph(self.community1, hd2), empty_column]
         report_headers.append(empty_column)
         report_headers.extend([Paragraph(self.community2, hd2), empty_column])
@@ -108,10 +108,10 @@ class AccrualPDFReport(object):
             add_styles.append(('SPAN', (3, row_no), (4, row_no)))
             add_styles.append(('LINEBELOW', (0, row_no), (1, row_no), 1, colors.HexColor('#1f8dd6')))
             add_styles.append(('LINEBELOW', (3, row_no), (4, row_no), 1, colors.HexColor('#1f8dd6')))
-            add_styles.append(('FONT', (0, row_no), (-1, row_no),  'Helvetica-Bold'))
+            add_styles.append(('FONT', (0, row_no), (-1, row_no), 'Helvetica-Bold'))
             for row1, row2 in izip(sect1.data, sect2.data):
                 row_no += 1
-                if row_no % 2 !=0:
+                if row_no % 2 != 0:
                     add_styles.append(('BACKGROUND', (0, row_no), (-1, row_no), colors.HexColor('#e1f2fa')))
                 value1 = Paragraph(row1.display_value(), self.p_style['value'])
                 value2 = Paragraph(row2.display_value(), self.p_style['value'])
@@ -120,7 +120,7 @@ class AccrualPDFReport(object):
         report_data.extend(report_numbers)
         report_table = SpreadsheetTable(report_data, repeatRows=2)
         table_style = [
-            #('GRID', (0, 0), (-1, -1), 0.25, colors.gray),
+            # ('GRID', (0, 0), (-1, -1), 0.25, colors.gray),
             ('BOX', (0, 0), (-1, -1), 0.25, colors.orange),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('SPAN', (0, 0), (1, 0)),
@@ -134,9 +134,6 @@ class AccrualPDFReport(object):
         story.append(report_table)
         self.draw(response, story)
         return response
-
-
-
 
     def inner_style(self):
         return [
@@ -154,6 +151,7 @@ class AccrualPDFReport(object):
         row_no = -1
         add_styles = []
         for i, component in enumerate(community_context_data):
+            print i
             data.append([component.display_title()])
             row_no += 1
             add_styles.append(('BACKGROUND', (0, row_no), (-1, row_no), colors.HexColor('#ffeb94')))

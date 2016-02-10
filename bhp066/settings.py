@@ -57,8 +57,8 @@ elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.loc
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':
     KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'bcpp-tsetsiba':
-    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
+elif socket.gethostname() == 'tsetsiba':
+    KEY_PATH = '/Users/tsetsiba/source/keys'
 else:
     # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
@@ -71,6 +71,7 @@ testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
+
 #     KEY_PATH = BASE_DIR
     if testing_db_name == 'sqlite':
         DATABASES = TESTING_SQLITE

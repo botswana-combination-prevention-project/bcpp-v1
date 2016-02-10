@@ -12,8 +12,10 @@ from .report_query import TwoColumnReportQuery
 
 class HouseholdMemberReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
-        self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community__iexact=self.community,
-                                                                   created__gte=self.start_date, created__lte=self.end_date)
+        self.community_members_qs = HouseholdMember.objects.filter(
+            household_structure__household__community__iexact=self.community,
+            created__gte=self.start_date, created__lte=self.end_date
+        )
 
     def build(self):
         """builds up the report data"""
@@ -66,14 +68,16 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
 
     def age_eligible_qs(self):
         enrolled_ids = HouseholdReportQuery.enrolled_ids_qs(self.community, self.start_date, self.end_date)
-        return self.community_members_qs.filter(age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
+        return self.community_members_qs.filter(
+            age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
 
     def tested_qs(self):
         return self.community_members_qs.filter(subjectvisit__hivtested__isnull=False)
 
     def study_eligible_qs(self):
-        return SubjectConsent.objects.filter(household_member__household_structure__household__community__iexact=self.community,
-                                             created__gte=self.start_date, created__lte=self.end_date)
+        return SubjectConsent.objects.filter(
+            household_member__household_structure__household__community__iexact=self.community,
+            created__gte=self.start_date, created__lte=self.end_date)
 
     def reached_stats(self):
         return self._residents_demographics('REFUSED', 'UNDECIDED', 'RESEARCH')
@@ -86,7 +90,7 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
 
     def _residents_demographics(self, *args):
         demographics = OrderedDict()
-        #demo_query = self.community_members_qs.filter(member_status_full__in=args)
+        # demo_query = self.community_members_qs.filter(member_status_full__in=args)
         demo_query = self.community_members_qs.filter(reported=True)
         demographics['Count'] = demo_query.count()
         demographics['Males'] = demo_query.filter(gender='M').count()
@@ -100,7 +104,8 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return demographics
 
     def unreached_after_visits_qs(self, no_of_visits):
-        absentee_count_query = self.absentee_qs().annotate(absentee_count=Count('subjectabsentee__subjectabsenteeentry'))
+        absentee_count_query = self.absentee_qs().annotate(
+            absentee_count=Count('subjectabsentee__subjectabsenteeentry'))
         return absentee_count_query.filter(absentee_count=no_of_visits)
 
     def self_reported_stats(self):

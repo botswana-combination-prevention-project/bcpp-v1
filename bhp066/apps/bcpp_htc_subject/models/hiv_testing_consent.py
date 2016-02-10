@@ -13,7 +13,7 @@ class HivTestingConsent(BaseScheduledModel):
         max_length=15,
         choices=YES_NO,
         help_text='',
-        )
+    )
 
     reason_not_testing = models.CharField(
         verbose_name=_("What is the main reason you did not want HIV testing as part of today\'s visit?"),
@@ -22,7 +22,7 @@ class HivTestingConsent(BaseScheduledModel):
         null=True,
         blank=True,
         help_text='',
-        )
+    )
 
     history = AuditTrail()
 

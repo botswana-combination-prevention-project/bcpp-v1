@@ -109,7 +109,8 @@ class PreOrder(BaseSyncUuidModel):
     result.allow_tags = True
 
     def skip_saving_criteria(self):
-        if self.__class__.objects.filter(subject_visit=self.subject_visit, panel=self.panel, status=self.status).exists():
+        if self.__class__.objects.filter(
+                subject_visit=self.subject_visit, panel=self.panel, status=self.status).exists():
             print('********IGNORED {}**********'.format(self))
             return True
 

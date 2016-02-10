@@ -20,5 +20,5 @@ class HtcHivResultAdmin(HtcSubjectVisitModelAdmin):
         "couples_testing": admin.VERTICAL,
         "symptoms": admin.VERTICAL,
         "family_tb": admin.VERTICAL,
-        }
+    }
 admin.site.register(HtcHivResult, HtcHivResultAdmin)

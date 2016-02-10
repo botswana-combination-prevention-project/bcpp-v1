@@ -29,8 +29,9 @@ class HouseholdVisitsReportQuery(TwoColumnReportQuery):
         return HouseholdLogEntry.objects.filter(household_log__household_structure__household__pk__in=households_ids)
 
     def _root_households_qs(self):
-        return Household.objects.filter(plot__action=CONFIRMED, created__gte=self.start_date, created__lte=self.end_date,
-                                        plot__status__istartswith='occupied', community=self.community)
+        return Household.objects.filter(
+            plot__action=CONFIRMED, created__gte=self.start_date, created__lte=self.end_date,
+            plot__status__istartswith='occupied', community=self.community)
 
     def _households_with_all_enrolled(self):
         return self._root_households_qs().exclude(householdstructure__householdmember__is_consented=False)
@@ -38,7 +39,8 @@ class HouseholdVisitsReportQuery(TwoColumnReportQuery):
     def _households_with_all_screened(self):
         untested = ['Not performed', 'Declined']
         hh_enrolled_qs = self._households_with_all_enrolled()
-        return hh_enrolled_qs.exclude(householdstructure__householdmember__subjectvisit__hivresult__hiv_result__in=untested)
+        return hh_enrolled_qs.exclude(
+            householdstructure__householdmember__subjectvisit__hivresult__hiv_result__in=untested)
 
     def confirmed_refusing_qs(self):
         return HouseholdLogEntry.objects.filter(household_log__household_structure__householdmember__refused=True)

@@ -185,7 +185,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
             raise exception_cls(
                 'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before'
                 ' consent.')
-        self.validate_guardian_dob(enrollment_checklist)
+        self.validate_guardian_dob(enrollment_checklist, subject_consent, exception_cls)
         self.validate_citizen_literacy_nd_legal_marriage(enrollment_checklist, subject_consent, exception_cls)
         if not household_member.eligible_subject:
             raise exception_cls('Subject is not eligible or has not been confirmed eligible '
@@ -312,7 +312,7 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         app_label = 'bcpp_subject'
         get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'survey', 'version'),
-                           ('first_name', 'dob', 'initials', 'version'))
+                           ('first_name', 'dob', 'initials', 'version', 'survey'))
         ordering = ('-created', )
 
 
