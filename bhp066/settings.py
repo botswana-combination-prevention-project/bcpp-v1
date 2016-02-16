@@ -63,6 +63,8 @@ else:
     # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
 
+ADMINS_HOST = ['ckgathi', 'tsetsiba', 'One-2.local', 'mac2.local']
+
 MANAGERS = ADMINS
 
 # DATABASES
