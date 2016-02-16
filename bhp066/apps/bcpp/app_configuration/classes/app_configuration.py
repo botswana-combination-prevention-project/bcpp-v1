@@ -1,4 +1,5 @@
 import socket
+
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
 
@@ -23,7 +24,6 @@ from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
 from bhp066.apps.bcpp_survey.models import Survey
-from bhp066.apps.bcpp_household.models.notebook_plot_list import NotebookPlotList
 
 try:
     from config.labels import aliquot_label
@@ -39,6 +39,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
+        self.prep_survey_for_tests()
         self.search_limit_setup()
         self.update_or_create_consent_type()
 
@@ -419,7 +420,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
         return self.validate_plot(map_area, map_code)
 
     def validate_plot(self, map_area, map_code):
-        #map_code = site_mappers.get_current_mapper().map_code
         try:
             community_check = settings.CURRENT_COMMUNITY_CHECK
         except AttributeError:
@@ -481,99 +481,48 @@ class BcppAppConfiguration(BaseAppConfiguration):
                     'and FILTERED_DEFAULT_SEARCH should be set to true in a notebook. '
                     'Update in bcpp_settings.py.')
 
-    def update_survey_year_1(self):
-        surveys = Survey.objects.all().order_by('datetime_start')
-        if settings.CURRENT_SURVEY == 'bcpp-year-1':
-            survey = surveys.filter(survey_slug='bcpp-year-1').first()
-            start_date = datetime.today() - timedelta(days=1)
-            end_date = datetime.today() + timedelta(days=30)
-            full_enrollment_date = start_date + timedelta(days=5)
-            current_mapper = site_mappers.registry.get('test_community')
-            current_mapper.full_enrollment_date = full_enrollment_date
-            site_mappers._registry['test_community'] = current_mapper
-            site_mappers._registry_by_code[current_mapper.map_code] = current_mapper
-            survey.datetime_start = start_date
-            survey.datetime_end = end_date
-            survey.save()
+    @property
+    def survey_dates(self):
+        survey_dates = []
+        start_date = datetime.today() - timedelta(days=1)
+        end_date = datetime.today() + timedelta(days=30)
+        full_enrollment_date = end_date
+        for _ in range(3):
+            survey_dates.append((start_date, end_date, full_enrollment_date))
+            start_date = end_date + timedelta(days=2)
+            end_date = start_date + timedelta(days=30)
+            full_enrollment_date = end_date
+        return survey_dates
 
-            survey = surveys.filter(survey_slug='bcpp-year-2').first()
-            survey.datetime_start = end_date + timedelta(days=1)
-            full_enrollment_date = survey.datetime_start + timedelta(days=5)
-            site_mappers.registry.get('test_community').full_enrollment_date = full_enrollment_date
-            survey.datetime_end = end_date + timedelta(days=30)
-            survey.save()
-
-            survey = surveys.filter(survey_slug='bcpp-year-3').first()
-            survey.datetime_start = end_date + timedelta(days=32)
-            full_enrollment_date = survey.datetime_start + timedelta(days=5)
-            site_mappers.registry.get('test_community').full_enrollment_date = full_enrollment_date
-            survey.datetime_end = end_date + timedelta(days=62)
-            survey.save()
-
-    def update_survey_year_2(self):
-        surveys = Survey.objects.all().order_by('datetime_start')
-        if settings.CURRENT_SURVEY == 'bcpp-year-2':
-            survey = surveys.filter(survey_slug='bcpp-year-2').first()
-            start_date = datetime.today() - timedelta(days=1)
-            end_date = datetime.today() + timedelta(days=30)
-            full_enrollment_date = start_date + timedelta(days=5)
-            site_mappers.registry.get('test_community').full_enrollment_date = full_enrollment_date
-            survey.datetime_start = start_date
-            survey.datetime_end = end_date
-            survey.save()
-
-            survey = surveys.filter(survey_slug='bcpp-year-1').first()
-            start_date = start_date - timedelta(days=30)
-            full_enrollment_date = start_date + timedelta(days=5)
-            site_mappers.registry.get('test_community').full_enrollment_date = full_enrollment_date
-            survey.datetime_start = start_date
-            survey.datetime_end = start_date - timedelta(days=2)
-            survey.save()
-
-            survey = surveys.filter(survey_slug='bcpp-year-3').first()
-            survey.datetime_start = start_date + timedelta(days=32)
-            full_enrollment_date = survey.datetime_start + timedelta(days=5)
-            site_mappers.registry.get('test_community').full_enrollment_date = full_enrollment_date
-            survey.datetime_end = end_date + timedelta(days=62)
-            survey.save()
-
-    def update_survey_year_3(self):
-        surveys = Survey.objects.all().order_by('datetime_start')
-        if settings.CURRENT_SURVEY == 'bcpp-year-3':
-            survey = surveys.filter(survey_slug='bcpp-year-3').first()
-            start_date = datetime.today() - timedelta(days=1)
-            end_date = datetime.today() + timedelta(days=30)
-            full_enrollment_date = datetime.today() + timedelta(days=5)
-            site_mappers.registry.get(self.sex_partner_community.lower()).full_enrollment_date = full_enrollment_date
-            survey.datetime_start = start_date
-            survey.datetime_end = end_date
-            survey.save()
-
-            survey = surveys.filter(survey_slug='bcpp-year-1').first()
-            start_date = start_date - timedelta(days=30)
-            survey.datetime_start = start_date
-            full_enrollment_date = start_date + timedelta(days=5)
-            site_mappers.registry.get(self.sex_partner_community.lower()).full_enrollment_date = full_enrollment_date
-            survey.datetime_end = start_date - timedelta(days=2)
-            survey.save()
-
-            survey = surveys.filter(survey_slug='bcpp-year-2').first()
-            start_date = start_date + timedelta(days=32)
-            survey.datetime_start = start_date
-            full_enrollment_date = start_date + timedelta(days=5)
-            site_mappers.registry.get(self.sex_partner_community.lower()).full_enrollment_date = full_enrollment_date
-            survey.datetime_start = start_date + timedelta(days=32)
-            survey.datetime_end = end_date + timedelta(days=62)
-            survey.save()
+    def update_survey(self, survey, survey_dates):
+        survey.datetime_start, survey.datetime_end, full_enrollment_date = survey_dates
+        full_enrollment_date = full_enrollment_date
+        survey.save()
 
     def prep_survey_for_tests(self):
-        self.update_survey_year_1()
-        self.update_survey_year_2()
-        self.update_survey_year_3()
+        surveys = Survey.objects.all()
+        mapper = site_mappers.get_current_mapper()
+        if socket.gethostname() in settings.ADMINS_HOST:
+            survey_slug = [(1, 2, 3), (2, 1, 3), (3, 1, 2)][int(settings.CURRENT_SURVEY[-1]) - 1]
+            for j, survey_dates in enumerate(self.survey_dates):
+                survey_year = 'bcpp-year-{}'.format(survey_slug[j])
+                survey = surveys.filter(survey_slug=survey_year).first()
+                self.update_survey(survey, survey_dates)
+                self.update_site_mapper(mapper, survey_year, survey_dates)
 
-    @property
-    def notebook_plot_list(self):
-        if not (device.is_central_server and device.is_community_server):
-            return NotebookPlotList.objects.filter(notebook=socket.gethostname()).values_list('plot_identifer')
+    def update_site_mapper(self, mapper, survey_year, survey_dates):
+        from collections import namedtuple
+        SurveyDatesTuple = namedtuple(
+            'SurveyDatesTuple', 'name start_date full_enrollment_date end_date smc_start_date')
+        start_date, end_date, full_enrollment_date = survey_dates
+        start_date = start_date + timedelta(days=1)
+        survey_date = SurveyDatesTuple(
+            name='t{}'.format(survey_year[-1]),
+            start_date=start_date.date(),
+            full_enrollment_date=full_enrollment_date.date(),
+            end_date=end_date.date(),
+            smc_start_date=datetime.today().date())
+        mapper.survey_dates[survey_year] = survey_date
+        return mapper
 
 bcpp_app_configuration = BcppAppConfiguration()

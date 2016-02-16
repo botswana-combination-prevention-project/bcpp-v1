@@ -37,9 +37,7 @@ class OperationalRbd(BaseOperationalReport):
             is_drawn='yes')
         self.data_dict['2. Clinic RBD\'s drawn'] = clinic_rbd.count()
         clinic_bhs_rbd = SubjectRequisition.objects.filter(
-            subject_visit__household_member__household_structure__household__plot__community__in=[
-                'digawana', 'otse', 'lentsweletau', 'oodi', 'mmankgodi', 'lerala', 'maunatlala',
-                'shoshong', 'nkange', 'tati_siding', 'mathangwane', 'gweta', 'gumare', 'sefhare', 'masunga'],
+            subject_visit__household_member__household_structure__household__plot__community__in=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
@@ -56,9 +54,7 @@ class OperationalRbd(BaseOperationalReport):
             is_drawn='yes')
         self.data_dict['3. Clinic VL\'s drawn @ BHP'] = clinic_vl_requisitions.count()
         clinic_bhs_vl = SubjectRequisition.objects.filter(
-            subject_visit__household_member__household_structure__household__plot__community__in=[
-                'digawana', 'otse', 'lentsweletau', 'oodi', 'mmankgodi', 'lerala', 'maunatlala',
-                'shoshong', 'nkange', 'tati_siding', 'mathangwane', 'gweta', 'gumare', 'sefhare', 'masunga'],
+            subject_visit__household_member__household_structure__household__plot__community__in=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
