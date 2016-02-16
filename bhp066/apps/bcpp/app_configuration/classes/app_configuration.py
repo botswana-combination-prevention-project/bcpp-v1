@@ -4,7 +4,6 @@ from collections import OrderedDict
 from datetime import datetime, date, timedelta
 
 from django.conf import settings
-from django.db.utils import IntegrityError
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from bhp066.apps.bcpp_household.models import Plot
@@ -16,7 +15,6 @@ from edc_device import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-from edc.core.bhp_variables.models import StudySpecific, StudySite
 from edc_consent.models import ConsentType
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
