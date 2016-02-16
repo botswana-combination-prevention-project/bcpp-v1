@@ -5,7 +5,7 @@ from django.db.models import Max
 
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
-from edc.map.classes import site_mappers
+# from edc.map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
@@ -19,7 +19,7 @@ from .subject_consent import SubjectConsent
 from .subject_locator import SubjectLocator
 from .tb_symptoms import TbSymptoms
 
-site_mappers.autodiscover()
+# site_mappers.autodiscover()
 
 REFERRAL_CLINIC_TYPES = (
     ('ANC', 'ANC'),

@@ -9,7 +9,6 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
-from edc.map.classes import Mapper, site_mappers
 
 from bhp066.apps.bcpp_clinic.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
 from bhp066.apps.bcpp_clinic.tests.factories import (ClinicConsentFactory, ClinicVisitFactory,
@@ -28,7 +27,6 @@ class TestNaturalKey(TestCase):
             site_lab_profiles.register(ClinicSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        site_mappers.autodiscover()
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppClinicVisitSchedule().build()
