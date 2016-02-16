@@ -30,22 +30,22 @@ class SefophePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 2, 11),
-            full_enrollment_date=date(2015, 3, 6),
-            end_date=date(2015, 3, 27),
+            start_date=date(2015, 1, 19),
+            full_enrollment_date=date(2015, 2, 10),
+            end_date=date(2015, 3, 3),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 2, 12),
+            full_enrollment_date=date(2016, 3, 20),
+            end_date=date(2016, 3, 21),
+            smc_start_date=date(2016, 2, 12)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
-            start_date=None,
-            full_enrollment_date=None,
-            end_date=None,
-            smc_start_date=None),
+            start_date=date(2016, 12, 4),
+            full_enrollment_date=date(2016, 12, 31),
+            end_date=date(2016, 12, 31),
+            smc_start_date=date(2016, 12, 31)),
     }
 
     clinic_days = {
