@@ -17,4 +17,3 @@ class HouseholdMemberFactory(factory.DjangoModelFactory):
     study_resident = YES
     target = 20
     inability_to_participate = NOT_APPLICABLE
-

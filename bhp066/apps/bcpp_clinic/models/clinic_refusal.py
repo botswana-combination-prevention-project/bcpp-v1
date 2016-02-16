@@ -61,7 +61,7 @@ class ClinicRefusal(BaseSyncUuidModel):
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def save(self, *args, **kwargs):
-        self.community = site_mappers.get_current_mapper().map_area
+        self.community = site_mappers.get_mapper(site_mappers.current_community).map_area
         super(ClinicRefusal, self).save(*args, **kwargs)
 
     class Meta:

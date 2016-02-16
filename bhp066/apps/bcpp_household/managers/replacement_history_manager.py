@@ -11,7 +11,7 @@ class ReplacementHistoryManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             return super(ReplacementHistoryManager, self).get_queryset().filter(
                 replacing_item__startswith=community)
         return super(ReplacementHistoryManager, self).get_queryset()

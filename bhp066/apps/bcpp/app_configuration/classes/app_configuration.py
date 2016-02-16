@@ -399,7 +399,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             * plot identifier community prefix is the same as the site code.
         """
         try:
-            map_code = site_mappers.get_current_mapper().map_code
+            map_code = site_mappers.get_mapper(site_mappers.current_community).map_code
         except AttributeError:
             map_code = '00'
         if self.confirm_site_code_in_settings:  # default is True, set to False for tests
@@ -407,7 +407,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
                                            'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
         try:
-            map_area = site_mappers.get_current_mapper().map_area
+            map_area = site_mappers.get_mapper(site_mappers.current_community).map_area
         except AttributeError:
             map_area = 'BHP'
         if self.confirm_community_in_settings:  # default is True, set to False for tests
@@ -499,7 +499,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     def prep_survey_for_tests(self):
         surveys = Survey.objects.all()
-        mapper = site_mappers.get_current_mapper()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         if socket.gethostname() in settings.ADMINS_HOST:
             survey_slug = [(1, 2, 3), (2, 1, 3), (3, 1, 2)][int(settings.CURRENT_SURVEY[-1]) - 1]
             for j, survey_dates in enumerate(self.survey_dates):

@@ -12,7 +12,6 @@ from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..classes import HouseholdDashboard
 
@@ -22,23 +21,20 @@ class TestDashboard(TestCase):
     app_label = 'testing'
 
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+        self.community = site_mappers.current_community
+        mapper = site_mappers.get_mapper(self.community)
+        print "this is the mapper", mapper
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppAppConfiguration()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-        site_mappers.autodiscover()
-        mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        self.community = mapper().get_map_area()
-        gps_degrees_s, gps_minutes_s, gps_degrees_e, gps_minutes_e = mapper().test_location
         self.plot = PlotFactory(community=self.community,
-                                gps_degrees_s=gps_degrees_s,
-                                gps_minutes_s=gps_minutes_s,
-                                gps_degrees_e=gps_degrees_e,
-                                gps_minutes_e=gps_minutes_e,
                                 household_count=2,
                                 status='residential_habitable')
         self.household1 = Household.objects.filter(plot=self.plot).order_by('created')[0]

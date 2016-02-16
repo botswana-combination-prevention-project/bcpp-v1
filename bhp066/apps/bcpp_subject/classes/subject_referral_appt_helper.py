@@ -34,14 +34,14 @@ class SubjectReferralApptHelper(object):
         self._base_date = base_date or datetime.today()  # should come from the user as today's date??
         self._intervention_communities = intervention_communities
         self._referral_code = None
-        self.community_code = community_code or site_mappers.get_current_mapper().map_code
-        self.community_name = community_code or site_mappers.get_current_mapper().map_area
+        self.community_code = community_code or site_mappers.get_mapper(site_mappers.current_community).map_code
+        self.community_name = community_code or site_mappers.get_mapper(site_mappers.current_community).map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
-            self.clinic_days = site_mappers.get_current_mapper().current_clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = site_mappers.get_mapper(site_mappers.current_community).current_clinic_days.get(self.referral_clinic_type)
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)

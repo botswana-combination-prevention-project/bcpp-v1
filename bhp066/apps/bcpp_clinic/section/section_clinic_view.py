@@ -29,12 +29,12 @@ class SectionClinicView(BaseSectionView):
         current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.get_current_mapper()),
+            'current_community': site_mappers.current_community,
             'daily_log': daily_log,
             'subject_dashboard_url': self.dashboard_url_name,
         })
         return context
 
 # only include section for CPC or the central server
-if site_mappers.get_current_mapper().intervention or device.device_id == device.central_server_id:
+if site_mappers.get_mapper(site_mappers.current_community).intervention or device.device_id == device.central_server_id:
     site_sections.register(SectionClinicView)

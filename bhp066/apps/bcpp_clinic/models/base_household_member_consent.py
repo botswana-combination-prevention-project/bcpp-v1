@@ -55,7 +55,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         return self.consent_datetime
 
     def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
+        return site_mappers.get_mapper(site_mappers.current_community).map_code
 
     def save(self, *args, **kwargs):
         if not self.id:

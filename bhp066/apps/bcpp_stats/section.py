@@ -16,6 +16,6 @@ class SectionReportsView(BaseSectionView):
         return context
 
     def get_current_community(self):
-        return site_mappers.get_current_mapper().map_area
+        return site_mappers.get_mapper(site_mappers.current_community).map_area
 
 site_sections.register(SectionReportsView)

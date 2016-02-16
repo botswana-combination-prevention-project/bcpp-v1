@@ -38,7 +38,7 @@ class ClinicEnrollmentLoss(BaseSyncUuidModel):
     objects = BaseClinicHouseholdMemberManager()
 
     def save(self, *args, **kwargs):
-        self.community = site_mappers.get_current_mapper().map_area
+        self.community = site_mappers.get_mapper(site_mappers.current_community).map_area
         super(ClinicEnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):

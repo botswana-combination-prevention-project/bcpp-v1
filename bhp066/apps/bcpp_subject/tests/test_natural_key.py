@@ -85,7 +85,7 @@ class TestNaturalKey(TestCase):
         FILTERED_DEFAULT_SEARCH=True,
     )
     def test_p3(self):
-        mapper = site_mappers.get_current_mapper()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         community = mapper.map_area
         plot = PlotFactory(community=community, household_count=1, status='residential_habitable')
         Household.objects.get(plot=plot)

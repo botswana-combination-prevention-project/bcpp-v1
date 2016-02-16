@@ -407,7 +407,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     @property
     def intervention(self):
-        return site_mappers.get_current_mapper().intervention
+        return site_mappers.get_mapper(site_mappers.current_community).intervention
 
     @property
     def plot_enrolled(self):
@@ -845,7 +845,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def is_bhs(self):
         """Returns True if the member was survey as part of the BHS."""
         plot_identifier = self.household_structure.household.plot.plot_identifier
-        clinic_plot_identifier = site_mappers.get_current_mapper().clinic_plot.plot_identifier
+        clinic_plot_identifier = site_mappers.get_mapper(site_mappers.current_community).clinic_plot.plot_identifier
         is_bhs = plot_identifier != clinic_plot_identifier
         return is_bhs
 

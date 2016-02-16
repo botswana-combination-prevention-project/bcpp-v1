@@ -260,7 +260,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     objects = PlotManager()
 
     def __unicode__(self):
-        if site_mappers.get_current_mapper().clinic_plot_identifier == self.plot_identifier:
+        if site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier == self.plot_identifier:
             return 'BCPP-CLINIC'
         else:
             return self.plot_identifier
@@ -271,7 +271,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        if not self.plot_identifier == site_mappers.get_current_mapper().clinic_plot_identifier:
+        if not self.plot_identifier == site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier:
             self.allow_enrollment(using, update_fields=update_fields)
         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
@@ -286,8 +286,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         # unless overridden, if self.community != to mapper.map_area, raise
         self.verify_plot_community_with_current_mapper(self.community)
         # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
-        mapper_cls = site_mappers.registry.get(self.community)
-        mapper = mapper_cls()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         if not self.plot_identifier:
             self.plot_identifier = PlotIdentifier(mapper.map_code, using).get_identifier()
             if not self.plot_identifier:
@@ -350,7 +349,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         update_fields = update_fields or []
         exception_cls = exception_cls or ValidationError
         if using == 'default':  # do not check on remote systems
-            mapper_instance = site_mappers.get_current_mapper()
+            mapper_instance = site_mappers.get_mapper(site_mappers.current_community)
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
@@ -627,12 +626,12 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         except AttributeError:
             pass
         if verify_plot_community_with_current_mapper:
-            if community != site_mappers.get_current_mapper().map_area:
+            if community != site_mappers.get_mapper(site_mappers.current_community).map_area:
                 raise exception_cls(
                     'Plot community does not correspond with the current mapper '
                     'community of \'{}\'. Got \'{}\'. '
                     'See settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER'.format(
-                        site_mappers.get_current_mapper().map_area, community))
+                        site_mappers.get_mapper(site_mappers.current_community).map_area, community))
 
     @property
     def plot_log(self):

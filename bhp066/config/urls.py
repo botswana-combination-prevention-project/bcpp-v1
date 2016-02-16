@@ -34,7 +34,7 @@ site_sections.autodiscover()
 site_sections.update_section_lists()
 admin.autodiscover()
 
-site_mappers.get_current_mapper().verify_survey_dates()
+site_mappers.get_mapper(site_mappers.current_community).verify_survey_dates()
 
 for model in get_models():
     try:

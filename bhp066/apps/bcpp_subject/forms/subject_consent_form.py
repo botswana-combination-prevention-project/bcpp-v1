@@ -124,7 +124,7 @@ class BaseBcppConsentForm(BaseConsentForm):
             except AttributeError:
                 limit = False
             if limit:
-                mapper_community = site_mappers.get_current_mapper().map_area
+                mapper_community = site_mappers.get_mapper(site_mappers.current_community).map_area
                 community = household_member.household_structure.household.plot.community
                 if community != mapper_community:
                     raise forms.ValidationError(

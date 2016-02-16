@@ -14,7 +14,7 @@ class CallLogManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             return super(CallLogManager, self).get_queryset().filter(
                 household_member__household_structure__household__plot__community=community)
         return super(CallLogManager, self).get_queryset()
@@ -30,7 +30,7 @@ class CallLogEntryManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             return super(CallLogEntryManager, self).get_queryset().filter(
                 call_log__household_member__household_structure__household__plot__community=community)
         return super(CallLogEntryManager, self).get_queryset()

@@ -18,14 +18,14 @@ class PackingListHelper(object):
 
     @property
     def received_items(self):
-        community_code = site_mappers.get_current_mapper().map_code
+        community_code = site_mappers.get_mapper(site_mappers.current_community).map_code
         sql = ('select headerdate, edc_specimen_identifier from lab01response as l where '
                'edc_specimen_identifier like \'066{}%\'').format(community_code)
         return self.cursor.execute(sql).fetchall()
 
     @property
     def stored_items(self):
-        community_code = site_mappers.get_current_mapper().map_code
+        community_code = site_mappers.get_mapper(site_mappers.current_community).map_code
         sql = ('select datecreated, sample_id, sample_type from ST505ResponseQ001X0 where '
                'sample_id like \'066{}%\'').format(community_code)
         return self.cursor.execute(sql).fetchall()
@@ -82,10 +82,10 @@ class PackingListHelper(object):
             else:
                 raise
         print('Received packing list items for {}:'.format(
-            site_mappers.get_current_mapper().map_area, PackingListItem.objects.filter(received=True).count()))
+            site_mappers.get_mapper(site_mappers.current_community).map_area, PackingListItem.objects.filter(received=True).count()))
         for panel in PackingListItem.objects.values('panel__name').filter(received=True).annotate(Count('panel')):
             print('{}: {}'.format(panel.get('panel__name'), panel.get('panel__count')))
-        print('List of pending packing list items for {}:'.format(site_mappers.get_current_mapper().map_area))
+        print('List of pending packing list items for {}:'.format(site_mappers.get_mapper(site_mappers.current_community).map_area))
         for packing_list_item in PackingListItem.objects.filter(received=False).order_by('created'):
             try:
                 item_datetime = packing_list_item.item_datetime.strftime('%Y-%m-%d')

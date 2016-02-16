@@ -26,8 +26,8 @@ class SectionSubjectView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.get_current_mapper()),
-            'mapper_name': site_mappers.get_current_mapper().map_area,
+            'current_community': str(site_mappers.get_mapper(site_mappers.current_community)),
+            'mapper_name': site_mappers.get_mapper(site_mappers.current_community).map_area,
             'subject_dashboard_url': self.dashboard_url_name,
         })
         context.update()

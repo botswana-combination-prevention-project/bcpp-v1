@@ -11,7 +11,7 @@ class PackingListManager(Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             return super(PackingListManager, self).get_queryset().filter(community=community)
         return super(PackingListManager, self).get_queryset()
 
@@ -23,6 +23,6 @@ class PackingListItemManager(Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             return super(PackingListItemManager, self).get_queryset().filter(packing_list__community=community)
         return super(PackingListItemManager, self).get_queryset()

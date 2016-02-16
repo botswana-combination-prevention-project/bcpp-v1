@@ -49,7 +49,7 @@ class ClinicConsent(PersonalFieldsMixin, VulnerabilityFieldsMixin, SampleCollect
             self.registered_subject = RegisteredSubject.objects.get(identity=self.identity)
             self.household_member = HouseholdMember.objects.get(registered_subject=self.registered_subject)
             self.survey = self.household_member.household_structure.survey
-        self.community = site_mappers.get_current_mapper().map_area
+        self.community = site_mappers.current_community
         # self.clinic_subject_identifier()
         super(ClinicConsent, self).save(*args, **kwargs)
 

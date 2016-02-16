@@ -232,7 +232,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
          }
     )
 
-if site_mappers.get_current_mapper().intervention is False:
+if site_mappers.get_mapper(site_mappers.current_community).intervention is False:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
@@ -241,7 +241,7 @@ if site_mappers.get_current_mapper().intervention is False:
         if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T2').get('entries').remove(item)
 
-if site_mappers.get_current_mapper().intervention is True:
+if site_mappers.get_mapper(site_mappers.current_community).intervention is True:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)

@@ -65,10 +65,10 @@ class BaseScheduledModelTestCase(TestCase):
 #         site_lab_tracker.autodiscover()
 #         BcppSubjectVisitSchedule().build()
 
-        self.community = site_mappers.get_current_mapper().map_area
-        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
+        self.community = site_mappers.get_mapper(site_mappers.current_community).map_area
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_mapper(site_mappers.current_community).map_code)
         self.site_code = self.study_site
-        self.intervention = site_mappers.get_current_mapper().intervention
+        self.intervention = site_mappers.get_mapper(site_mappers.current_community).intervention
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.survey2 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')

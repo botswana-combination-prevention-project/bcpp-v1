@@ -11,7 +11,7 @@ class ReceiveManager(Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            code = site_mappers.get_current_mapper().map_code
+            code = site_mappers.get_mapper(site_mappers.current_community).map_code
             return super(ReceiveManager, self).get_queryset().filter(
                 receive_identifier__startswith='066{}'.format(code))
         return super(ReceiveManager, self).get_queryset()

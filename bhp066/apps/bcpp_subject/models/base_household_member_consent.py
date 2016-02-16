@@ -56,7 +56,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuid
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
+        return site_mappers.get_mapper(site_mappers.current_community).map_code
 
     def get_subject_type(self):
         return 'subject'

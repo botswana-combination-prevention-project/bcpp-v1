@@ -251,9 +251,9 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 ALLOW_MODEL_SERIALIZATION = True
 
 # bcpp_settings
-BHS_START_DATE = site_mappers.get_current_mapper().bhs_start_date
-BHS_END_DATE = site_mappers.get_current_mapper().bhs_end_date
-BHS_FULL_ENROLLMENT_DATE = site_mappers.get_current_mapper().bhs_full_enrollment_date
-SMC_START_DATE = site_mappers.get_current_mapper().smc_start_date
+BHS_START_DATE = site_mappers.get_mapper(site_mappers.current_community).bhs_start_date
+BHS_END_DATE = site_mappers.get_mapper(site_mappers.current_community).bhs_end_date
+BHS_FULL_ENROLLMENT_DATE = site_mappers.get_mapper(site_mappers.current_community).bhs_full_enrollment_date
+SMC_START_DATE = site_mappers.get_mapper(site_mappers.current_community).smc_start_date
 MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
 LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']

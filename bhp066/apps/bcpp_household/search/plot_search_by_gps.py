@@ -22,13 +22,13 @@ class PlotSearchByGps(BaseSearcher):
 
     def get_most_recent_query_options(self):
         """Returns a dictionary to be added to the options for filtering the search model."""
-        return {'community': site_mappers.get_current_mapper().map_area}
+        return {'community': site_mappers.get_mapper(site_mappers.current_community).map_area}
 
     def search_result(self, request, **kwargs):
         """Returns an iterable search_result ordered by distance from a given gps point."""
         search_result = []
         gps_form = self.search_form(request.POST)
-        mapper = site_mappers.get_current_mapper()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         if gps_form.is_valid():
             radius = gps_form.data.get('radius') / 1000
             lat = mapper.get_gps_lat(
@@ -46,7 +46,7 @@ class PlotSearchByGps(BaseSearcher):
 
     def search_queryset(self, request=None):
         """Returns a filtered search model queryset."""
-        mapper = site_mappers.get_current_mapper()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         options = {mapper.map_area_field_attr: mapper.map_area}
         if request:
             search_attrvalue = request.GET.get(self.get_search_attrname())  # e.g. identifier
@@ -66,7 +66,7 @@ class PlotSearchByGps(BaseSearcher):
             """
         ordered_list_of_keys = []
         items = {}
-        mapper = site_mappers.get_current_mapper()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
         for item in queryset:
             distance_from_gps = mapper.gps_distance_between_points(lat, lon, item.gps_target_lat, item.gps_target_lon)
             if distance_from_gps <= radius:

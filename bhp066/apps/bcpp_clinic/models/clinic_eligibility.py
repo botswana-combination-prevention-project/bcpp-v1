@@ -224,7 +224,7 @@ class ClinicEligibility (BaseSyncUuidModel):
                     self.check_for_known_identity(self.identity)
             self.age_in_years = relativedelta(self.report_datetime.date(), self.dob).years
             self.is_eligible, self.loss_reason = self.passes_enrollment_criteria()
-            self.community = site_mappers.get_current_mapper().map_area
+            self.community = site_mappers.get_mapper(site_mappers.current_community).map_area
             if not self.household_member:
                 self.household_member = self.clinic_household_member
         super(ClinicEligibility, self).save(*args, **kwargs)
@@ -263,7 +263,7 @@ class ClinicEligibility (BaseSyncUuidModel):
             clinic_household_member = ClinicHouseholdMember.objects.get(pk=self.household_member.pk)
         except (ClinicHouseholdMember.DoesNotExist, AttributeError):
             household_structure = HouseholdStructure.objects.get(
-                household__plot=site_mappers.get_current_mapper().clinic_plot,
+                household__plot=site_mappers.get_mapper(site_mappers.current_community).clinic_plot,
                 survey=Survey.objects.current_survey())
             clinic_household_member = ClinicHouseholdMember.objects.create(
                 household_structure=household_structure,

@@ -26,7 +26,7 @@ class HouseholdLogEntryManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_current_mapper().map_area
+            community = site_mappers.get_mapper(site_mappers.current_community).map_area
             if PlotIdentifier.get_notebook_plot_lists():
                 plot_identifier_list = PlotIdentifier.get_notebook_plot_lists()
                 return super(HouseholdLogEntryManager, self).get_queryset().filter(

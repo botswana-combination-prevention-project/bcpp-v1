@@ -36,7 +36,7 @@ class SubjectReferralHelper(object):
         self._subject_referral = None
         self._subject_referral_dict = {}
         self._subject_status_helper = None
-        self.community_code = site_mappers.get_current_mapper().map_code
+        self.community_code = site_mappers.get_mapper(site_mappers.current_community).map_code
         # self.models dict is also used in the signal
         self.models = copy(SubjectStatusHelper.models)
         self.models[BASELINE].update({
@@ -292,7 +292,7 @@ class SubjectReferralHelper(object):
 
     @property
     def intervention(self):
-        return site_mappers.get_current_mapper().intervention
+        return site_mappers.get_mapper(site_mappers.current_community).intervention
 
     @property
     def arv_clinic(self):

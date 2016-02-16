@@ -44,9 +44,9 @@ class ClinicEligibilityTests(TestCase):
         self.plot = PlotFactory(community='oodi', household_count=1, status='bcpp_clinic')
         self.household = HouseholdFactory(plot=self.plot)
         self.household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey)
-        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
-        self.intervention = site_mappers.get_current_mapper().intervention
-        site_mappers.get_current_mapper().verify_survey_dates()
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_mapper(site_mappers.current_community).map_code)
+        self.intervention = site_mappers.get_mapper(site_mappers.current_community).intervention
+        site_mappers.get_mapper(site_mappers.current_community).verify_survey_dates()
 
     def test_additional_key_similar_eligibility_member_subject(self):
         """Tests constraint across hhm, clinic_eligibility and registered_subject

@@ -15,7 +15,7 @@ from edc.map.classes import site_mappers
 @csrf_protect
 def export_outgoing_to_usb(request, **kwargs):
     """Sets the path and then calls the edc export view 'export_outgoing_to_file'."""
-    site_name = site_mappers.get_current_mapper().map_area
+    site_name = site_mappers.get_mapper(site_mappers.current_community).map_area
     app_name = settings.APP_NAME.lower()
     if platform.system() == 'Darwin':
         usb_path = '/Volumes/{}_usb/'.format(app_name)

@@ -70,8 +70,8 @@ class TestMemberStatusChoices(TestCase):
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
-        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
-        self.intervention = site_mappers.get_registry(settings.CURRENT_COMMUNITY)().intervention
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_mapper(site_mappers.current_community).map_code)
+        self.intervention = site_mappers.get_mapper(site_mappers.current_community).intervention
 
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18, study_resident='Yes', household_structure=self.household_structure)

@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 current_survey, current_survey.datetime_start, current_survey.datetime_end)
         except ImproperlyConfigured as err_message:
             print 'Survey configuration is invalid. Got {}'.format(err_message.message)
-        print 'Current Mapper: {}'.format(str(site_mappers.get_current_mapper()))
+        print 'Current Mapper: {}'.format(str(site_mappers.get_mapper(site_mappers.current_community)))
         print('\nBHP066 Edc {} ({})\n'.format(site_revision.tag, site_revision.branch))
 
     def format_for_wiki(self):
