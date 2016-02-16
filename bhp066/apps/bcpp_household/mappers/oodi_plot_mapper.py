@@ -62,13 +62,3 @@ class OodiPlotMapper(BasePlotMapper):
     }
 
 site_mappers.register(OodiPlotMapper)
-
-
-
-en = EnrollmentChecklist.objects.create(
-    citizen='Yes', confirm_participation=confirm_participation, 
-    created = consent.created, gender=gender, household_residency='Yes', 
-    household_member=consent.household_member, initials=initials, literacy=literacy, 
-    marriage_certificate=marriage_certificate, report_datetime=report_datetime, 
-    user_created=consent.user_created, dob=consent.dob
-)
