@@ -3,6 +3,8 @@ from django.db import models
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 
+from ..managers import ConsentHistoryManager
+
 
 class ClinicConsentHistory(models.Model):
 
@@ -10,7 +12,7 @@ class ClinicConsentHistory(models.Model):
 
     household_member = models.ForeignKey(HouseholdMember)
 
-    objects = models.Manager()
+    objects = ConsentHistoryManager()
 
     def natural_key(self):
         if not self.registered_subject:

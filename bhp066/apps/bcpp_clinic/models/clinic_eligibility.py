@@ -99,7 +99,6 @@ class ClinicEligibility (BaseSyncUuidModel):
 
     identity = IdentityField(
         verbose_name="Identity number (OMANG, etc)",
-        unique=True,
         null=True,
         blank=True,
         help_text=("Use Omang, Passport number, driver's license number or Omang receipt number")
@@ -263,7 +262,7 @@ class ClinicEligibility (BaseSyncUuidModel):
             clinic_household_member = ClinicHouseholdMember.objects.get(pk=self.household_member.pk)
         except (ClinicHouseholdMember.DoesNotExist, AttributeError):
             household_structure = HouseholdStructure.objects.get(
-                household__plot=site_mappers.get_mapper(site_mappers.current_community).clinic_plot,
+                household__plot=site_mappers.get_mapper(site_mappers.current_community)().clinic_plot,
                 survey=Survey.objects.current_survey())
             clinic_household_member = ClinicHouseholdMember.objects.create(
                 household_structure=household_structure,
@@ -314,37 +313,53 @@ class ClinicEligibility (BaseSyncUuidModel):
             pass
         return None
 
-    def passes_enrollment_criteria(self):
-        """Creates or updates (or deletes) the enrollment loss based on the
-        reason for not passing the enrollment checklist."""
-        loss_reason = []
+    def age_reason(self, loss_reason):
         if self.age_in_years < 16:
             loss_reason.append('Too young (<16).')
         if self.age_in_years > 64:
             loss_reason.append('Too old (>64).')
-        if self.has_identity == 'No' or not self.identity:
-            loss_reason.append('No valid identity.')
+        return loss_reason
+
+    def literacy_reason(self, loss_reason):
+        if self.literacy == 'No':
+            loss_reason.append('Illiterate with no literate witness.')
+        if self.literacy == 'Unknown':
+            loss_reason.append('Literacy unknown.')
+        return loss_reason
+
+    def hiv_status_reason(self, loss_reason):
+        if self.hiv_status == 'NEG':
+            loss_reason.append('HIV Negative.')
+        if self.hiv_status != 'POS' and self.hiv_status != 'NEG':
+            loss_reason.append('HIV status unknown.')
+        return loss_reason
+
+    def part_time_resident_reason(self, loss_reason):
         if self.part_time_resident == 'No':
             loss_reason.append('Not resident.')
         if self.part_time_resident == 'Unknown':
             loss_reason.append('Residency unknown.')
+        return loss_reason
+
+    def passes_enrollment_criteria(self):
+        """Creates or updates (or deletes) the enrollment loss based on the
+        reason for not passing the enrollment checklist."""
+        loss_reason = []
+        loss_reason = self.age_reason(loss_reason)
+        if self.has_identity == 'No' or not self.identity:
+            loss_reason.append('No valid identity.')
+        loss_reason = self.part_time_resident_reason(loss_reason)
         if self.citizen == 'No' and self.legal_marriage == 'No':
             loss_reason.append('Not a citizen and not married to a citizen.')
         if (self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and
                 self.marriage_certificate == 'No'):
             loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
-        if self.literacy == 'No':
-            loss_reason.append('Illiterate with no literate witness.')
-        if self.literacy == 'Unknown':
-            loss_reason.append('Literacy unknown.')
+        loss_reason = self.literacy_reason(loss_reason)
         if self.age_in_years < 18 and self.guardian != 'Yes':
             loss_reason.append('Minor without guardian available.')
         if self.inability_to_participate != 'N/A':
             loss_reason.append('Mental Incapacity/Deaf/Mute/Too sick.')
-        if self.hiv_status == 'NEG':
-            loss_reason.append('HIV Negative.')
-        if self.hiv_status != 'POS' and self.hiv_status != 'NEG':
-            loss_reason.append('HIV status unknown.')
+        loss_reason = self.hiv_status_reason(loss_reason)
         if not self.identity:
             loss_reason.append('Identity unknown.')
         if not self.dob:
@@ -353,13 +368,16 @@ class ClinicEligibility (BaseSyncUuidModel):
             loss_reason.append('Citizenship unknown.')
         return (False if loss_reason else True, loss_reason)
 
-    @property
-    def reason_ineligible(self):
-        reason = []
+    def age_reason_ineligible(self, reason):
         if self.age_in_years < 16:
             reason.append('Minor.')
         if self.age_in_years > 64:
             reason.append('Too old.')
+        return reason
+
+    def reason_ineligible(self):
+        reason = []
+        reason = self.age_reason_ineligible(reason)
         if self.part_time_resident == 'No':
             reason.append('Not resident.')
         if self.part_time_resident == 'Unknown':
