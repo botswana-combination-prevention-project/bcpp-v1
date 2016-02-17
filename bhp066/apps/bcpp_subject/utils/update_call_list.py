@@ -20,7 +20,6 @@ def update_call_list(community, survey_slug, label, verbose=False):
     See (HouseholdStructure manager method add_household_members_from_survey).
     """
     SubjectReferral = get_model('bcpp_subject', 'SubjectReferral')
-    CallList = get_model('bcpp_subject', 'CallList')
     HicEnrollment = get_model('bcpp_subject', 'HicEnrollment')
     SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
     SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
@@ -94,18 +93,7 @@ def update_call_list(community, survey_slug, label, verbose=False):
                 hostname_created=subject_consent.hostname_created,
                 user_created=subject_consent.user_created,
             )
-            try:
-                call_list = CallList.objects.get(household_member=target_household_member, label=label)
-                if verbose:
-                    print '{}/{} {} already added to call list'.format(n, total, subject_consent.subject_identifier)
-
-            except CallList.DoesNotExist:
-                call_list = CallList.objects.create(**options)
-                if verbose:
-                    print '{}/{} Added {} to call list'.format(n, total, subject_consent.subject_identifier)
-            call_list.hostname_created = subject_consent.hostname_created
-            call_list.user_created = subject_consent.user_created
-            call_list.save()
+            call_list_update(options, subject_consent, label, target_household_member, n, total, verbose=False)
         except MapperError as e:
             print e
         except SubjectLocator.DoesNotExist:
@@ -113,3 +101,18 @@ def update_call_list(community, survey_slug, label, verbose=False):
                   'follow (SubjectLocator)'.format(member))
         except HouseholdStructureNotEnrolled as e:
             print str(e)
+
+
+def call_list_update(options, subject_consent, label, target_household_member, n, total, verbose=False):
+    CallList = get_model('bcpp_subject', 'CallList')
+    try:
+        call_list = CallList.objects.get(household_member=target_household_member, label=label)
+        if verbose:
+            print '{}/{} {} already added to call list'.format(n, total, subject_consent.subject_identifier)
+    except CallList.DoesNotExist:
+        call_list = CallList.objects.create(**options)
+        if verbose:
+            print '{}/{} Added {} to call list'.format(n, total, subject_consent.subject_identifier)
+    call_list.hostname_created = subject_consent.hostname_created
+    call_list.user_created = subject_consent.user_created
+    call_list.save()

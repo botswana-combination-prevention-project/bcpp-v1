@@ -14,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
-from edc.map.classes import Mapper, site_mappers
+from edc.map.classes import site_mappers
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -27,7 +27,7 @@ from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_lab.models import AliquotType, Panel
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+
 from bhp066.apps.bcpp_subject.models import HivResult
 
 from .factories import (SubjectConsentFactory, SubjectVisitFactory)
@@ -45,6 +45,8 @@ class BaseRuleGroupTestSetup(TestCase):
         FILTERED_DEFAULT_SEARCH=True,
     )
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:

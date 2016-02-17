@@ -13,10 +13,8 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 from edc_constants.constants import NOT_APPLICABLE
-from edc.map.classes import Mapper
 
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
@@ -39,7 +37,7 @@ class BaseScheduledModelTestCase(TestCase):
     def startup(self):
 
         site_mappers.autodiscover()
-
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:

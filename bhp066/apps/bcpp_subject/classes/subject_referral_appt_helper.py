@@ -41,7 +41,8 @@ class SubjectReferralApptHelper(object):
         try:
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
-            self.clinic_days = site_mappers.get_mapper(site_mappers.current_community).current_clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = site_mappers.get_mapper(
+                site_mappers.current_community).current_clinic_days.get(self.referral_clinic_type)
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)

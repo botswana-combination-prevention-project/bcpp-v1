@@ -2,7 +2,6 @@ from django.db.models import signals
 from datetime import datetime, timedelta, date
 
 from django.core import serializers
-from django.conf import settings
 from django.db.models import get_app, get_models
 from django.test import TestCase
 
@@ -17,15 +16,12 @@ from edc.core.crypto_fields.classes import FieldCryptor
 from edc.device.sync.classes import SerializeToTransaction
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.models import VisitDefinition
-from edc.subject.entry.models import Entry
 from edc.subject.appointment.models import Appointment
-from edc.map.classes import Mapper
 
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_lab.models import Panel, AliquotType
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
@@ -50,6 +46,8 @@ class TestNaturalKey(TestCase):
         FILTERED_DEFAULT_SEARCH=True,
     )
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
