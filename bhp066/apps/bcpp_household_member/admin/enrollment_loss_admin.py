@@ -23,7 +23,8 @@ class EnrollmentLossAdmin(BaseModelAdmin):
         if db_field.name == "household_member":
             household_members = HouseholdMember.objects.none()
             if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
-                household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
+                household_members = HouseholdMember.objects.filter(
+                    household_structure__exact=request.GET.get('household_structure', 0))
             kwargs["queryset"] = household_members
         return super(EnrollmentLossAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 

@@ -10,9 +10,34 @@ from ..models import EnrollmentChecklist
 
 class EnrollmentChecklistForm(BaseModelForm):
 
+    def validate_study_participation(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('study_participation') == 'No':
+            if not cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
+                raise forms.ValidationError('Confirmation on study participation is not required.'
+                                            'The question is not applicable')
+
+        if cleaned_data.get('study_participation') == 'Yes':
+            if cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
+                raise forms.ValidationError('Confirmation on study participation required.'
+                                            'The answer can not be Not Applicable.')
+
+    def validate_citizen(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('citizen') == 'No':
+            if cleaned_data.get('legal_marriage') == NOT_APPLICABLE:
+                raise forms.ValidationError('Participant is not a citizen, indicate if he/she is legally '
+                                            'married to a Botswana citizen.')
+            if (cleaned_data.get('legal_marriage') == 'Yes' and
+                    cleaned_data.get('marriage_certificate') == NOT_APPLICABLE):
+                raise forms.ValidationError('Participant is a non-citizen married to a citizen, indicate '
+                                            'if he/she produced marriage certificate as proof.')
+            if cleaned_data.get('legal_marriage') == 'No' and cleaned_data.get('marriage_certificate') == 'Yes':
+                raise forms.ValidationError('Participant is a non-citizen NOT married to a citizen, '
+                                            'there cannot be a marriage certificate.')
+
     def clean(self):
         cleaned_data = super(EnrollmentChecklistForm, self).clean()
-
         if not cleaned_data.get('household_member'):
             raise forms.ValidationError('Please select a household member.')
 
@@ -29,27 +54,9 @@ class EnrollmentChecklistForm(BaseModelForm):
             if not cleaned_data.get('marriage_certificate') == NOT_APPLICABLE:
                 raise forms.ValidationError('Marriage Certificate is not applicable, Participant is a citizen.')
 
-        if cleaned_data.get('study_participation') == 'No':
-            if not cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
-                raise forms.ValidationError('Confirmation on study participation is not required.'
-                                            'The question is not applicable')
+        self.study_participation()
+        self.validate_citizen()
 
-        if cleaned_data.get('study_participation') == 'Yes':
-            if cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
-                raise forms.ValidationError('Confirmation on study participation required.'
-                                            'The answer can not be Not Applicable.')
-
-        if cleaned_data.get('citizen') == 'No':
-            if cleaned_data.get('legal_marriage') == NOT_APPLICABLE:
-                raise forms.ValidationError('Participant is not a citizen, indicate if he/she is legally '
-                                            'married to a Botswana citizen.')
-            if (cleaned_data.get('legal_marriage') == 'Yes' and
-                    cleaned_data.get('marriage_certificate') == NOT_APPLICABLE):
-                raise forms.ValidationError('Participant is a non-citizen married to a citizen, indicate '
-                                            'if he/she produced marriage certificate as proof.')
-            if cleaned_data.get('legal_marriage') == 'No' and cleaned_data.get('marriage_certificate') == 'Yes':
-                raise forms.ValidationError('Participant is a non-citizen NOT married to a citizen, '
-                                            'there cannot be a marriage certificate.')
         age_in_years = relativedelta(date.today(), cleaned_data.get('dob')).years
         if age_in_years in [16, 17] and cleaned_data.get('is_minor') == NOT_APPLICABLE:
             raise forms.ValidationError('Subject a minor. Got {0} years. Answer to \'if minor, is there '

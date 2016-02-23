@@ -16,4 +16,9 @@ from .subject_refusal import SubjectRefusal
 from .subject_refusal_history import SubjectRefusalHistory
 from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
-from .signals import *
+from .signals import (
+    household_head_eligibility_on_post_save, household_head_eligibility_on_pre_save, subject_htc_on_post_save,
+    base_household_member_consent_on_post_save, subject_undecided_entry_on_post_save,
+    subject_member_status_form_on_post_save, household_member_on_post_save, household_member_on_pre_save,
+    enrollment_checklist_on_post_save, enrollment_checklist_on_post_delete, subject_htc_on_post_delete,
+    subject_refusal_on_post_delete)

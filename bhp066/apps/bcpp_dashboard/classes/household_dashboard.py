@@ -92,7 +92,9 @@ class HouseholdDashboard(Dashboard):
     @property
     def work_list(self):
         try:
-            work_list = HouseholdWorkList.objects.get(household_structure=self.household_structure)
+            work_list = HouseholdWorkList.objects.get(
+                household_structure=self.household_structure
+            )
         except HouseholdWorkList.DoesNotExist:
             work_list = None
         return work_list

@@ -124,6 +124,19 @@ def household_member_on_pre_save(sender, instance, raw, using, **kwargs):
             instance.update_hiv_history_on_pre_save(using, **kwargs)
 
 
+def create_subject_undecided(using, instance=None, household_structure=None):
+    if instance.absent or (instance.present_today == 'No' and instance.survival_status == ALIVE):
+        try:
+            SubjectAbsentee.objects.using(using).get(household_member=instance)
+        except SubjectAbsentee.DoesNotExist:
+            SubjectAbsentee.objects.using(using).create(
+                report_datetime=datetime.today(),
+                registered_subject=instance.registered_subject,
+                household_member=instance,
+                survey=household_structure.survey,
+            )
+
+
 @receiver(post_save, weak=False, dispatch_uid="household_member_on_post_save")
 def household_member_on_post_save(sender, instance, raw, created, using, **kwargs):
     """Updates enumerated, eligible_members on household structure."""
@@ -131,23 +144,15 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
         if isinstance(instance, HouseholdMember):
             # update registered subject
             instance.update_registered_subject_on_post_save(using, **kwargs)
-            members = HouseholdMember.objects.filter(household_structure__household__plot=instance.household_structure.household.plot).count()
+            members = HouseholdMember.objects.filter(
+                household_structure__household__plot=instance.household_structure.household.plot).count()
             instance.update_plot_on_post_save(instance, members)
 
             try:
                 household_structure = HouseholdStructure.objects.using(using).get(
                     pk=instance.household_structure.pk)
                 # create subject absentee if member_status == ABSENT otherwise delete the entries
-                if instance.absent or (instance.present_today == 'No' and instance.survival_status == ALIVE):
-                    try:
-                        SubjectAbsentee.objects.using(using).get(household_member=instance)
-                    except SubjectAbsentee.DoesNotExist:
-                        SubjectAbsentee.objects.using(using).create(
-                            report_datetime=datetime.today(),
-                            registered_subject=instance.registered_subject,
-                            household_member=instance,
-                            survey=household_structure.survey,
-                        )
+                create_subject_undecided(using, instance, household_structure)
                 # create subject undecided if member_status == UNDECIDED otherwise delete the entries
                 if instance.undecided:
                     try:
