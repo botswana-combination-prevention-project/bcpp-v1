@@ -1,1 +1,0 @@
-from .clinic_eligibility_tests import ClinicEligibilityTests

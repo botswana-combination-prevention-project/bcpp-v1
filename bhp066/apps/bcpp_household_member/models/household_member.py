@@ -4,7 +4,6 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
-from django.core.exceptions import MultipleObjectsReturned
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
@@ -263,6 +262,28 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             self.survey.survey_abbrev,
             is_bhs)
 
+    def update_member_status(self, selected_member_status, clear_enrollment_fields):
+        if self.member_status == BHS_SCREEN:
+            self.undecided = False
+            self.absent = False
+            self.eligible_htc = False
+            self.refused_htc = False
+            if self.refused:
+                self.clear_refusal
+            if self.enrollment_checklist_completed:
+                clear_enrollment_fields = self.clear_enrollment_checklist
+            if self.htc:
+                self.clear_htc
+        if self.member_status == REFUSED:
+            if self.enrollment_checklist_completed:
+                clear_enrollment_fields = self.clear_enrollment_checklist
+        else:
+            self.undecided = True if selected_member_status == UNDECIDED else False
+            self.absent = True if selected_member_status == ABSENT else False
+        if self.eligible_hoh:
+            self.relation = HEAD_OF_HOUSEHOLD
+        return clear_enrollment_fields
+
     def save(self, *args, **kwargs):
         selected_member_status = None
         using = kwargs.get('using')
@@ -281,25 +302,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             self.absent = True
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
-            if self.member_status == BHS_SCREEN:
-                self.undecided = False
-                self.absent = False
-                self.eligible_htc = False
-                self.refused_htc = False
-                if self.refused:
-                    self.clear_refusal
-                if self.enrollment_checklist_completed:
-                    clear_enrollment_fields = self.clear_enrollment_checklist
-                if self.htc:
-                    self.clear_htc
-            if self.member_status == REFUSED:
-                if self.enrollment_checklist_completed:
-                    clear_enrollment_fields = self.clear_enrollment_checklist
-            else:
-                self.undecided = True if selected_member_status == UNDECIDED else False
-                self.absent = True if selected_member_status == ABSENT else False
-        if self.eligible_hoh:
-            self.relation = HEAD_OF_HOUSEHOLD
+            clear_enrollment_fields = self.update_member_status(selected_member_status, clear_enrollment_fields)
         if self.intervention and self.plot_enrolled:
             self.eligible_htc = self.evaluate_htc_eligibility
         elif not self.intervention:
@@ -316,7 +319,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
-#         self.is_the_household_member_for_current_survey()
+        # self.is_the_household_member_for_current_survey()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -407,7 +410,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     @property
     def intervention(self):
-        return site_mappers.get_mapper(site_mappers.current_community).intervention
+        return site_mappers.get_current_mapper().intervention
 
     @property
     def plot_enrolled(self):
@@ -815,12 +818,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         except RegisteredSubject.DoesNotExist:
             # this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.id
-        except MultipleObjectsReturned:
-            registered_subject = RegisteredSubject.objects.filter(
-                registration_identifier=self.internal_identifier).first()
-            subject_identifier = registered_subject.subject_identifier
-            if not subject_identifier:
-                subject_identifier = registered_subject.registration_identifier
         return subject_identifier
 
     def get_hiv_history(self):
@@ -845,7 +842,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def is_bhs(self):
         """Returns True if the member was survey as part of the BHS."""
         plot_identifier = self.household_structure.household.plot.plot_identifier
-        clinic_plot_identifier = site_mappers.get_mapper(site_mappers.current_community).clinic_plot.plot_identifier
+        clinic_plot_identifier = site_mappers.get_current_mapper().clinic_plot.plot_identifier
         is_bhs = plot_identifier != clinic_plot_identifier
         return is_bhs
 

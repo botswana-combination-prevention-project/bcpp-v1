@@ -7,28 +7,37 @@ from .base_clinic_model_form import BaseClinicModelForm
 
 class ClinicSubjectLocatorForm (BaseClinicModelForm):
 
-    def clean(self):
-        cleaned_data = super(ClinicSubjectLocatorForm, self).clean()
-        # validating home_visits
-        if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):
-            raise forms.ValidationError(
-                'If participant has not given permission to make home_visits, do not give physical(home) '
-                'address details')
-        # requiring info to be keyed
-        # home_visit permission
-        if cleaned_data.get('home_visit_permission', None) == 'Yes' and not cleaned_data.get('physical_address', None):
-            raise forms.ValidationError(
-                'If participant has allowed you to make home visits, what is their physical address?')
-        # permission to followup
-        if cleaned_data.get('may_follow_up', None) == 'Yes' and not cleaned_data.get('subject_cell', None):
-            raise forms.ValidationError('If participant has allowed you to follow them up, what is their cell number?')
+    def validate_home_visit_permission(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('home_visit_permission', None):
+            if cleaned_data.get('home_visit_permission', None) == 'No':
+                if cleaned_data.get('physical_address', None):
+                    raise forms.ValidationError(
+                        'If participant has not given permission to make home_visits, do not give physical(home) '
+                        'address details')
+            else:
+                if not cleaned_data.get('physical_address', None):
+                    raise forms.ValidationError(
+                        'If participant has allowed you to make home visits, what is their physical address?')
+
+    def validate_may_follow_up(self):
         # may call work
+        cleaned_data = self.cleaned_data
         if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_place', None):
             raise forms.ValidationError(
                 'If participant has allowed you to call them at work, name work place location?')
         if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_phone', None):
             raise forms.ValidationError(
                 'If participant has allowed you to call them at work, give the work phone number?')
+
+    def clean(self):
+        cleaned_data = super(ClinicSubjectLocatorForm, self).clean()
+
+        self.validate_home_visit_permission()
+        # permission to followup
+        if cleaned_data.get('may_follow_up', None) == 'Yes' and not cleaned_data.get('subject_cell', None):
+            raise forms.ValidationError('If participant has allowed you to follow them up, what is their cell number?')
+        self.validate_may_follow_up()
         # Contact next-of-kin
         if cleaned_data.get('has_alt_contact', None) == 'Yes' and not cleaned_data.get('alt_contact_name', None):
             raise forms.ValidationError(

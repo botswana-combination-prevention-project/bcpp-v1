@@ -184,7 +184,7 @@ class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         return self.community
 
     def __unicode__(self):
-        if site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
+        if site_mappers.get_mapper(site_mappers.current_community)().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
             return self.plot.description
         return self.household_identifier
 

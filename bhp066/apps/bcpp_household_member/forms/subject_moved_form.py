@@ -13,8 +13,9 @@ class SubjectMovedForm(BaseMembershipForm):
         cleaned_data = self.cleaned_data
 
         if cleaned_data.get('moved_household') == NO and cleaned_data.get('moved_community') == YES:
-            raise forms.ValidationError('You have indicated that the participant has NOT moved out of the household but HAS '
-                                        'moved out of the community. Please correct.')
+            raise forms.ValidationError(
+                'You have indicated that the participant has NOT moved out of the household but HAS '
+                'moved out of the community. Please correct.')
 
         if cleaned_data.get('moved_community') == YES and not cleaned_data.get('new_community'):
             raise forms.ValidationError('Specify the name of the new community or UNKNOWN. Got participant has '

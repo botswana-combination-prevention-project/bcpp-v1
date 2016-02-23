@@ -12,6 +12,20 @@ from .base_household_member_form import BaseHouseholdMemberForm
 
 
 class HouseholdMemberForm(BaseHouseholdMemberForm):
+
+    def validate_on_gender(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('gender') == MALE:
+            if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in FEMALE_RELATIONS]:
+                raise forms.ValidationError(
+                    'Member is Male but you selected a female relation. Got {0}.'.format(
+                        [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
+        if cleaned_data.get('gender') == FEMALE:
+            if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in MALE_RELATIONS]:
+                raise forms.ValidationError(
+                    'Member is Female but you selected a male relation. Got {0}.'.format(
+                        [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
+
     def clean(self):
         cleaned_data = super(HouseholdMemberForm, self).clean()
         self.instance.check_eligible_representative_filled(
@@ -22,11 +36,7 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
             raise forms.ValidationError('This household member completed the HoH questionnaire. '
                                         'You cannot change their age to less than 18. '
                                         'Got {0}.'.format(cleaned_data.get('age_in_years')))
-        if cleaned_data.get('gender') == MALE:
-            if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in FEMALE_RELATIONS]:
-                raise forms.ValidationError(
-                    'Member is Male but you selected a female relation. Got {0}.'.format(
-                        [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
+        self.validate_on_gender()
 
         if cleaned_data.get('survival_status') == DEAD:
             if not cleaned_data.get('present_today') == NO:
@@ -34,11 +44,6 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
             if cleaned_data.get('study_resident') == NO or cleaned_data.get('study_resident') == YES:
                 self._errors["study_resident"] = ErrorList([u"Please, select don't want to answer "])
 
-        if cleaned_data.get('gender') == FEMALE:
-            if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in MALE_RELATIONS]:
-                raise forms.ValidationError(
-                    'Member is Female but you selected a male relation. Got {0}.'.format(
-                        [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
         if cleaned_data.get('relation') == HEAD_OF_HOUSEHOLD:
             # instance cannot be head if another head already exists
             self.instance.check_head_household(
