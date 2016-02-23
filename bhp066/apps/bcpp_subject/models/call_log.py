@@ -4,6 +4,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_constants.constants import CLOSED, OPEN, ALIVE
+from ..classes import CallHelper
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import EncryptedTextField
 from edc_base.model.fields import OtherCharField
@@ -17,6 +19,7 @@ from bhp066.apps.bcpp_survey.models.survey import Survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 from ..managers import CallLogEntryManager, CallLogManager
 from ..validators import date_in_survey
+from ..models import CallList
 
 from .subject_locator import SubjectLocator
 from .subject_consent import SubjectConsent
@@ -239,6 +242,48 @@ class CallLogEntry (BaseSyncUuidModel):
             self.call_log.household_member.initials,
             self.call_log.household_member.age_in_years,
         )
+
+    def call_outcome(self, call_list):
+        """Return a call outcome list."""
+        outcome = []
+        try:
+            call_log_entry = CallLogEntry.objects.filter(call_log=self.call_log).order_by('-call_datetime')[0]
+            # create or update member appointment
+            if call_log_entry.appt_date:
+                outcome.append('Appt')
+                call_helper = CallHelper(call_log_entry=call_log_entry)
+                call_helper.member_appointment
+                call_helper.work_list
+                call_list.member_appointment = call_helper.member_appointment
+            else:
+                if call_log_entry.survival_status in [ALIVE, DEAD]:
+                    outcome.append('Alive' if ALIVE else 'Deceased')
+                if call_log_entry.moved_community == YES:
+                    outcome.append('Moved')
+                if call_log_entry.call_again == YES:
+                    outcome.append('Call again')
+                elif call_log_entry.call_again == NO:
+                    outcome.append('Do not call')
+        except IndexError:
+            pass
+
+    def update_call_list(self):
+        """Update the call list."""
+
+        call_list = CallList.objects.get(
+            household_member=self.call_log.household_member,
+            label=self.call_log.label)
+        outcome = self.call_outcome(call_list)
+        call_list.call_outcome = '. '.join(outcome)
+        call_list.call_datetime = CallLogEntry.objects.filter(
+            call_log=self.call_log).order_by('-created')[0].call_datetime
+        call_list.call_attempts = CallLogEntry.objects.filter(
+            call_log=self.call_log).count()
+        if self.call_again == YES:
+            call_list.call_status = OPEN
+        else:
+            call_list.call_status = CLOSED
+        call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome', 'member_appointment'])
 
     def natural_key(self):
         return self.call_log.natural_key() + (self.call_datetime, )

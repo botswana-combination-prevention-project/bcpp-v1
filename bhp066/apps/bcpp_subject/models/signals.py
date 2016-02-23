@@ -5,14 +5,14 @@ from django.core.exceptions import ValidationError
 
 from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.data_manager.models import TimePointStatus
-from edc_constants.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD, COMPLETE, PENDING
+from edc_constants.constants import CLOSED, COMPLETE, PENDING
 
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 from bhp066.apps.bcpp_subject.constants import BASELINE_CODES
 
 from ..constants import POC_VIRAL_LOAD
-from ..classes import SubjectReferralHelper, CallHelper
-from ..models import (SubjectReferral, SubjectVisit, CallLogEntry, CallList,
+from ..classes import SubjectReferralHelper
+from ..models import (SubjectReferral, SubjectVisit, CallLogEntry,
                       PimaVl, SubjectConsent)
 
 
@@ -158,40 +158,7 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
     """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome')."""
     if not raw:
         if isinstance(instance, CallLogEntry):
-            call_list = CallList.objects.get(
-                household_member=instance.call_log.household_member,
-                label=instance.call_log.label)
-            outcome = []
-            try:
-                call_log_entry = CallLogEntry.objects.filter(call_log=instance.call_log).order_by('-call_datetime')[0]
-                # create or update member appointment
-                if call_log_entry.appt_date:
-                    outcome.append('Appt')
-                    call_helper = CallHelper(call_log_entry=call_log_entry)
-                    call_helper.member_appointment
-                    call_helper.work_list
-                    call_list.member_appointment = call_helper.member_appointment
-                else:
-                    if call_log_entry.survival_status in [ALIVE, DEAD]:
-                        outcome.append('Alive' if ALIVE else 'Deceased')
-                    if call_log_entry.moved_community == YES:
-                        outcome.append('Moved')
-                    if call_log_entry.call_again == YES:
-                        outcome.append('Call again')
-                    elif call_log_entry.call_again == NO:
-                        outcome.append('Do not call')
-            except IndexError:
-                pass
-            call_list.call_outcome = '. '.join(outcome)
-            call_list.call_datetime = CallLogEntry.objects.filter(
-                call_log=instance.call_log).order_by('-created')[0].call_datetime
-            call_list.call_attempts = CallLogEntry.objects.filter(
-                call_log=instance.call_log).count()
-            if instance.call_again == YES:
-                call_list.call_status = OPEN
-            else:
-                call_list.call_status = CLOSED
-            call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome', 'member_appointment'])
+            instance.udate_call_list()
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
