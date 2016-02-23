@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import get_model
 
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_constants.constants import CLOSED, OPEN, ALIVE
@@ -19,7 +20,6 @@ from bhp066.apps.bcpp_survey.models.survey import Survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 from ..managers import CallLogEntryManager, CallLogManager
 from ..validators import date_in_survey
-from ..models import CallList
 
 from .subject_locator import SubjectLocator
 from .subject_consent import SubjectConsent
@@ -270,6 +270,7 @@ class CallLogEntry (BaseSyncUuidModel):
     def update_call_list(self):
         """Update the call list."""
 
+        CallList = get_model("bcpp_subject", "CallList")
         call_list = CallList.objects.get(
             household_member=self.call_log.household_member,
             label=self.call_log.label)
