@@ -25,7 +25,6 @@ from bhp066.apps.bcpp_survey.models import Survey
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from .factories import SubjectConsentFactory, SubjectVisitFactory
 
@@ -33,6 +32,7 @@ from .factories import SubjectConsentFactory, SubjectVisitFactory
 from edc_quota.client.models import Quota
 from edc_quota.client.exceptions import QuotaReachedError
 from edc.map.classes import Mapper
+from edc.map.classes.controller import site_mappers
 
 
 class TestPlotMapper(Mapper):
@@ -60,6 +60,8 @@ class TestPimaVL(TestCase):
         FILTERED_DEFAULT_SEARCH=True,
     )
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
