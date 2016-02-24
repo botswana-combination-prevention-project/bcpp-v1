@@ -35,57 +35,41 @@ class PackingListHelper(object):
         packing_list_item.received = True
         packing_list_item.save(update_fields=['received', 'received_datetime'])
 
-    def reconcile_with_destination(self, exception_cls=None, print_messages=None):
-        """Flags packing list items as received based on queries into LIS database at
-        settings.LAB_IMPORT_DMIS_DATA_SOURCE.
+    def received_packing_list(self):
+        for received_datetime, edc_specimen_identifier in self.received_items:
+            try:
+                packing_list_item = PackingListItem.objects.get(
+                    item_reference=edc_specimen_identifier, received=False)
+                self.update_packing_list_item(packing_list_item, received_datetime)
+                print(edc_specimen_identifier + ' (received)')
+            except MultipleObjectsReturned:
+                for packing_list_item in PackingListItem.objects.filter(
+                        item_reference=edc_specimen_identifier, received=False):
+                    self.update_packing_list_item(packing_list_item, received_datetime)
+                    print(edc_specimen_identifier + ' (received - dup)')
+            except PackingListItem.DoesNotExist:
+                pass
 
-        Queries BHHRL LIS receiving records and storage records."""
-        def print(*args, **kwargs):
-            if print_messages:
-                return __builtins__.print(*args, **kwargs)
-        try:
-            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
-                with cnxn.cursor() as self.cursor:
-                    for received_datetime, edc_specimen_identifier in self.received_items:
-                        try:
-                            packing_list_item = PackingListItem.objects.get(
-                                item_reference=edc_specimen_identifier, received=False)
-                            self.update_packing_list_item(packing_list_item, received_datetime)
-                            print(edc_specimen_identifier + ' (received)')
-                        except MultipleObjectsReturned:
-                            for packing_list_item in PackingListItem.objects.filter(
-                                    item_reference=edc_specimen_identifier, received=False):
-                                self.update_packing_list_item(packing_list_item, received_datetime)
-                                print(edc_specimen_identifier + ' (received - dup)')
-                        except PackingListItem.DoesNotExist:
-                            pass
-                    for received_datetime, edc_specimen_identifier, alpha_code in self.stored_items:
-                        try:
-                            packing_list_item = PackingListItem.objects.get(
-                                item_reference=edc_specimen_identifier, received=False)
-                            Aliquot.objects.get(
-                                aliquot_identifier=edc_specimen_identifier, aliquot_type__alpha_code=alpha_code)
-                            self.update_packing_list_item(packing_list_item, received_datetime)
-                            print(edc_specimen_identifier + ' (received in storage)')
-                        except MultipleObjectsReturned:
-                            for packing_list_item in PackingListItem.objects.filter(
-                                    item_reference=edc_specimen_identifier, received=False):
-                                self.update_packing_list_item(packing_list_item, received_datetime)
-                                print(edc_specimen_identifier + ' (received in storage - dup)')
-                        except PackingListItem.DoesNotExist:
-                            pass
-                        except Aliquot.DoesNotExist:
-                            print(edc_specimen_identifier + ' Wrong specimen type. Got {}.'.format(alpha_code))
-        except pyodbc.Error as error:
-            if exception_cls:
-                raise exception_cls(str(error))
-            else:
-                raise
-        print('Received packing list items for {}:'.format(
-            site_mappers.get_mapper(site_mappers.current_community).map_area, PackingListItem.objects.filter(received=True).count()))
-        for panel in PackingListItem.objects.values('panel__name').filter(received=True).annotate(Count('panel')):
-            print('{}: {}'.format(panel.get('panel__name'), panel.get('panel__count')))
-        print('List of pending packing list items for {}:'.format(site_mappers.get_mapper(site_mappers.current_community).map_area))
+    def received_storage(self):
+        for received_datetime, edc_specimen_identifier, alpha_code in self.stored_items:
+            try:
+                packing_list_item = PackingListItem.objects.get(
+                    item_reference=edc_specimen_identifier, received=False)
+                Aliquot.objects.get(
+                    aliquot_identifier=edc_specimen_identifier, aliquot_type__alpha_code=alpha_code)
+                self.update_packing_list_item(packing_list_item, received_datetime)
+                print(edc_specimen_identifier + ' (received in storage)')
+            except MultipleObjectsReturned:
+                for packing_list_item in PackingListItem.objects.filter(
+                        item_reference=edc_specimen_identifier, received=False):
+                    self.update_packing_list_item(packing_list_item, received_datetime)
+                    print(edc_specimen_identifier + ' (received in storage - dup)')
+            except PackingListItem.DoesNotExist:
+                pass
+            except Aliquot.DoesNotExist:
+                print(edc_specimen_identifier + ' Wrong specimen type. Got {}.'.format(alpha_code))
+
+    def packing_list_items(self):
         for packing_list_item in PackingListItem.objects.filter(received=False).order_by('created'):
             try:
                 item_datetime = packing_list_item.item_datetime.strftime('%Y-%m-%d')
@@ -101,3 +85,30 @@ class PackingListHelper(object):
                 item_datetime,
                 panel_name,
             ))
+
+    def reconcile_with_destination(self, exception_cls=None, print_messages=None):
+        """Flags packing list items as received based on queries into LIS database at
+        settings.LAB_IMPORT_DMIS_DATA_SOURCE.
+
+        Queries BHHRL LIS receiving records and storage records."""
+        def print(*args, **kwargs):
+            if print_messages:
+                return __builtins__.print(*args, **kwargs)
+        try:
+            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
+                with cnxn.cursor() as self.cursor:
+                    self.received_packing_list()
+                    self.received_storage()
+        except pyodbc.Error as error:
+            if exception_cls:
+                raise exception_cls(str(error))
+            else:
+                raise
+        print('Received packing list items for {}:'.format(
+            site_mappers.get_mapper(site_mappers.current_community).map_area,
+            PackingListItem.objects.filter(received=True).count()))
+        for panel in PackingListItem.objects.values('panel__name').filter(received=True).annotate(Count('panel')):
+            print('{}: {}'.format(panel.get('panel__name'), panel.get('panel__count')))
+        print('List of pending packing list items for {}:'.format(
+            site_mappers.get_mapper(site_mappers.current_community).map_area))
+        self.packing_list_items()

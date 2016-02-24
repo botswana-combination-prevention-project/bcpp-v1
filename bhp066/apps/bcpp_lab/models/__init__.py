@@ -16,4 +16,4 @@ from .receive import Receive
 from .result import Result
 from .result_item import ResultItem
 from .subject_requisition import SubjectRequisition
-from .signals import *
+from .signals import (clinic_requisition_on_post_save, requisition_not_drawn, create_preorder_on_post_save)

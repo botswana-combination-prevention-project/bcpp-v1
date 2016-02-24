@@ -7,7 +7,8 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 
 from bhp066.apps.bcpp_lab.models import AliquotType, Panel
 from bhp066.apps.bcpp_subject.models import HivCareAdherence
-from bhp066.apps.bcpp_subject.tests import BaseRuleGroupTestSetup
+#from bhp066.apps.bcpp_subject.tests import BaseRuleGroupTestSetup
+from bhp066.apps.bcpp_subject.tests.base_rule_group_test_setup import BaseRuleGroupTestSetup
 from ..models import Aliquot, Receive, PreOrder, SubjectRequisition, AliquotProfile
 
 from .factories import SubjectRequisitionFactory, ProcessingFactory
