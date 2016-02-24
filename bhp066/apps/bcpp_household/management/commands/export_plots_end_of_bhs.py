@@ -14,6 +14,86 @@ from bhp066.apps.bcpp_household.models import Plot, HouseholdStructure, Househol
 from ...choices import INACCESSIBLE
 
 
+def habitable_plot_status(plot, survey):
+    status = []
+    if plot.household_count == 0:
+        raise TypeError('Unexpected plot status, household_count==0')
+    else:
+        for household_structure in HouseholdStructure.objects.filter(
+                survey=survey, household__plot=plot).exclude(enrolled=True):
+            if HouseholdLogEntry.objects.filter(
+                    household_log__household_structure=household_structure):
+                household_structure.household.replaced_by = None
+                replacement_helper = ReplacementHelper(household_structure=household_structure)
+                if not replacement_helper.household_replacement_reason:
+                    replacement_reason = ''.join(
+                        [log.household_status for log in HouseholdLogEntry.objects.filter(
+                            household_log__household_structure=household_structure).order_by('created')][-1:]) or '-'
+                    if replacement_reason == 'eligible_representative_present':
+                        replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
+                    status.append(
+                        'htc {}'.format(
+                            (replacement_helper.household_replacement_reason or replacement_reason).replace(' ', '_')))
+    return status
+
+
+def hic_status(plot):
+    # flagged by BHS to hand over to htc on replacement
+    status = []
+    if plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+        status = ['--- {}'.format(plot.status, plot.selected or '0')]
+    else:
+        status = ['htc'.format(plot.selected or '0')]
+    return status
+
+
+def non_bhs_htc_plot_status(plot, survey):
+    status = []
+    if plot.status is None:
+        # plot never confirmed or replaced, give to htc
+        status.append('htc {}'.format(plot.action, plot.selected))
+    elif plot.status in [INACCESSIBLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+        # not a plot
+        status.append('--- {}'.format(plot.status, plot.selected))
+    elif plot.status == RESIDENTIAL_HABITABLE:
+        status += habitable_plot_status(plot, survey)
+    else:
+        raise TypeError('Unexpected plot status')
+    return status
+
+
+def write_to_file(target_path, header_row, community_name, survey, status_options, cnt):
+    with open(os.path.expanduser(target_path), 'w') as f:
+        writer = csv.writer(f, delimiter='|')
+        writer.writerow(header_row)
+        # determine a status comment on each plot
+        for plot in Plot.objects.filter(
+                community=community_name,
+                selected__isnull=False).exclude(bhs=True).order_by('selected', 'plot_identifier'):
+            status = []
+            if plot.bhs:
+                # enrolled in bhs
+                status = ['bhs'.format(plot.selected)]
+            elif plot.htc:
+                status = hic_status(plot)
+            else:
+                status += non_bhs_htc_plot_status(plot, survey)
+            if status:
+                status = '{}'.format(', '.join(status))
+            else:
+                status = 'htc not visited'
+            print status
+            cnt += 1
+            writer.writerow([plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                             plot.gps_target_lat, plot.gps_target_lon, 'Yes' if plot.bhs else 'No',
+                             status])
+            for s in status.split(','):
+                try:
+                    status_options[s] += 1
+                except KeyError:
+                    status_options.update({s: 1})
+
+
 class Command(BaseCommand):
 
     APP_NAME = 0
@@ -62,68 +142,7 @@ class Command(BaseCommand):
             community_name, datetime.today().strftime('%Y%m%d%H%M'))
         cnt = 0
         status_options = {}
-        with open(os.path.expanduser(target_path), 'w') as f:
-            writer = csv.writer(f, delimiter='|')
-            writer.writerow(header_row)
-            # determine a status comment on each plot
-            for plot in Plot.objects.filter(
-                    community=community_name,
-                    selected__isnull=False).exclude(bhs=True).order_by('selected', 'plot_identifier'):
-                status = []
-                if plot.bhs:
-                    # enrolled in bhs
-                    status = ['bhs'.format(plot.selected)]
-                elif plot.htc:
-                    # flagged by BHS to hand over to htc on replacement
-                    if plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-                        status = ['--- {}'.format(plot.status, plot.selected or '0')]
-                    else:
-                        status = ['htc'.format(plot.selected or '0')]
-                else:
-                    if plot.status is None:
-                        # plot never confirmed or replaced, give to htc
-                        status.append('htc {}'.format(plot.action, plot.selected))
-                    elif plot.status in [INACCESSIBLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-                        # not a plot
-                        status.append('--- {}'.format(plot.status, plot.selected))
-                    elif plot.status == RESIDENTIAL_HABITABLE:
-                        if plot.household_count == 0:
-                            raise TypeError('Unexpected plot status, household_count==0')
-                        else:
-                            for household_structure in HouseholdStructure.objects.filter(
-                                    survey=survey, household__plot=plot).exclude(enrolled=True):
-                                if HouseholdLogEntry.objects.filter(
-                                        household_log__household_structure=household_structure):
-                                    household_structure.household.replaced_by = None
-                                    replacement_helper = ReplacementHelper(household_structure=household_structure)
-                                    if not replacement_helper.household_replacement_reason:
-                                        replacement_reason = ''.join(
-                                            [log.household_status for log in HouseholdLogEntry.objects.filter(
-                                                household_log__household_structure=household_structure).order_by(
-                                                    'created')][-1:]) or '-'
-                                        if replacement_reason == 'eligible_representative_present':
-                                            replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
-                                    status.append(
-                                        'htc {}'.format(
-                                            (replacement_helper.household_replacement_reason or replacement_reason
-                                             ).replace(' ', '_'))
-                                    )
-                    else:
-                        raise TypeError('Unexpected plot status')
-                if status:
-                    status = '{}'.format(', '.join(status))
-                else:
-                    status = 'htc not visited'
-                print status
-                cnt += 1
-                writer.writerow([plot.plot_identifier, plot.action, plot.status, plot.household_count,
-                                 plot.gps_target_lat, plot.gps_target_lon, 'Yes' if plot.bhs else 'No',
-                                 status])
-                for s in status.split(','):
-                    try:
-                        status_options[s] += 1
-                    except KeyError:
-                        status_options.update({s: 1})
+        write_to_file(target_path, header_row, community_name, survey, status_options, cnt)
         print 'exported {} records of {}.'.format(cnt, Plot.objects.filter(
             community=community_name, selected__isnull=False).order_by('selected', 'plot_identifier').count())
         print os.path.expanduser(target_path)

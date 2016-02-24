@@ -11,7 +11,8 @@ class PlotForm(BaseModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
 
-        if self.instance.plot_identifier == site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier:
+        if self.instance.plot_identifier == site_mappers.get_mapper(
+                site_mappers.current_community).clinic_plot_identifier:
             raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
                                         'It may not be edited by a user.')
         try:
