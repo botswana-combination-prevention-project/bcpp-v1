@@ -47,8 +47,7 @@ class SectionHouseholdView(BaseSectionView):
             results_per_page: (default: 25)
         """
         current_survey = Survey.objects.current_survey()
-        if not results_per_page:
-            results_per_page = 25
+        results_per_page = results_per_page or 25
         if device.is_central_server:
             if current_survey.survey_abbrev == 'Y1':
                 _search_result = []

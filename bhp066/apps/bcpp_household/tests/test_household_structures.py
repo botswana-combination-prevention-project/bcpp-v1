@@ -14,10 +14,10 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
+from edc.map.classes import site_mappers
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from .factories.plot_factory import PlotFactory
 from .factories.household_log_entry_factory import HouseholdLogEntryFactory
@@ -28,6 +28,8 @@ class TestHouseholdStructures(TestCase):
     """Test plots and Households."""
 
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -120,10 +122,7 @@ class TestHouseholdStructures(TestCase):
 
     def test_enrolled1(self):
         """Assert enrolled is False if members but none consented."""
-<<<<<<< HEAD
-=======
 
->>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):

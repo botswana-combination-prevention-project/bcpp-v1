@@ -33,7 +33,7 @@ class TestHouseholds(TestCase):
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
         self.community = 'test_community'
-        self.mapper = site_mappers.get_registry(self.community)()
+        self.mapper = site_mappers.get_mapper(self.community)
 
         self.survey = Survey.objects.all()[0]
 

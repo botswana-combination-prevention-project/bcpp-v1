@@ -26,7 +26,6 @@ from bhp066.apps.bcpp_household_member.models import SubjectAbsentee
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bhp066.apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..constants import (RARELY_NEVER_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED)
@@ -36,11 +35,15 @@ from .factories.household_refusal_factory import HouseholdRefusalFactory
 from .factories.household_assessment_factory import HouseholdAssessmentFactory
 from .factories.reprentative_eligibility_factory import RepresentativeEligibilityFactory
 from edc.device.sync.tests.factories.producer_factory import ProducerFactory
+from edc.map.classes.controller import site_mappers
+from edc.device.sync.models.outgoing_transaction import OutgoingTransaction
 
 
 class TestPlotReplacement(TestCase):
 
     def setUp(self):
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -598,6 +601,7 @@ class TestPlotReplacement(TestCase):
             crypt.save(using='dispatch_destination')
         bcpp_dispatch = BcppDispatchController(
             using_source='default', using_destination=self.producer.name, dispatch_container_instance=plot)
+        OutgoingTransaction.objects.all().delete()
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         options = dict(is_dispatched=True,
