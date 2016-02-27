@@ -127,6 +127,28 @@ class ReplacementHelper(object):
     def plot_replacement_reason(self):
         return 'replaced. NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE 5% plot'
 
+    def replaceable_ressidential_habitables(self):
+        """Replaceable residential habitable households."""
+        replaceable = False
+        if self.plot.status == RESIDENTIAL_HABITABLE:
+            if self.household_structure.refused_enumeration:
+                replaceable = True
+                # self.replacement_reason = 'household refused_enumeration'
+            elif self.all_eligible_members_refused:
+                replaceable = True
+                # self.replacement_reason = 'household all_eligible_members_refused'
+            elif self.eligible_representative_absent:
+                replaceable = True
+                # self.replacement_reason = 'household eligible_representative_absent'
+            elif self.all_eligible_members_absent:
+                replaceable = True
+                self.replacement_reason = 'household all_eligible_members_absent'
+            elif (self.household_structure.failed_enumeration and
+                  self.household_structure.no_informant):
+                replaceable = True
+                # self.replacement_reason = 'household failed_enumeration no_informant'
+        return replaceable
+
     @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot.
@@ -141,23 +163,7 @@ class ReplacementHelper(object):
         if self.household_replacement_reason:
             replaceable = True
         try:
-            if self.plot.status == RESIDENTIAL_HABITABLE:
-                if self.household_structure.refused_enumeration:
-                    replaceable = True
-                    # self.replacement_reason = 'household refused_enumeration'
-                elif self.all_eligible_members_refused:
-                    replaceable = True
-                    # self.replacement_reason = 'household all_eligible_members_refused'
-                elif self.eligible_representative_absent:
-                    replaceable = True
-                    # self.replacement_reason = 'household eligible_representative_absent'
-                elif self.all_eligible_members_absent:
-                    replaceable = True
-                    self.replacement_reason = 'household all_eligible_members_absent'
-                elif (self.household_structure.failed_enumeration and
-                      self.household_structure.no_informant):
-                    replaceable = True
-                    # self.replacement_reason = 'household failed_enumeration no_informant'
+            replaceable = self.replaceable_ressidential_habitables()
         except AttributeError as attribute_error:
             if 'has no attribute \'household\'' in str(attribute_error):
                 pass
@@ -262,9 +268,9 @@ class ReplacementHelper(object):
         try:
             using_producer = Producer.objects.get(settings_key=using_producer).settings_key
             load_producer_db_settings()
-            if not TransactionHelper().outgoing_transactions(
-                    socket.gethostname(), using_producer, raise_exception=True):
-                if not TransactionHelper().has_incoming_for_producer(using_producer, 'default'):
+            if (not TransactionHelper().outgoing_transactions(
+                    socket.gethostname(), using_producer, raise_exception=True)) and (
+                        not TransactionHelper().has_incoming_for_producer(using_producer, 'default')):
                     available_plots = self.available_plots
                     for replaceable_household, _ in self.replaceable_households(using_producer):
                         try:
@@ -299,8 +305,8 @@ class ReplacementHelper(object):
                         except OperationalError as operational_error:
                             raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
                                                    'Got {}'.format(using_producer, str(operational_error)))
-                else:
-                    raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
+            else:
+                raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
         except Producer.DoesNotExist as does_not_exist:
             raise ReplacementError('Unable to find to producer with settings key \'{}\'. '
                                    'Got {}'.format(using_producer, str(does_not_exist)))
@@ -315,9 +321,9 @@ class ReplacementHelper(object):
         try:
             using_producer = Producer.objects.get(settings_key=using_producer).settings_key
             load_producer_db_settings()
-            if not TransactionHelper().outgoing_transactions(
-                    socket.gethostname(), using_producer, raise_exception=True):
-                if not TransactionHelper().has_incoming_for_producer(using_producer, 'default'):
+            if (not TransactionHelper().outgoing_transactions(
+                    socket.gethostname(), using_producer, raise_exception=True)) and (
+                        not TransactionHelper().has_incoming_for_producer(using_producer, 'default')):
                     available_plots = self.available_plots
                     for replaceable_plot, _ in self.replaceable_plots(using_producer):
                         try:
@@ -352,8 +358,8 @@ class ReplacementHelper(object):
                         except OperationalError as operational_error:
                             raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
                                                    'Got {}'.format(using_producer, str(operational_error)))
-                else:
-                    raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
+            else:
+                raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
         except Producer.DoesNotExist as does_not_exist:
             raise ReplacementError('Unable to find to producer with settings key \'{}\'. '
                                    'Got {}'.format(using_producer, str(does_not_exist)))

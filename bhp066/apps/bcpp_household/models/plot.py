@@ -329,7 +329,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         if instance.pk:
-            for _ in range(0, count):
+            while count > 0:
                 Household.objects.create(**{
                     'plot': instance,
                     'gps_target_lat': instance.gps_target_lat,
@@ -340,6 +340,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                     'gps_degrees_s': instance.gps_degrees_s,
                     'gps_minutes_e': instance.gps_minutes_e,
                     'gps_minutes_s': instance.gps_minutes_s})
+                count -= 1
 
     def allow_enrollment(self, using, exception_cls=None, plot_instance=None, update_fields=None):
         """Raises an exception if an attempt is made to edit a plot after
@@ -355,95 +356,102 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
             if (not mapper_instance.map_code == '00' and not
                 plot_instance.bhs and
-                    date.today() > mapper_instance().current_survey_dates.full_enrollment_date):
+                    date.today() > mapper_instance.current_survey_dates.full_enrollment_date):
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                     'data related to it, may not be modified. '
                                     'See site_mappers'.format(
                                         self.community, mapper_instance.current_survey_dates.full_enrollment_date))
         return True
 
+    def household_valid_to_delete(self, instance, using=None):
+        """ Checks whether there is a plot log entry for each log. If it does not exists the
+        household can be deleted. """
+        Household = models.get_model('bcpp_household', 'Household')
+        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
+        allowed_to_delete = []
+        for hh in Household.objects.using(using).filter(plot=instance):
+            if (HouseholdLogEntry.objects.filter(
+                    household_log__household_structure__household=hh).exists() or hh in allowed_to_delete):
+                continue
+            allowed_to_delete.append(hh)
+        return allowed_to_delete
+
+    def validate_number_to_delete(self, instance, existing_no, using=None):
+            if (existing_no in [0, 1] or instance.household_count == existing_no or
+                    instance.household_count > existing_no or instance.household_count == 0):
+                return False
+            else:
+                if self.household_valid_to_delete(instance, using):
+                    del_valid = existing_no - instance.household_count
+                    if len(self.household_valid_to_delete(instance, using)) < del_valid:
+                        return len(self.household_valid_to_delete(instance, using))
+                    else:
+                        return del_valid
+                return False
+
+    def delete_households_for_non_residential(self, instance, existing_no, using=None):
+        Household = models.get_model('bcpp_household', 'Household')
+        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        household_to_delete = self.household_valid_to_delete(instance, using)
+        try:
+            if len(household_to_delete) == existing_no and existing_no > 0:
+                hh = HouseholdStructure.objects.filter(household__in=household_to_delete)
+                hl = HouseholdLog.objects.filter(household_structure__in=hh)
+                hl.delete()  # delete household_logs
+                hh.delete()  # delete household_structure
+                for hh in household_to_delete:
+                    with transaction.atomic():
+                        Household.objects.get(id=hh.id).delete()  # delete household
+                return True
+            else:
+                return False
+        except IntegrityError:
+            return False
+        except DatabaseError:
+            return False
+
+    def delete_household(self, instance, existing_no, using=None):
+        Household = models.get_model('bcpp_household', 'Household')
+        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        try:
+            delete_no = self.validate_number_to_delete(
+                instance, existing_no, using) if self.validate_number_to_delete(
+                instance,
+                existing_no,
+                using) else 0
+            if not delete_no == 0:
+                deletes = self.household_valid_to_delete(instance, using)[:delete_no]
+                hh = HouseholdStructure.objects.filter(household__in=deletes)
+                hl = HouseholdLog.objects.filter(household_structure__in=hh)
+                hl.delete()  # delete household_logs
+                hh.delete()  # delete household_structure
+                for hh in deletes:
+                    with transaction.atomic():
+                        Household.objects.get(id=hh.id).delete()  # delete household
+                return True
+            else:
+                return False
+        except IntegrityError:
+            return False
+        except DatabaseError:
+            return False
+
+    def delete_confirmed_household(self, instance, existing_no, using=None):
+        """ Deletes required number of households. """
+        if instance.status in [RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
+            return self.delete_households_for_non_residential(instance, existing_no, using)
+        else:
+            return self.delete_household(instance, existing_no, using)
+
     def safe_delete_households(self, existing_no, instance=None, using=None):
         """ Deletes households and HouseholdStructure if member_count==0 and no log entry.
             If there is a household log entry, this DOES NOT delete the household
         """
-        Household = models.get_model('bcpp_household', 'Household')
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
         instance = instance or self
         using = using or 'default'
-
-        def household_valid_to_delete(instance):
-            """ Checks whether there is a plot log entry for each log. If it does not exists the
-            household can be deleted. """
-            allowed_to_delete = []
-            for hh in Household.objects.using(using).filter(plot=instance):
-                if (HouseholdLogEntry.objects.filter(
-                        household_log__household_structure__household=hh).exists() or hh in allowed_to_delete):
-                    continue
-                allowed_to_delete.append(hh)
-            return allowed_to_delete
-
-        def delete_confirmed_household(instance, existing_no):
-            """ Deletes required number of households. """
-            def validate_number_to_delete(instance, existing_no):
-                if (existing_no in [0, 1] or instance.household_count == existing_no or
-                        instance.household_count > existing_no or instance.household_count == 0):
-                    return False
-                else:
-                    if household_valid_to_delete(instance):
-                        del_valid = existing_no - instance.household_count
-                        if len(household_valid_to_delete(instance)) < del_valid:
-                            return len(household_valid_to_delete(instance))
-                        else:
-                            return del_valid
-                    return False
-
-            def delete_households_for_non_residential(instance, existing_no):
-                household_to_delete = household_valid_to_delete(instance)
-                try:
-                    if len(household_to_delete) == existing_no and existing_no > 0:
-                        hh = HouseholdStructure.objects.filter(household__in=household_to_delete)
-                        hl = HouseholdLog.objects.filter(household_structure__in=hh)
-                        hl.delete()  # delete household_logs
-                        hh.delete()  # delete household_structure
-                        for hh in household_to_delete:
-                            with transaction.atomic():
-                                Household.objects.get(id=hh.id).delete()  # delete household
-                        return True
-                    else:
-                        return False
-                except IntegrityError:
-                    return False
-                except DatabaseError:
-                    return False
-
-            def delete_household(instance, existing_no):
-                try:
-                    delete_no = validate_number_to_delete(instance, existing_no) if validate_number_to_delete(
-                        instance,
-                        existing_no) else 0
-                    if not delete_no == 0:
-                        deletes = household_valid_to_delete(instance)[:delete_no]
-                        hh = HouseholdStructure.objects.filter(household__in=deletes)
-                        hl = HouseholdLog.objects.filter(household_structure__in=hh)
-                        hl.delete()  # delete household_logs
-                        hh.delete()  # delete household_structure
-                        for hh in deletes:
-                            with transaction.atomic():
-                                Household.objects.get(id=hh.id).delete()  # delete household
-                        return True
-                    else:
-                        return False
-                except IntegrityError:
-                    return False
-                except DatabaseError:
-                    return False
-            if instance.status in [RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
-                return delete_households_for_non_residential(instance, existing_no)
-            else:
-                return delete_household(instance, existing_no)
-        return delete_confirmed_household(instance, existing_no)
+        return self.delete_confirmed_household(instance, existing_no)
 
     def create_or_delete_households(self, instance=None, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.

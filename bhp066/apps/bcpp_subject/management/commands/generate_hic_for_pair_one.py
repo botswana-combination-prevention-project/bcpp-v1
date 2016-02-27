@@ -12,19 +12,27 @@ def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enroll
     SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
     ResidencyMobility = get_model('bcpp_subject', 'ResidencyMobility')
     HicEnrollment = get_model('bcpp_subject', 'HicEnrollment')
-    n += 1
-    subject_visit = SubjectVisit.objects.get(
-        household_member=subject_consent.household_member,
-        appointment__visit_definition__time_point=0)
-    residency_and_mobility = ResidencyMobility.objects.get(
-        subject_visit=subject_visit)
+    try:
+        subject_visit = SubjectVisit.objects.get(
+            household_member=subject_consent.household_member,
+            appointment__visit_definition__time_point=0)
+    except SubjectVisit.DoesNotExist:
+        print '{}.   missing SubjectVisit'.format(n)
+    try:
+        residency_and_mobility = ResidencyMobility.objects.get(
+            subject_visit=subject_visit)
+    except ResidencyMobility.DoesNotExist:
+        print '{}.   missing ResidencyMobility'.format(n)
     if residency_and_mobility.modified.year == 2013:
         # this question has flipped after pair 1
         residency_and_mobility.intend_residency = YES if(
             residency_and_mobility.intend_residency == NO) else NO
         residency_and_mobility.save()
-    subject_locator = SubjectLocator.objects.get(
-        subject_visit=subject_visit)
+    try:
+        subject_locator = SubjectLocator.objects.get(
+            subject_visit=subject_visit)
+    except SubjectLocator.DoesNotExist:
+        print '{}.   missing SubjectLocator'.format(n)
     if (SubjectStatusHelper(subject_visit).hiv_result == NEG and
             residency_and_mobility.permanent_resident == YES and
             residency_and_mobility.intend_residency == NO and
@@ -52,9 +60,6 @@ def create_hic_enrollment(self, n, created, verbose, subject_consent, hic_enroll
 
 
 def hic_for_consents(verbose, subject_consents, total_consents):
-    SubjectVisit = get_model('bcpp_subject', 'SubjectVisit')
-    SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
-    ResidencyMobility = get_model('bcpp_subject', 'ResidencyMobility')
     HicEnrollment = get_model('bcpp_subject', 'HicEnrollment')
     created = 0
     enrolled = 0
@@ -66,17 +71,8 @@ def hic_for_consents(verbose, subject_consents, total_consents):
             enrolled += 1
             print '{}. already enrolled'.format(n)
         except HicEnrollment.DoesNotExist:
-            try:
-                create_hic_enrollment(n, created, verbose, subject_consent, hic_enrollment)
-            except SubjectVisit.DoesNotExist:
-                if verbose:
-                    print '{}.   missing SubjectVisit'.format(n)
-            except ResidencyMobility.DoesNotExist:
-                if verbose:
-                    print '{}.   missing ResidencyMobility'.format(n)
-            except SubjectLocator.DoesNotExist:
-                if verbose:
-                    print '{}.   missing SubjectLocator'.format(n)
+            create_hic_enrollment(n, created, verbose, subject_consent, hic_enrollment)
+        n += 1
     print 'Reviewed {} consents from Pair 1. Created {} HIC Enrollment forms. {} already enrolled'.format(
         total_consents, created, enrolled
     )

@@ -11,18 +11,18 @@ from ...constants import CONFIRMED
 class Command(BaseCommand):
     """ Corrects the target radius in plot enrolled with radius > 25m but without an IncreasePlotRadius record
     """
-    args = '--site_code <site_code>, --fix <True|False>'
+    args = '--community <community>, --fix <True|False>'
 
     help = ('Corrects the target radius in plot enrolled with radius > 25m but without an IncreasePlotRadius record'
-            ' for plots of site_code x. Specify --fix (True|False) to fix or do a dry run')
+            ' for plots of community x. Specify --fix (True|False) to fix or do a dry run')
 
     option_list = BaseCommand.option_list + (
         make_option(
-            '--site_code',
-            dest='site_code',
+            '--community',
+            dest='community',
             action='store_true',
             default=False,
-            help=('Enter site_code')),
+            help=('Enter community')),
         make_option(
             '--fix',
             dest='fix',
@@ -35,27 +35,18 @@ class Command(BaseCommand):
         if len(args) == 2:
             pass
         else:
-            raise CommandError('Command expecting Two arguments, being --site_code <site_code>, --fix <True|False>')
-        if options['site_code'] and options['site_code']:
+            raise CommandError('Command expecting Two arguments, being --community <community>, --fix <True|False>')
+        if options['community'] and options['community']:
             self.correct_target_distance(args[0], args[1])
         else:
-            raise CommandError('Command expecting Two arguments, being --site_code <site_code>, --fix <True|False>')
+            raise CommandError('Command expecting Two arguments, being --community <community>, --fix <True|False>')
 
-    def correct_target_distance(self, site_code, fix):
-        community = None
+    def correct_target_distance(self, community, fix):
         to_fix = []
         Plot = get_model('bcpp_household', 'Plot')
         IncreasePlotRadius = get_model('bcpp_household', 'IncreasePlotRadius')
         print "======================================="
-        print ".....Correcting for SITE_CODE={}".format(site_code)
-        for key, value in site_mappers.registry.iteritems():
-            if value.map_code == site_code:
-                print ".....SITE_CODE={} represents {}".format(site_code, key.upper())
-                community = key
-        if not community:
-            print ".....Could not find a corresponding community for SITE_CODE={}".format(site_code)
-            print ".....Quitting Now"
-            return
+        print ".....Correcting for community={}".format(community)
         plots = Plot.objects.filter(community=community, action=CONFIRMED).exclude(htc=True)
         print ".....Found {} confirmed Plots for community {}".format(plots.count(), community.upper())
         for plot in plots:

@@ -18,8 +18,9 @@ from bhp066.apps.bcpp_household.models.household_work_list import HouseholdWorkL
 from bhp066.apps.bcpp_household.models.representative_eligibility import RepresentativeEligibility
 from bhp066.apps.bcpp_household.models.household_refusal import HouseholdRefusal
 from bhp066.apps.bcpp_household_member.models.household_member import HouseholdMember
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.models.plot import Plot
-from bhp066.apps.bcpp_household.models.plot_log import PlotLog
+from bhp066.apps.bcpp_household.models.plot_log import PlotLog, PlotLogEntry
 from bhp066.apps.bcpp_household.models.household import Household
 from bhp066.apps.bcpp_subject.models.call_log import CallLog
 from bhp066.apps.bcpp_subject.models.call_list import CallList

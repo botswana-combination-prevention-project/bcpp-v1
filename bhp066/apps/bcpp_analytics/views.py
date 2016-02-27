@@ -266,6 +266,34 @@ def operational_report_visits_view(request, **kwargs):
         context_instance=RequestContext(request))
 
 
+def absent_members_tobe_visited(members, community, ra_username, date_from, date_to):
+    members_tobe_visited = []
+    absentee_undecided = members.filter(
+        eligible_member=True, visit_attempts__lte=3,
+        household_structure__household__plot__community__icontains=community,
+        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
+    for mem in absentee_undecided:
+        if mem.member_status == UNDECIDED:
+            undecided_entries = SubjectUndecidedEntry.objects.filter(
+                subject_undecided__household_member=mem).order_by('next_appt_datetime')
+            if undecided_entries and mem.visit_attempts < 3:
+                members_tobe_visited.append(
+                    (str(mem), mem.member_status, mem.visit_attempts,
+                     str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
+            elif mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+        elif mem.member_status == ABSENT:
+            absentee_entries = SubjectAbsenteeEntry.objects.filter(
+                subject_absentee__household_member=mem).order_by('next_appt_datetime')
+            if absentee_entries and mem.visit_attempts < 3:
+                members_tobe_visited.append(
+                    (str(mem), mem.member_status, mem.visit_attempts,
+                     str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
+            elif mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+    return members_tobe_visited
+
+
 @login_required
 def operational_report_view(request, **kwargs):
     values = {}
@@ -341,30 +369,7 @@ def operational_report_view(request, **kwargs):
     ).count())
     values['93. Age eligible members enrolled in to HIC'] = how_many_hic
     values = collections.OrderedDict(sorted(values.items()))
-    members_tobe_visited = []
-    absentee_undecided = members.filter(
-        eligible_member=True, visit_attempts__lte=3,
-        household_structure__household__plot__community__icontains=community,
-        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
-    for mem in absentee_undecided:
-        if mem.member_status == UNDECIDED:
-            undecided_entries = SubjectUndecidedEntry.objects.filter(
-                subject_undecided__household_member=mem).order_by('next_appt_datetime')
-            if undecided_entries and mem.visit_attempts < 3:
-                members_tobe_visited.append(
-                    (str(mem), mem.member_status, mem.visit_attempts,
-                     str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
-            elif mem.visit_attempts < 3:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-        elif mem.member_status == ABSENT:
-            absentee_entries = SubjectAbsenteeEntry.objects.filter(
-                subject_absentee__household_member=mem).order_by('next_appt_datetime')
-            if absentee_entries and mem.visit_attempts < 3:
-                members_tobe_visited.append(
-                    (str(mem), mem.member_status, mem.visit_attempts,
-                     str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
-            elif mem.visit_attempts < 3:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+    members_tobe_visited = absent_members_tobe_visited(members, community, ra_username, date_from, date_to)
     communities = []
     if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
         # communities = [community[0].lower() for community in  COMMUNITIES]
@@ -394,56 +399,31 @@ def operational_report_view(request, **kwargs):
         context_instance=RequestContext(request))
 
 
-@login_required
-def replacement_report_view(request, **kwargs):
-
-    replacement_values = {}
-    accessment_forms_to_fill = 0
-    household_refusal_forms_to_fill = 0
-    replaceable_households = 0
-    replaced_households = 0
+def replace_replaceable_plots(plots):
     replaced_plots = 0
     replaceable_plots = 0
-    plots = None
-    household_structures = None
-    producer_name = None
-    households = None
-    HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
-    Household = get_model('bcpp_household', 'Household')
-    HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
-    HouseholdLog = get_model('bcpp_household', 'HouseholdLog')
-    HouseholdAssessment = get_model('bcpp_household', 'HouseholdAssessment')
-    HouseholdRefusal = get_model('bcpp_household', 'HouseholdRefusal')
-    first_survey_start_datetime = Survey.objects.all().aggregate(
-        datetime_start=Min('datetime_start')).get('datetime_start')
-    survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
-    if request.POST.get('producer_name'):
-        producer_name = request.POST.get('producer_name')
-        p_ids = []
-        plots = (plot for plot in Plot.objects.filter(selected__in=[1, 2]) if plot.dispatched_to == producer_name)
-        for plot in plots:
-            if producer_name == plot.dispatched_to:
-                p_ids.append(plot.id)
-        plots = Plot.objects.filter(id__in=p_ids)
-        households = Household.objects.filter(plot__in=plots)
-        household_structures = HouseholdStructure.objects.filter(survey=survey, household__in=households)
-    else:
-        plots = Plot.objects.filter(selected__in=[1, 2])
-        household_structures = HouseholdStructure.objects.filter(survey=survey)
-    producers = Producer.objects.all()
-    producer_names = []
-    for producer in producers:
-        producer_names.append(producer.name)
-
     # replaceable plots
     for plot in plots:
         if plot.replaceable:
             replaceable_plots += 1
         if plot.replaced_by:
             replaced_plots += 1
+    return [replaced_plots, replaceable_plots]
+
+
+def replaceable_replaced_households(household_structure):
+    household_structures = None
+    HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
+    HouseholdAssessment = get_model('bcpp_household', 'HouseholdAssessment')
+    HouseholdRefusal = get_model('bcpp_household', 'HouseholdRefusal')
+    accessment_forms_to_fill = 0
+    household_refusal_forms_to_fill = 0
+    replaceable_households = 0
+    replaced_households = 0
     for household_structure in household_structures:
         household_status = None
-        household_log = HouseholdLog.objects.filter(household_structure=household_structure)
+        household_log = get_model('bcpp_household', 'HouseholdLog').objects.filter(
+            household_structure=household_structure)
         # replaceable households
         if household_structure.household.replaceable:
             replaceable_households += 1
@@ -465,12 +445,50 @@ def replacement_report_view(request, **kwargs):
                 accessment_forms_to_fill += 1
         elif not hrf and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
             household_refusal_forms_to_fill += 1
+    return [replaced_households, replaceable_households, household_refusal_forms_to_fill, accessment_forms_to_fill]
 
-    replacement_values['1. Total replaced households'] = replaced_households
-    replacement_values['2. Total replaced plots'] = 23
-    replacement_values['3. Total number of replaceable households'] = replaceable_households
-    replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
-    replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
+
+@login_required
+def replacement_report_view(request, **kwargs):
+
+    replacement_values = {}
+    plots = None
+    producer_name = None
+    households = None
+    Household = get_model('bcpp_household', 'Household')
+    HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
+    first_survey_start_datetime = Survey.objects.all().aggregate(
+        datetime_start=Min('datetime_start')).get('datetime_start')
+    survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
+    if request.POST.get('producer_name'):
+        producer_name = request.POST.get('producer_name')
+        p_ids = []
+        plots = (plot for plot in Plot.objects.filter(selected__in=[1, 2]) if plot.dispatched_to == producer_name)
+        for plot in plots:
+            if producer_name == plot.dispatched_to:
+                p_ids.append(plot.id)
+        plots = Plot.objects.filter(id__in=p_ids)
+        households = Household.objects.filter(plot__in=plots)
+        household_structures = HouseholdStructure.objects.filter(survey=survey, household__in=households)
+    else:
+        plots = Plot.objects.filter(selected__in=[1, 2])
+        household_structures = HouseholdStructure.objects.filter(survey=survey)
+    producers = Producer.objects.all()
+    producer_names = []
+    for producer in producers:
+        producer_names.append(producer.name)
+    replaced_plots, replaceable_plots = replace_replaceable_plots(plots)
+    replaced_households = replaceable_replaced_households(household_structures)[0]
+    replaceable_households = replaceable_replaced_households(household_structures)[1]
+    household_refusal_forms_to_fill, = replaceable_replaced_households(household_structures)[2]
+    accessment_forms_to_fill = replaceable_replaced_households(household_structures)[3]
+
+    replacement_values['1. Total replaced plots'] = replaced_plots
+    replacement_values['2. Total replaceable plots'] = replaceable_plots
+    replacement_values['3. Total replaced households'] = replaced_households
+    replacement_values['4. Total number of replaceable households'] = replaceable_households
+    replacement_values['5. Total household assessment pending'] = accessment_forms_to_fill
+    replacement_values['6. Total Household refusals forms pending'] = household_refusal_forms_to_fill
 
     replacement_values = collections.OrderedDict(sorted(replacement_values.items()))
 

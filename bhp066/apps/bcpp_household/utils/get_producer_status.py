@@ -16,6 +16,31 @@ ProducerStatus = namedtuple('ProducerStatus', (
     'replaceables_last_updated error_message'))
 
 
+def establish_mysql_connection(hostname, producer):
+    try:
+        # Attempt to connect to the mysql port on the using producer's hostname to confirm if its online.
+        s = socket.socket()
+        # time out after 2 seconds if connection is not established
+        s.settimeout(2)
+        # connect to myswl port on producer
+        s.connect((hostname, 3306))
+        producer_online = True
+        # No exception occurred, only now you can search for outgoing transactions in producer.
+        outgoing_transactions = TransactionHelper().outgoing_transactions(
+            hostname, producer.name, raise_exception=True)
+    except socket.timeout:
+        error_message = (
+            'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(
+                hostname, producer.producer_ip))
+    except socket.error:
+        error_message = (
+            'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(
+                hostname, producer.producer_ip, str(socket.error)))
+    finally:
+        s.close()
+        return [producer_online, outgoing_transactions, error_message]
+
+
 def get_producer_status(producer=None, check_online=True):
     error_message = None
     outgoing_transactions = None
@@ -24,27 +49,7 @@ def get_producer_status(producer=None, check_online=True):
     try:
         if check_online:
             hostname, _, _ = getproducerbyaddr(producer)
-            try:
-                # Attempt to connect to the mysql port on the using producer's hostname to confirm if its online.
-                s = socket.socket()
-                # time out after 2 seconds if connection is not established
-                s.settimeout(2)
-                # connect to myswl port on producer
-                s.connect((hostname, 3306))
-                producer_online = True
-                # No exception occurred, only now you can search for outgoing transactions in producer.
-                outgoing_transactions = TransactionHelper().outgoing_transactions(
-                    hostname, producer.name, raise_exception=True)
-            except socket.timeout:
-                error_message = (
-                    'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(
-                        hostname, producer.producer_ip))
-            except socket.error:
-                error_message = (
-                    'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(
-                        hostname, producer.producer_ip, str(socket.error)))
-            finally:
-                s.close()
+            producer_online, outgoing_transactions, error_message = establish_mysql_connection(hostname)
         else:
             hostname = '?'
             outgoing_transactions = '?'
