@@ -185,19 +185,7 @@ class Member(Base):
                 attr_suffix, fieldattrs_other,
                 instance=subject_absentee_entry)
 
-    @property
-    def data_errors(self):
-        """Checks for known data error conditions and returns error messages as a dictionary."""
-        data_errors = {'member_status': [], 'enumeration_date': [],
-                       'household_status': [], 'consented': [],
-                       'household_log': []}
-        # 1. test if only uses current HOUSEHOLD_LOG_STATUS options
-        condition = list(set(
-            [item for item in self.household_log_status if item not in [tpl[0] for tpl in HOUSEHOLD_LOG_STATUS]]
-        ))
-        if condition:
-            data_errors['household_status'].append(
-                'Invalid household status options in {}. Got {}'.format(self.community, condition))
+    def consented_data_errors(self, data_errors):
         # 2. confirm is_consented agrees with SubjectConsent
         consented = SubjectConsent.objects.filter(household_member=self.household_member).exists
         if self.consented != consented:
@@ -218,6 +206,22 @@ class Member(Base):
         if self.member_status != BHS and self.consented:
             data_errors['member_status'].append(
                 'consented but member_status is {} in {}'.format(BHS, self.community))
+        return data_errors
+
+    @property
+    def data_errors(self):
+        """Checks for known data error conditions and returns error messages as a dictionary."""
+        data_errors = {'member_status': [], 'enumeration_date': [],
+                       'household_status': [], 'consented': [],
+                       'household_log': []}
+        # 1. test if only uses current HOUSEHOLD_LOG_STATUS options
+        condition = list(set(
+            [item for item in self.household_log_status if item not in [tpl[0] for tpl in HOUSEHOLD_LOG_STATUS]]
+        ))
+        if condition:
+            data_errors['household_status'].append(
+                'Invalid household status options in {}. Got {}'.format(self.community, condition))
+        data_errors = self.consented_data_errors(data_errors)
         # 5. member_status and survey date
         if self.member_status == UNDECIDED and self.member_survey.end_date < date.today():
             data_errors['member_status'].append(

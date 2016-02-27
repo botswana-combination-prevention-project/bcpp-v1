@@ -82,6 +82,11 @@ class Lab(Base):
     def __str__(self):
         return '{0.specimen_identifier!s}'.format(self)
 
+    def compare_lis_edc_identifiers(self, first_identifier, second_identifier):
+        if first_identifier != second_identifier:
+            print "Warning! LIS pat_ref differs with EDC subject_deintifier for {}. Got {}".format(
+                first_identifier, second_identifier)
+
     def fetch_receiving(self):
         """Fetches the receiving data from the LIS for each identifier."""
         def fetchall(cursor):
@@ -107,14 +112,10 @@ class Lab(Base):
                                 self.lis_received_datetime = lis_received_datetime
                             if not self.lis_subject_identifier:
                                 self.lis_subject_identifier = self.subject_identifier
-                                if self.lis_subject_identifier != self.subject_identifier:
-                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier "
-                                    "for {}. Got {}".format(self.subject_identifier, self.lis_subject_identifier)
+                                self.compare_lis_edc_identifiers(self.subject_identifier, self.lis_subject_identifier)
                             if not self.specimen_identifier:
                                 self.lis_subject_identifier = self.subject_identifier
-                                if self.lis_subject_identifier != self.subject_identifier:
-                                    print "Warning! LIS pat_ref differs with EDC subject_deintifier for {}. "
-                                    "Got {}".format(self.subject_identifier, self.lis_subject_identifier)
+                                self.compare_lis_edc_identifiers(self.subject_identifier, self.lis_subject_identifier)
 
         except pyodbc.Error as e:
             raise pyodbc.Error(e)
@@ -131,17 +132,12 @@ class Lab(Base):
                     'where PID=\'{lis_specimen_identifier}\'').format(
                         dmis_column=self.dmis_column, lis_specimen_identifier=self.lis_specimen_identifier))
             return cursor.execute(self.sql.get('resulted_items')).fetchall()
-        if self.verbose:
-            print "Querying dmis for {} resulted items".format(self.lis_specimen_identifier)
         try:
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
                 with cnxn.cursor() as cursor:
                     for report_date, sample_assay_date, utestid, result, quantifier, lis_result_id in fetchall(cursor):
                         try:
                             report_date = parse(report_date, dayfirst=True)
-                        except AttributeError:
-                            pass
-                        try:
                             sample_assay_date = parse(sample_assay_date, dayfirst=True)
                         except AttributeError:
                             pass

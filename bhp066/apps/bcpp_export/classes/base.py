@@ -65,29 +65,11 @@ class Base(DenormalizeMixin, FormatForExportMixin, ConsoleMixin):
         """Removes columns from the csv_data dict that are not to be exposed."""
         try:
             del self.csv_data['csv_data']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['_data_errors']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['errors']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['verbose']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['dateformat']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['isoformat']
-        except KeyError:
-            pass
-        try:
             del self.csv_data['floor_datetime']
         except KeyError:
             pass

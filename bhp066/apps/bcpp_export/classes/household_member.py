@@ -1,6 +1,4 @@
-from django.core.exceptions import MultipleObjectsReturned
 from edc.subject.registration.models import RegisteredSubject
-from bhp066.apps.bcpp_household_member.models import HouseholdMember as HouseholdMemberModel
 from bhp066.apps.bcpp_export.classes.survey import Survey
 
 from .base import Base
@@ -14,16 +12,7 @@ class HouseholdMember(Base):
     def __init__(self, household_member, **kwargs):
         """Allows None for attribute inspection."""
         super(HouseholdMember, self).__init__(**kwargs)
-        try:
-            self.household_member = HouseholdMemberModel.objects.get(internal_identifier=household_member)
-        except MultipleObjectsReturned:
-            self.household_member = HouseholdMemberModel.objects.filter(
-                internal_identifier=household_member).order_by('created')[0]
-        except HouseholdMemberModel.DoesNotExist:
-            try:
-                self.household_member = HouseholdMemberModel.objects.get(id=household_member)
-            except HouseholdMemberModel.DoesNotExist:
-                self.household_member = household_member
+        self.household_member = household_member
         if self.household_member:
             self.age_in_years = self.household_member.age_in_years
             self.community = self.household_member.household_structure.household.plot.community

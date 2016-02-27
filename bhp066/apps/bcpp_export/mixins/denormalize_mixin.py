@@ -2,6 +2,29 @@ from django.core.exceptions import MultipleObjectsReturned
 
 
 class DenormalizeMixin(object):
+
+    def update_lookup_model(self, lookup_flds, lookup_model, lookup_string, lookup_instance):
+        if lookup_flds:
+            try:
+                values = lookup_model.objects.values(
+                    *lookup_flds).get(
+                    **{lookup_string: lookup_instance})
+                for fld, value in values.iteritems():
+                    setattr(self, lookup_flds[fld], value)
+            except lookup_model.DoesNotExist:
+                for attr in lookup_flds.values():
+                    setattr(self, attr, None)
+            except MultipleObjectsReturned:
+                values_queryset = lookup_model.objects.values(
+                    *lookup_flds).filter(
+                    **{lookup_string: lookup_instance})
+                for values in values_queryset:
+                    vals = {fld: [] for fld in values}
+                    for fld, value in values.iteritems():
+                        vals[fld].append(value)
+                    for fld in values:
+                        setattr(self, lookup_flds[fld], vals[fld])
+
     def denormalize(self, attr_suffix, fieldattrs, instance=None,
                     lookup_model=None, lookup_instance=None, lookup_string=None):
         """Denormalizes one or more instance attributes and adds the survey_abbrev suffix.
@@ -44,26 +67,7 @@ class DenormalizeMixin(object):
                 if lookup_model:
                     # collect fields/attrs for query below
                     lookup_flds.update({fldname: attrname})
-        if lookup_flds:
-            try:
-                values = lookup_model.objects.values(
-                    *lookup_flds).get(
-                    **{lookup_string: lookup_instance})
-                for fld, value in values.iteritems():
-                    setattr(self, lookup_flds[fld], value)
-            except lookup_model.DoesNotExist:
-                for attr in lookup_flds.values():
-                    setattr(self, attr, None)
-            except MultipleObjectsReturned:
-                values_queryset = lookup_model.objects.values(
-                    *lookup_flds).filter(
-                    **{lookup_string: lookup_instance})
-                for values in values_queryset:
-                    vals = {fld: [] for fld in values}
-                    for fld, value in values.iteritems():
-                        vals[fld].append(value)
-                    for fld in values:
-                        setattr(self, lookup_flds[fld], vals[fld])
+        self.update_lookup_model(lookup_flds, lookup_model, lookup_string, lookup_instance)
         return obj
 
     def denormalize_other(self, attr_suffix, fieldattrs, instance):
