@@ -33,31 +33,32 @@ class Command(BaseCommand):
                             header_row.append(field.name)
                 else:
                     # dates are in odd formats, try to convert or fail
-                    for field in CdcHtc._meta.fields:
-                        _val = ['created', 'modified', '_import_datetime']
-                        if 'Date' in field.get_internal_type() and field.name not in _val:
-                            try:
-                                dt = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
-                                row[header_row.index(field.name)] = dt
-                            except IndexError:
-                                print field.name
-                            except ValueError:
-                                try:
-                                    dt = datetime.strptime(row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
-                                    row[header_row.index(field.name)] = dt
-                                except ValueError:
-                                    print 'Row {0}. Unable to convert date string {1} to DateTime. '
-                                    'Got {2}'.format(i, field.name, row[header_row.index(field.name)] or None)
-                                    row[header_row.index(field.name)] = None
-                        value = ['created', 'modified', '_import_datetime']
-                        if 'Integer' in field.get_internal_type() and field.name not in value:
-                            try:
-                                row[header_row.index(field.name)] = int(row[header_row.index(field.name)])
-                            except ValueError:
-                                row[header_row.index(field.name)] = None
+                    self.cdc_htc_data(i, row, header_row, field)
                     # populate dictionary for model.create
                     values = dict(zip(header_row, row))
                     values.update({'_community': row[header_row.index('Community_Name')].lower()})
                     values.update({'_title': source_path.split('/')[-1:]})
                     values.update({'_filename': source_path})
                     CdcHtc.objects.create(**values)
+
+    def cdc_htc_data(self, index, row, header_row, field):
+        for field in CdcHtc._meta.fields:
+            _val = ['created', 'modified', '_import_datetime']
+            if 'Date' in field.get_internal_type() and field.name not in _val:
+                try:
+                    dt = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                    row[header_row.index(field.name)] = dt
+                except ValueError:
+                    try:
+                        dt = datetime.strptime(row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
+                        row[header_row.index(field.name)] = dt
+                    except ValueError:
+                        print 'Row {0}. Unable to convert date string {1} to DateTime. '
+                        'Got {2}'.format(index, field.name, row[header_row.index(field.name)] or None)
+                        row[header_row.index(field.name)] = None
+            value = ['created', 'modified', '_import_datetime']
+            if 'Integer' in field.get_internal_type() and field.name not in value:
+                try:
+                    row[header_row.index(field.name)] = int(row[header_row.index(field.name)])
+                except ValueError:
+                    row[header_row.index(field.name)] = None

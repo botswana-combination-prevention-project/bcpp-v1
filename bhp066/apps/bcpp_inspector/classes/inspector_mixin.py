@@ -10,7 +10,10 @@ from ..models import SubjectRequisitionInspector
 class InspectorMixin(models.Model):
 
     def save_to_inspector(self, fields, instance_pk, using):
-        if SubjectRequisitionInspector.objects.using(using).filter(subject_identifier=fields.get('subject_identifier'), requisition_identifier=fields.get('requisition_identifier')).count() == 0:
+        subject_req_insp = SubjectRequisitionInspector.objects.using(using).filter(
+            subject_identifier=fields.get('subject_identifier'),
+            requisition_identifier=fields.get('requisition_identifier')).count()
+        if subject_req_insp == 0:
             if (not fields.get('requisition_identifier')) or (fields.get('requisition_identifier') == ""):
                 requisition_identifier = instance_pk
                 specimen_identifier = instance_pk

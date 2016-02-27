@@ -112,7 +112,8 @@
 #         if self.verbose:
 #             print "Loaded {} identifiers from csv".format(len(self.identifiers) - start_count)
 #         if self.verbose:
-#             print "De-duplicating identifier list of {} identifiers from csv".format(len(self.identifiers) - start_count)
+#             print "De-duplicating identifier list of {} identifiers from csv".format(
+#                        len(self.identifiers) - start_count)
 #         self.identifiers = list(set(self.identifiers))
 #         if self.verbose:
 #             print "Now have {} unique identifiers".format(len(self.identifiers))

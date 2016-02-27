@@ -83,7 +83,7 @@ def operational_report_view(request, **kwargs):
             visits_per_undecided.append((str(undecided), undecided_entries.filter(
                 subject_undecided__registered_subject=undecided.registered_subject).count()))
 
-    communities = [community[0].lower() for community in COMMUNITIES]
+    communities = [com[0].lower() for com in COMMUNITIES]
     communities[0] = '---------'
     return render_to_response(
         # 'report_'+request.user.username+'_'+report_name+'.html', {},
@@ -93,4 +93,4 @@ def operational_report_view(request, **kwargs):
                                     'visits_per_undecided': visits_per_undecided,
                                     'communities': communities},
         context_instance=RequestContext(request)
-        )
+    )

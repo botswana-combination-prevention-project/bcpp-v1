@@ -29,7 +29,8 @@ class SummaryReport(object):
                     # total by selection category
                     for item in Plot.objects.filter(community=community).values('selected').annotate(Count('selected')):
                         if not item['selected']:
-                            self.plots[community].update({'75_pct': Plot.objects.filter(community=community, selected__isnull=True).count()})
+                            plots_count = Plot.objects.filter(community=community, selected__isnull=True).count()
+                            self.plots[community].update({'75_pct': plots_count})
                         elif item['selected'] == '1':
                             self.plots[community].update({'20_pct': item['selected__count']})
                         elif item['selected'] == '2':

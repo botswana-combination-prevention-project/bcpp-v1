@@ -12,8 +12,9 @@ class ClinicDashboard(BaseSubjectDashboard):
     dashboard_name = 'Clinic Participant Dashboard'
     urlpattern_view = 'apps.bcpp_dashboard.views'
     template_name = 'clinic_dashboard.html'
+    base_subject_urls = BaseSubjectDashboard.urlpatterns
     urlpatterns = [
-        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'] + BaseSubjectDashboard.urlpatterns
+        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'] + base_subject_urls
     urlpattern_options = dict(
         BaseSubjectDashboard.urlpattern_options,
         dashboard_model=BaseSubjectDashboard.urlpattern_options['dashboard_model'] + '|clinic_eligibility',
