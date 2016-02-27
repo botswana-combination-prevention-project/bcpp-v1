@@ -34,7 +34,8 @@ class HouseholdDashboard(Dashboard):
         dashboard_model='household_structure',
         dashboard_type='household')
 
-    base_fields = ('id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
+    base_fields = (
+        'id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
 
     def __init__(self, **kwargs):
         super(HouseholdDashboard, self).__init__(**kwargs)
@@ -208,11 +209,11 @@ class HouseholdDashboard(Dashboard):
             for survey in Survey.objects.all().order_by('datetime_start'):
                 household_structure = HouseholdStructure.objects.get(
                     household=self.household, survey=survey)
-                url = reverse(self.dashboard_url_name,
-                              kwargs={'dashboard_type': self.dashboard_type,
-                                      'dashboard_model': 'household_structure',
-                                      'dashboard_id': household_structure.pk})
-                self._surveys.append(SurveyTuple(survey=survey, url=url))
+                _url = reverse(self.dashboard_url_name,
+                               kwargs={'dashboard_type': self.dashboard_type,
+                                       'dashboard_model': 'household_structure',
+                                       'dashboard_id': household_structure.pk})
+                self._surveys.append(SurveyTuple(survey=survey, url=_url))
         return self._surveys
 
     @property
