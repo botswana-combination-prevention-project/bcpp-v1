@@ -17,7 +17,10 @@ class CdcEnrollLog(BaseCdc):
 
     enrolldt = models.DateField(null=True)
     omang = IdentityField(null=True)
-    partid = models.CharField(max_length=25, null=True, help_text='Participant Identifier, e.g. BHS subject_identifier, HTC, etc')
+    partid = models.CharField(
+        max_length=25,
+        null=True,
+        help_text='Participant Identifier, e.g. BHS subject_identifier, HTC, etc')
 
     date_created = models.DateField(null=True)
     date_updated = models.DateField(null=True)

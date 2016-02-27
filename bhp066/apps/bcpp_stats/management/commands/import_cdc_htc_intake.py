@@ -45,27 +45,7 @@ class Command(BaseCommand):
                     # dates are in odd formats, try to convert or fail
                     for field in CdcHtcIntake._meta.fields:
                         value = system_fields + ['_import_datetime']
-                        if 'Date' in field.get_internal_type() and field.name not in value:
-                            if field.name == 'DOB' and row[header_row.index(field.name)]:
-                                row_val = row[header_row.index(field.name)][-2:]
-                                row[header_row.index(field.name)] = datetime.strptime(
-                                    row[header_row.index(field.name)][0:5] + '19' + row_val, '%d%b%Y')
-                            else:
-                                try:
-                                    dt = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
-                                    row[header_row.index(field.name)] = dt
-                                except IndexError as e:
-                                    print 'Field name not in header row. Got \'{0}\' ({1})'.format(field.name, e)
-                                except ValueError:
-                                    try:
-                                        dt = datetime.strptime(
-                                            row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
-                                        row[header_row.index(field.name)] = dt
-                                    except ValueError:
-                                        print 'Row {0}. Unable to convert date string {1} '
-                                        'to DateTime. Got {2}'.format(
-                                            i, field.name, row[header_row.index(field.name)] or None)
-                                        row[header_row.index(field.name)] = None
+                        self.date_field(i, row, header_row, field, value)
                         val = system_fields + ['_import_datetime', '_age_in_years']
                         if 'Integer' in field.get_internal_type() and field.name not in val:
                             try:
@@ -82,3 +62,26 @@ class Command(BaseCommand):
                     values.update({'_title': source_path.split('/')[-1:]})
                     values.update({'_filename': source_path})
                     CdcHtcIntake.objects.create(**values)
+
+    def date_field(self, index, row, header_row, field, value):
+        if 'Date' in field.get_internal_type() and field.name not in value:
+            if field.name == 'DOB' and row[header_row.index(field.name)]:
+                row_val = row[header_row.index(field.name)][-2:]
+                row[header_row.index(field.name)] = datetime.strptime(
+                    row[header_row.index(field.name)][0:5] + '19' + row_val, '%d%b%Y')
+            else:
+                try:
+                    dt = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                    row[header_row.index(field.name)] = dt
+                except IndexError as e:
+                    print 'Field name not in header row. Got \'{0}\' ({1})'.format(field.name, e)
+                except ValueError:
+                    try:
+                        dt = datetime.strptime(
+                            row[header_row.index(field.name)][0:18], '%d%b%Y:%H:%M:%S')
+                        row[header_row.index(field.name)] = dt
+                    except ValueError:
+                        print 'Row {0}. Unable to convert date string {1} '
+                        'to DateTime. Got {2}'.format(
+                            index, field.name, row[header_row.index(field.name)] or None)
+                        row[header_row.index(field.name)] = None
