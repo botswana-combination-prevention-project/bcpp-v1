@@ -4,6 +4,7 @@ from edc_constants.constants import NOT_APPLICABLE, POS
 
 from bhp066.apps.bcpp_clinic.models import ClinicConsent, Questionnaire, ClinicVlResult
 from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
+from bhp066.apps.bcpp_household_member.models import SubjectHtc
 from bhp066.apps.bcpp_household.models import Plot
 from bhp066.apps.bcpp_lab.models.subject_requisition import SubjectRequisition
 from bhp066.apps.bcpp_subject.models import (
@@ -27,12 +28,26 @@ class Subject(Base, SubjectDataFixMixin):
         self.household_member = self.member.household_member
         self.household = self.household_member.household_structure.household
         self.registered_subject = self.member.registered_subject
+        self.subject_identifier = self.member.registered_subject.subject_identifier
         self.internal_identifier = self.member.internal_identifier
+        try:
+            self.subject_htc = SubjectHtc.objects.get(household_member=household_member)
+        except:
+            self.subject_htc = None
         self.community = self.member.community
+        try:
+            self.subject_consent = SubjectConsent.objects.get(household_member=household_member)
+        except:
+            self.subject_consent = None
+        try:
+            self.clinic_consent = ClinicConsent.objects.get(household_member=household_member)
+        except:
+            self.clinic_consent = None
         self.survey = Survey(self.community, **kwargs)
         for survey_abbrev in self.survey.survey_abbrevs:
             fieldattrs = [('member_status', 'member_status')]
-            self.denormalize(survey_abbrev, fieldattrs, self.member.household_member.membership.by_survey.get(survey_abbrev))
+            self.denormalize(
+                survey_abbrev, fieldattrs, self.member.household_member.membership.by_survey.get(survey_abbrev))
         self.update_plot(**kwargs)
         self.update_household(**kwargs)
         self.update_subject_consent()
@@ -69,12 +84,14 @@ class Subject(Base, SubjectDataFixMixin):
         """Applies data_fixes defined in individual methods."""
         self.fix_referred_yesno()
         self.fix_clinic_citizen(self.household_member.household_member)
-        self.fix_clinic_member_status(self.subject_consent)
-        self.fix_subject_member_status(self.subject_consent)
+        if self.clinic_consent:
+            self.fix_clinic_member_status(self.clinic_consent)
+        if self.subject_consent:
+            self.fix_subject_member_status(self.subject_consent)
 
     def update_plot(self, **kwargs):
         """Sets the plot attributes for this instance using an instance of the Plot model."""
-        plot = Plot.objects.defer(*Plot.encrypted_fields()).get(id=self.household.plot_id)
+        plot = Plot.objects.defer('plot_identifier').get(id=self.household.plot_id)
         attrs = [
             ('plot_identifier', 'plot_identifier'),
             ('location', 'location'),
@@ -91,11 +108,9 @@ class Subject(Base, SubjectDataFixMixin):
     def update_subject_consent(self):
         try:
             if self.location == 'clinic':
-                self.subject_consent = ClinicConsent.objects.defer(*ClinicConsent.encrypted_fields()).get(
-                    registered_subject=self.registered_subject)
+                self.subject_consent = ClinicConsent.objects.get(registered_subject=self.registered_subject)
             else:
-                self.subject_consent = SubjectConsent.objects.defer(*SubjectConsent.encrypted_fields()).get(
-                    registered_subject=self.registered_subject)
+                self.subject_consent = SubjectConsent.objects.get(registered_subject=self.registered_subject)
             # self.consenting_household_member = self.subject_consent.household_member
             self.age_in_years = self.subject_consent.age
             self.citizen = self.subject_consent.citizen
@@ -262,7 +277,7 @@ class Subject(Base, SubjectDataFixMixin):
 
     def update_subject_locator(self):
         try:
-            subject_locator = SubjectLocator.objects.defer(*SubjectLocator.encrypted_fields()).get(
+            subject_locator = SubjectLocator.objects.get(
                 registered_subject=self.registered_subject)
             self.home_visit_permission = subject_locator.home_visit_permission
             self.may_follow_up = subject_locator.may_follow_up
@@ -283,17 +298,20 @@ class Subject(Base, SubjectDataFixMixin):
                 lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev)
             )
             try:
-                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev),
-                        pima.pima_today_other if not pima.pima_today_other.upper() == 'OTHER' else pima.pima_today_other_other)
+                if not pima.pima_today_other.upper() == 'OTHER':
+                    pima_today_other = pima.pima_today_other
+                else:
+                    pima_today_other = pima.pima_today_other_other
+                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev), pima_today_other)
             except AttributeError:
                 setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev), None)
 
     def update_viral_load(self, **kwargs):
         for survey_abbrev in self.survey.survey_abbrevs:
             try:
-                subject_requisition = SubjectRequisition.objects.defer(
-                    *SubjectRequisition.encrypted_fields()).get(
-                    subject_visit__household_member=self.member.household_member.membership.by_survey.get(survey_abbrev),
+                subject_requisition = SubjectRequisition.objects.get(
+                    subject_visit__household_member=self.member.household_member.membership.by_survey.get(
+                        survey_abbrev),
                     panel__name='Viral Load')
                 specimen = Specimen(
                     subject_requisition,

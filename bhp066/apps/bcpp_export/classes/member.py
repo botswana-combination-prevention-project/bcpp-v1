@@ -23,7 +23,8 @@ class Member(Base):
         data_errors = []
         members = []
         for household_member in HouseholdMember.objects.filter(
-                is_consented=True, household_structure__household__plot__community='digawana').order_by('-created')[0:25]:
+                is_consented=True, household_structure__household__plot__community='digawana'
+        ).order_by('-created')[0:25]:
             print household_member.internal_identifier
             member = Member(household_member)
             if member.data_errors:
@@ -81,7 +82,7 @@ class Member(Base):
     def update_plot(self):
         """Sets the plot attributes for this instance using an instance of the Plot model."""
         # self.plot = Plot(household_member=self.household_member)
-        plot = Plot.objects.defer(*Plot.encrypted_fields()).get(id=self.household.plot_id)
+        plot = Plot.objects.get(id=self.household.plot_id)
         attrs = [
             ('plot_identifier', 'plot_identifier'),
             ('location', 'location'),

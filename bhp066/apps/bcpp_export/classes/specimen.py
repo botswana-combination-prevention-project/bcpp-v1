@@ -108,7 +108,8 @@ class Specimen(Base):
         def fetchall(cursor):
             self.sql.update(
                 resulted_items=(
-                    'select PID as sample_id, reportdate, sample_assay_date, utestid, result, result_quantifier, L21.id as lis_result_id '
+                    'select PID as sample_id, reportdate, sample_assay_date, utestid,'
+                    'result, result_quantifier, L21.id as lis_result_id '
                     'from BHPLAB.DBO.LAB21Response as L21 '
                     'left join BHPLAB.DBO.LAB21ResponseQ001X0 as L21D on L21.Q001X0=L21D.QID1X0 '
                     'where PID IN (\'{lis_specimen_identifiers}\')').format(
@@ -121,7 +122,14 @@ class Specimen(Base):
         try:
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE, timeout=3) as cnxn:
                 with cnxn.cursor() as cursor:
-                    for lis_specimen_identifier, report_date, assay_date, utestid, result, result_quantifier, lis_result_id in fetchall(cursor):
+                    for values_list in fetchall(cursor):
+                        lis_specimen_identifier = values_list[0]
+                        report_date = values_list[1]
+                        assay_date = values_list[2]
+                        utestid = values_list[3]
+                        result = values_list[4]
+                        result_quantifier = values_list[5]
+                        lis_result_id = values_list[6]
                         try:
                             report_date = parse(report_date, dayfirst=True)
                         except AttributeError:

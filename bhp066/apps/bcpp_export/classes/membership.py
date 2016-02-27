@@ -35,7 +35,7 @@ class Membership(object):
             setattr(self, attrname, self.first_attr_value(attrname))
         self.enumeration_first_date = self.first_attr_value('created').date() if self.members else None
         self.enumeration_last_date = self.last_attr_value('created').date() if self.members else None
-        self.consented = True if [hm.is_consented for hm in self.members if hm.is_consented] else None
+        self.consented = True if [h_member.is_consented for h_member in self.members if h_member.is_consented] else None
 
     def first_attr_value(self, attrname):
         """Returns the value of attr from the first item in the list."""

@@ -14,7 +14,7 @@ from bhp066.apps.bcpp_household.tests.factories import PlotFactory
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_household_member.tests.factories import (HouseholdMemberFactory, EnrollmentChecklistFactory)
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
@@ -40,7 +40,8 @@ class BaseTestMember(TestCase):
         self.representative_eligibility = None
         self.study_site = None
         self.intervention = None
-
+        site_mappers.autodiscover()
+        from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:

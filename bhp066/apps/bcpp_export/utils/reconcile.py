@@ -80,15 +80,6 @@ class Reconcile(object):
             self._missing_in_edc.extend([item for item in self.lab_identifiers if item not in self.identifiers_in_edc])
         return self._missing_in_edc
 
-#     @property
-#     def missing_in_lis(self):
-#         """Returns a list of identifiers not found in the EDC but seen in the LIS."""
-#         if not self._missing_in_lis:
-#             self._missing_in_lis = [item for item in self.htc_identifiers if item not in self.identifiers_in_lis]
-#             self._missing_in_lis.extend([item for item in self.pims_identifiers if item not in self.identifiers_in_lis])
-#             self._missing_in_lis.extend([item for item in self.lab_identifiers if item not in self.identifiers_in_lis])
-#         return self._missing_in_lis
-
     @property
     def identifiers_in_edc(self):
         """Returns a list of identifiers from each of the three types captured in the EDC."""

@@ -14,7 +14,8 @@ class Command(BaseCommand):
         try:
             object_name = args[0]
         except IndexError:
-            raise CommandError('Usage: export_transactions app_label.modelname, e.g. export_transactions bcpp_subject.subjectreferral')
+            raise CommandError(
+                'Usage: export_transactions app_label.modelname, e.g. export_transactions bcpp_subject.subjectreferral')
         export_plan = ExportPlan.objects.get(
             app_label='object', object_name=object_name)
         export_model_helper = ExportObjectHelper(export_plan, object_name, exception_cls=CommandError)

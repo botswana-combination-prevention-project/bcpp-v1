@@ -14,15 +14,15 @@ class Subjects(BaseCollector):
         from bhp066.apps.bcpp_export.collectors import Subjects
 
         subjects = Subjects()
-        #export everything (all consents, all communities)
+        # export everything (all consents, all communities)
         subjects.export_by_community()
 
         # export all consents for two communities
-        subjects.export_by_community((['digawana', 'ranaka'])
+        subjects.export_by_community(['digawana', 'ranaka'])
         # export all consents by pair, write to a file prefixed by 'AA'.
         subjects.export_by_community(site_mappers.get_by_pair(3), filename_prefix='AA')
         # export only subject consents for two communities
-        subjects.export_by_community((['digawana', 'ranaka'], exclude_clinic_consents=True)
+        subjects.export_by_community(['digawana', 'ranaka'], exclude_clinic_consents=True)
         # inspect or count subject consents
         len(subjects.subject_consents)
         # inspect or count a subset of subject consents
@@ -48,11 +48,10 @@ class Subjects(BaseCollector):
         * Is filtered on community and possibly survey;
         * excludes "clinic" plots."""
         if not self._subject_consents:
-            self._subject_consents = SubjectConsent.objects.values_list('household_member').filter(
-                **self.filter_options
-                ).exclude(
+            self._subject_consents = SubjectConsent.objects.values_list(
+                'household_member').filter(**self.filter_options).exclude(
                     household_member__household_structure__household__plot__plot_identifier__endswith='0000-00'
-                    ).order_by('{}registered_subject__subject_identifier'.format(self.order))
+            ).order_by('{}registered_subject__subject_identifier'.format(self.order))
         return self._subject_consents
 
     @property

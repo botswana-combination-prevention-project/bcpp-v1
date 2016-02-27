@@ -165,7 +165,7 @@ class Lab(Base):
                                 self.lis_result_int = int(result)
                             except TypeError:
                                 pass
-                            self.lis_result_qnt = result_quantifier
+                            self.lis_result_qnt = quantifier
                             self.lis_assay = utestid
                             self.lis_assay_date = sample_assay_date
                         else:
