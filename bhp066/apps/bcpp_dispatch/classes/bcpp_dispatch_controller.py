@@ -99,9 +99,8 @@ class BcppDispatchController(DispatchController):
         """
         survey = kwargs.get('survey', None)
         if survey:
-            if survey.survey_abbrev == 'Y1':
-                surveys = [survey]
-            elif survey.survey_abbrev == 'Y2':
+            surveys = [survey]
+            if survey.survey_abbrev == 'Y2':
                 y1_survey = Survey.objects.get(survey_abbrev='Y1')
                 surveys = [y1_survey, survey]
             elif survey.survey_abbrev == 'Y3':

@@ -11,7 +11,8 @@ try:
 except ProducerError:
     pass
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^play_transactions/', play_transactions, name='bcpp_dispatch_play_url'),
     url(r'^sync/export_outgoing_to_usb/', export_outgoing_to_usb, name='bcpp_sync_export_outgoing_url'),
     url(r'^sync/(?P<selected_producer>[a-z0-9\-\_\.]+)/', bcpp_sync, name='bcpp_sync_url'),
