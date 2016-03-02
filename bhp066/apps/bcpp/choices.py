@@ -6,6 +6,7 @@ QUANTIFIER = (
     ('greater_than', _('Greater Than')),
     ('equal_to', _('Equal To')),
     ('less_than', _('Less Than')),
+    (OTHER, _('Other, specify:')),
 )
 
 YES_NO_DONT_ANSWER = (
