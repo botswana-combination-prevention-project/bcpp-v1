@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE, OTHER
 
 QUANTIFIER = (
     ('greater_than', _('Greater Than')),
