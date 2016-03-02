@@ -83,7 +83,9 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-ugettext = lambda s: s  # does this do anything?
+
+def ugettext(s):
+    return s  # does this do anything?
 
 LANGUAGES = (
     ('tn', 'Setswana'),
