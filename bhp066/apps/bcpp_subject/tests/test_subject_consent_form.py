@@ -21,9 +21,11 @@ from edc.core.bhp_variables.models import StudySite
 from edc_constants.constants import YES, NO
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -35,18 +37,6 @@ from edc_quota.client.models import Quota
 from edc_quota.client.exceptions import QuotaReachedError
 from edc.map.classes import Mapper
 from edc.map.classes.controller import site_mappers
-
-
-class TestPlotMapper(Mapper):
-    map_area = 'test_community'
-    map_code = '01'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.011111
-    gps_center_lon = 25.741111
-    radius = 5.5
-    location_boundary = ()
 
 
 class TestSubjectConsentForm(TestCase):
@@ -81,7 +71,6 @@ class TestSubjectConsentForm(TestCase):
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         RepresentativeEligibilityFactory(household_structure=self.household_structure)
-        HouseholdMemberFactory(household_structure=self.household_structure)
 
         self.male_dob = date.today() - relativedelta(years=25)
         self.male_age_in_years = 25
@@ -136,6 +125,7 @@ class TestSubjectConsentForm(TestCase):
              'is_dob_estimated': '-',
              'consent_signature': YES,
              'consent_datetime': datetime.today(),
+             'version':1
         }
 
 
@@ -155,3 +145,36 @@ class TestSubjectConsentForm(TestCase):
         consent_form  = SubjectConsentForm(data=self.data)
         consent_form.save()
         self.assertEqual(RegisteredSubject.objects.filter(identity=self.data['identity']).count(), 1)
+
+    def test_validate_identity_valid_bhs_and_ahs(self):
+        """ Test identity on
+        """
+        from bhp066.apps.bcpp_subject.forms.subject_consent_form import SubjectConsentForm
+        self.data['identity'] = '317918515'
+        self.data['confirm_identity'] = '317918515'
+        consent_form  = SubjectConsentForm(data=self.data)
+        consent_form.save()
+        self.assertEqual(RegisteredSubject.objects.filter(identity=self.data['identity']).count(), 1)
+        survey_T0 = Survey.objects.all().order_by('datetime_start')[0]
+        survey_T1 = Survey.objects.all().order_by('datetime_start')[1]
+        enumeration_helper_T3 = EnumerationHelper(self.household_structure.household, survey_T0, survey_T1)
+        enumeration_helper_T3.add_members_from_survey()
+
+        household_member_y2 = HouseholdMember.objects.get(
+            registered_subject__identity='317918515',
+            household_structure__survey=survey_T1
+        )
+        self.data['household_member'] = household_member_y2.id
+        self.data['version'] = 4
+        consent_form  = SubjectConsentForm(data=self.data)
+        # print consent_form.errors
+        self.assertIn(u"Form may not be saved. Only data from BCPP Year 1 may be added/changed. "
+                      u"(LIMIT_EDIT_TO_CURRENT_SURVEY)",
+                      consent_form.errors.get("__all__"))
+        # del consent_form.errors['__all__']
+        # consent_form.save()
+        # self.assertEqual(SubjectConsent.objects.filter(registered_subject__identity=self.data['identity']).count(), 2)
+
+
+
+
