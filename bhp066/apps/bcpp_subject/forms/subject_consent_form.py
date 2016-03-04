@@ -21,7 +21,7 @@ class BaseBcppConsentForm(BaseConsentForm):
 
     def clean(self):
         cleaned_data = super(BaseBcppConsentForm, self).clean()
-        self.validate_identity()
+        self.clean_identity_and_household_member()
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
@@ -152,13 +152,14 @@ class BaseBcppConsentForm(BaseConsentForm):
             raise forms.ValidationError("Please select the household member.")
         return household_member
 
-    def validate_identity(self):
+    def clean_identity_and_household_member(self):
         instance = None
         if self.instance.id:
             instance = self.instance
         else:
             instance = SubjectConsent(**self.cleaned_data)
         identity = self.cleaned_data.get('identity')
+
         try:
             identity = super(BaseBcppConsentForm, self).clean_identity()
         except AttributeError:
@@ -166,11 +167,13 @@ class BaseBcppConsentForm(BaseConsentForm):
         try:
             if not instance.id:
                 RegisteredSubject.objects.get(identity=identity)
-                raise ValidationError(
-                    "Identity already used by another participant."
-                    " Got \'%(identity)s\'.",
-                    params={'identity': identity},
-                    code='invalid')
+                household_member = self.cleaned_data.get("household_member")
+                if household_member.member_status == 'BHS_ELIGIBLE':
+                    raise ValidationError(
+                        "Identity already used by another participant."
+                        " Got \'%(identity)s\'.",
+                        params={'identity': identity},
+                        code='invalid')
         except MultipleObjectsReturned:
             raise forms.ValidationError(
                 "More than one subject is using this identity \'%(identity)s\'. Cannot continue.",
