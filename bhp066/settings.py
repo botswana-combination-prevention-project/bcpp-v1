@@ -61,7 +61,8 @@ elif socket.gethostname() == 'tsetsiba':
     KEY_PATH = '/Users/tsetsiba/source/keys'
 else:
     # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
-    KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
+    # KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
+    KEY_PATH = os.path.join(BASE_DIR.ancestor(1), 'keys')
 
 ADMINS_HOST = ['ckgathi', 'tsetsiba', 'One-2.local', 'mac2.local']
 
@@ -74,7 +75,7 @@ if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
 
-#     KEY_PATH = BASE_DIR
+    KEY_PATH = BASE_DIR
     if testing_db_name == 'sqlite':
         DATABASES = TESTING_SQLITE
     else:
