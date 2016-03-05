@@ -34,8 +34,8 @@ BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 GIT_DIR = BASE_DIR.ancestor(1)
 
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source
-PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project
-PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))  # e.g. /home/django/source/bhp066_project/bhp066
+PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bcpp
+PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))  # e.g. /home/django/source/bcpp/bhp066
 APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 MEDIA_ROOT = PROJECT_DIR.child('media')
@@ -47,10 +47,17 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
+DEVELOPER_HOSTS = [
+    'mac2-2.local', 'ckgathi', 'one-2.local', 'One-2.local', 'tsetsiba', 'leslie']
+
 # edc.crytpo_fields encryption keys
 # developers should set by catching their hostname instead of setting explicitly
 if socket.gethostname() == 'mac2.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
+elif socket.gethostname() in DEVELOPER_HOSTS:
+    KEY_PATH = os.path.join(SOURCE_ROOT, 'crypto_fields/test_keys')
+elif 'test' in sys.argv:
+    KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bcpp/bhp066/keys'
 elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
