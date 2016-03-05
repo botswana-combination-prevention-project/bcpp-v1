@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ValidationError
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 
@@ -20,6 +21,7 @@ class BaseBcppConsentForm(BaseConsentForm):
 
     def clean(self):
         cleaned_data = super(BaseBcppConsentForm, self).clean()
+        self.clean_identity_and_household_member()
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
@@ -150,14 +152,28 @@ class BaseBcppConsentForm(BaseConsentForm):
             raise forms.ValidationError("Please select the household member.")
         return household_member
 
-    def clean_identity(self):
+    def clean_identity_and_household_member(self):
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = SubjectConsent(**self.cleaned_data)
         identity = self.cleaned_data.get('identity')
+
         try:
             identity = super(BaseBcppConsentForm, self).clean_identity()
         except AttributeError:
             pass
         try:
-            RegisteredSubject.objects.get(identity=identity)
+            if not instance.id:
+                RegisteredSubject.objects.get(identity=identity)
+                household_member = self.cleaned_data.get("household_member")
+                if household_member.member_status == 'BHS_ELIGIBLE':
+                    raise ValidationError(
+                        "Identity already used by another participant."
+                        " Got \'%(identity)s\'.",
+                        params={'identity': identity},
+                        code='invalid')
         except MultipleObjectsReturned:
             raise forms.ValidationError(
                 "More than one subject is using this identity \'%(identity)s\'. Cannot continue.",
@@ -166,7 +182,6 @@ class BaseBcppConsentForm(BaseConsentForm):
         except RegisteredSubject.DoesNotExist:
             pass
         return identity
-
 
 class SubjectConsentForm(BaseBcppConsentForm):
 
