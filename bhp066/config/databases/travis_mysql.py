@@ -2,7 +2,7 @@
 TRAVIS_MYSQL = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bcpp',
+        'NAME': 'test_default',
         'USER': 'travis',
         'HOST': '',
         'PORT': '',
@@ -10,7 +10,7 @@ TRAVIS_MYSQL = {
     },
     'lab_api': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bcpp_lab',
+        'NAME': 'test_lab_api',
         'USER': 'travis',
         'HOST': '',
         'PORT': '',
@@ -18,7 +18,7 @@ TRAVIS_MYSQL = {
     },
     'test_server': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bcpp_test',
+        'NAME': 'test_destination',
         'USER': 'travis',
         'HOST': '',
         'PORT': '',
