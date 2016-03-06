@@ -46,6 +46,9 @@ before_script:
   - flake8 bhp066
   - mysql -e 'create database edc;'
   - mysql -e 'create database edc_lab;'
+  - mysql -e 'create database test_default CHARACTER SET utf8;'
+  - mysql -e 'create database test_lab_api CHARACTER SET utf8;'
+  - mysql -e 'create database dispatch_destination CHARACTER SET utf8;'
 
 script: 
   - coverage run --source=bhp066 manage.py test
