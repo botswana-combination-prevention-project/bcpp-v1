@@ -18,7 +18,7 @@ TRAVIS_MYSQL = {
     },
     'test_server': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test_destination',
+        'NAME': 'dispatch_destination',
         'USER': 'travis',
         'HOST': '',
         'PORT': '',
