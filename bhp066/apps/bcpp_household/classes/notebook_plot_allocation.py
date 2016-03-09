@@ -9,8 +9,10 @@ class NotebookPlotAllocation(object):
     notebook_plot_lists = []
 
     def __init__(self, sectioned_plots=None):
-        self.sectioned_plots = sectioned_plots
+        self.sectioned_plots = sectioned_plots or self.current_community_plot
         self.community = settings.CURRENT_COMMUNITY
+        self.path = '/Users/tsetsiba/source/bhp066_project/bhp066/apps/bcpp_household/annual_notebook_list/new_lerala.txt'
+        self.path = None
 
     @property
     def current_community_plot(self):
@@ -24,7 +26,7 @@ class NotebookPlotAllocation(object):
             temp.append(hostname_created)
             host_plots = []
             for consent in consents:
-                host_plots.append(consent.household_member.household_structure.householdplot.plot_identifier)
+                host_plots.append(consent.household_member.household_structure.household.plot.plot_identifier)
             temp.append(host_plots)
             generated_plot_list.append(temp)
         return generated_plot_list
@@ -118,8 +120,10 @@ class NotebookPlotAllocation(object):
     @property
     def current_community_config_file(self):
         hosts = []
-        path = '/Users/tsetsiba/source/bhp066_project/bhp066/apps/bcpp_household/annual_notebook_list/test_lerala.txt'
-        self.file = open(path)
+        if self.path is None:
+            raise (
+                "Specific the distribution config file for the current community-{}".format(self.community))
+        self.file = open(self.path)
         for line in self.file.readlines():
             hosts.append(line.strip())
         return hosts
@@ -165,15 +169,17 @@ class NotebookPlotAllocation(object):
         for hosts in self.custom_allocation_config:
             for host in hosts:
                 if 'half' in host:
-                    if shared_hosts:
-                        for i, shared in enumerate(shared_hosts):
-                            for shrd in shared:
-                                if shrd == host:
-                                    temp = shared_hosts[i]
-                                    temp[1].append(hosts[0].strip())
-                                    shared_hosts[i] = temp
-                    else:
-                        shared_hosts.append([host, [hosts[0]]])
+                    temp = []
+                    temp.append(host)
+                    if not (temp in shared_hosts):
+                        shared_hosts.append(temp)
+
+        for x, shared_host in enumerate(shared_hosts):
+            sharing_hosts = []
+            for hosts in self.custom_allocation_config:
+                if shared_host[0] in hosts:
+                    sharing_hosts.append(hosts[0])
+            shared_hosts[x].append(sharing_hosts)
         return shared_hosts
 
     @property

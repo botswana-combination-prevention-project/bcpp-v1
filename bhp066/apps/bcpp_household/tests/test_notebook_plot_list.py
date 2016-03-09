@@ -80,6 +80,19 @@ class TestNotebookPlotAllocation(TestCase):
             elif hosts[0] == 'bcpp009':
                 self.assertEqual(list(set(['19', '22', '7', '8', '9', '10', '11'])), list(set(hosts[1])))
 
+    def test_shared_hosts(self):
+        list_with_duplicates = [
+            ['bcpp011', ['1', '2', '3']],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10', '11']],
+            ['bcpp005', ['12', '13', '14', '15', '16']],
+            ['bcpp052', ['18', '17']],
+            ['bcpp016', ['20', '21']],
+            ['bcpp032', ['19', '22', '23', '24']]]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        shared_hosts = notebook.custom_allocation_config_shared
+        self.assertEqual(len(shared_hosts), 2)
+
     def test_sections(self):
         list_with_duplicates = [
             ['bcpp011', ['1', '2', '3']],
