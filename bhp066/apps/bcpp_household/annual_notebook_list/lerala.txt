@@ -1,0 +1,14 @@
+bcpp011 < bcpp011 & bcpp043(half)
+bcpp009 < bcpp038
+bcpp067 < bcpp008
+bcpp005 < bcpp005 & bcpp052
+bcpp038 < bcpp016
+bcpp014 < bcpp014 & bcpp004(half)
+bcpp019 < bcpp019
+bcpp034 < bcpp034 & bcpp043(half)
+bcpp007 < bcpp007
+bcpp010 < bcpp010
+bcpp004 < bcpp032 & bcpp004(half)
+bcpp012 < bcpp012
+bcpp043 < bcpp048.local
+bcpp018 < bcpp018

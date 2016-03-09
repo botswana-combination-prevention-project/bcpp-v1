@@ -1,0 +1,6 @@
+bcpp011 < bcpp011
+bcpp009 < bcpp038 & bcpp032(half)
+bcpp067 < bcpp008 & bcpp032(half)
+bcpp005 < bcpp005 & bcpp052
+bcpp038 < bcpp016
+bcpp016 < bcpp067
