@@ -9,10 +9,9 @@ class NotebookPlotAllocation(object):
     notebook_plot_lists = []
 
     def __init__(self, sectioned_plots=None):
-        self.sectioned_plots = sectioned_plots or self.current_community_plot
+        self.path = '/Users/tsetsiba/source/bhp066_project/bhp066/apps/bcpp_household/annual_notebook_list/new_lerala_share3.txt'
         self.community = settings.CURRENT_COMMUNITY
-        self.path = '/Users/tsetsiba/source/bhp066_project/bhp066/apps/bcpp_household/annual_notebook_list/new_lerala.txt'
-        self.path = None
+        self.sectioned_plots = sectioned_plots or self.current_community_plot
 
     @property
     def current_community_plot(self):
@@ -26,7 +25,8 @@ class NotebookPlotAllocation(object):
             temp.append(hostname_created)
             host_plots = []
             for consent in consents:
-                host_plots.append(consent.household_member.household_structure.household.plot.plot_identifier)
+                if not (consent.household_member.household_structure.household.plot.plot_identifier in host_plots):
+                    host_plots.append(consent.household_member.household_structure.household.plot.plot_identifier)
             temp.append(host_plots)
             generated_plot_list.append(temp)
         return generated_plot_list
@@ -57,7 +57,7 @@ class NotebookPlotAllocation(object):
     def update_sectioned_plots(self):
         for plots_data in self.allocate_sections:
             hostname, plots_identifiers, sections = plots_data
-            for plot_identifier in plots_identifiers:
+            for plot_identifier in list(set(plots_identifiers)):
                 hostname = hostname
                 section, sub_section = sections
                 plot = Plot.objects.get(plot_identifier=plot_identifier)
@@ -89,11 +89,11 @@ class NotebookPlotAllocation(object):
             all_plots = copy.deepcopy(duplicate_plots_list)
             all_plots.remove(plots)
             _plots = list(set(plots[1]))
-            notebook_list = copy.deepcopy(plots[1])
+            notebook_list = copy.deepcopy(list(set(plots[1])))
             for sub_list in all_plots:
                 main_index = duplicate_plots_list.index(sub_list)
                 try:
-                    _sub_list = sub_list[1]
+                    _sub_list = list(set(sub_list[1]))
                     for identifier in _plots:
                         if identifier in list(set(_sub_list)):
                             if len(set(duplicate_plots_list[main_index][1])) >= len(notebook_list):
@@ -122,7 +122,7 @@ class NotebookPlotAllocation(object):
         hosts = []
         if self.path is None:
             raise (
-                "Specific the distribution config file for the current community-{}".format(self.community))
+                "Specific the distribution config file for the current community-{}".format(settings.CURRENT_COMMUNITY))
         self.file = open(self.path)
         for line in self.file.readlines():
             hosts.append(line.strip())
@@ -186,7 +186,7 @@ class NotebookPlotAllocation(object):
     def prepare_notebook_plot_list(self):
         final_notebook_plot_list = []
         for hosts in self.custom_allocation_config:
-            host_to_be_assigned = hosts[0]
+            host_to_be_assigned = hosts[0].strip()
             hosts_to_allocated = hosts[1:]
             temp = []
             temp.append(host_to_be_assigned)
@@ -206,10 +206,14 @@ class NotebookPlotAllocation(object):
             for x, pl in enumerate(all_plots):
                 temp = []
                 if host.strip() == pl[0].strip():
-                    temp.append(host.strip())
-                    tmp = shared_plots[i] + pl[1]
-                    temp.append(tmp)
-                    all_plots[x] = temp
+                    try:
+                        pl = pl[1] if len(pl) > 1 else []
+                        temp.append(host.strip())
+                        tmp = shared_plots[i] + pl
+                        temp.append(tmp)
+                        all_plots[x] = temp
+                    except IndexError:
+                        print ("Error trying to allocate shared plots for {}".format(host))
         return all_plots
 
     @property

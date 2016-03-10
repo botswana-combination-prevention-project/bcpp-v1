@@ -5,7 +5,7 @@ from bhp066.apps.bcpp_household.classes.notebook_plot_allocation import Notebook
 
 class TestNotebookPlotAllocation(TestCase):
 
-    def test_remove_duplicates_with_load_balancing(self):
+    def test_remove_duplicates_with_load_sharing_evenly1(self):
         list_with_duplicates = [
             ['bcpp011', ['21', '22', '23']],
             ['bcpp038', ['21', '22', '23', '24', '25', '26']],
@@ -18,7 +18,7 @@ class TestNotebookPlotAllocation(TestCase):
         self.assertEqual(list(set(['24', '25', '26'])), list_without_duplicates[1][1])
         self.assertEqual(list(set(['28', '32', '31', '30'])), list_without_duplicates[2][1])
 
-    def test_remove_duplicates_with_load_sharing_evenly(self):
+    def test_remove_duplicates_with_load_sharing_evenly2(self):
         list_with_duplicates = [
             ['bcpp011', ['22', '22', '22']],
             ['bcpp038', ['21', '22', '23', '24', '25', '26']],
@@ -30,6 +30,141 @@ class TestNotebookPlotAllocation(TestCase):
         self.assertEqual(list(set(['22'])), list(set(list_without_duplicates[0][1])))
         self.assertEqual(list(set(['25', '26', '21', '23'])), list_without_duplicates[1][1])
         self.assertEqual(list(set(['28', '32', '31', '30'])), list_without_duplicates[2][1])
+
+    def test_remove_duplicates_with_load_sharing_evenly3(self):
+        list_with_duplicates = [
+            ['bcpp011', ['22', '21', '22']],
+            ['bcpp009', ['21', '22', '22']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        list_without_duplicates = notebook.remove_duplicates_and_load_balance_plots
+        self.assertEqual(list(set(['21'])), list(set(list_without_duplicates[0][1])))
+        self.assertEqual(list(set(['22'])), list_without_duplicates[1][1])
+
+    def test_remove_duplicates_with_load_sharing_evenly4(self):
+        list_with_duplicates = [
+            ['bcpp011', ['22', '21', '23']],
+            ['bcpp009', ['21', '22', '23']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        list_without_duplicates = notebook.remove_duplicates_and_load_balance_plots
+        self.assertEqual(list(set(['21', '23'])), list(set(list_without_duplicates[0][1])))
+        self.assertEqual(list(set(['22'])), list_without_duplicates[1][1])
+
+    def test_final_list_with_and_cases_shared1(self):
+        list_with_duplicates = [
+            ['bcpp011', ['1', '2', '3']],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        new_final_plots = notebook.allocated_shared_plots
+        for hosts in new_final_plots:
+            if hosts[0] == 'bcpp011':
+                self.assertEqual(list(set(['1', '2', '3', '7', '8'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp009':
+                self.assertEqual(list(set(['4', '5', '6', '9', '10'])), list(set(hosts[1])))
+
+    def test_final_list_with_and_cases_shared2(self):
+        list_with_duplicates = [
+            ['bcpp011', ['1', '2', '3']],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10']],
+            ['bcpp039', ['11', '12', '13', '14']],
+            ['bcpp010', ['15']],
+            ['bcpp012', ['16']],
+            ['bcpp013', ['17']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        new_final_plots = notebook.allocated_shared_plots
+        print new_final_plots
+        for hosts in new_final_plots:
+            if hosts[0] == 'bcpp011':
+                self.assertEqual(list(set(['1', '2', '3', '7', '8'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp009':
+                self.assertEqual(list(set(['4', '5', '6', '9', '10'])), list(set(hosts[1])))
+                print hosts[0]
+            elif hosts[0] == 'bcpp010':
+                self.assertEqual(list(set(['15', '11', '12'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp012':
+                self.assertEqual(list(set(['16', '13', '14'])), list(set(hosts[1])))
+
+    def test_final_list_with_and_cases_shared3(self):
+        list_with_duplicates = [
+            ['bcpp011', ['1', '2', '3']],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10']],
+            ['bcpp039', ['11', '12', '13', '14']],
+            ['bcpp010', ['15']],
+            ['bcpp012', ['16']],
+            ['bcpp013', ['17', '18']],
+            ['bcpp014', ['19']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        new_final_plots = notebook.allocated_shared_plots
+        print new_final_plots
+        for hosts in new_final_plots:
+            if hosts[0] == 'bcpp011':
+                self.assertEqual(list(set(['1', '2', '3', '7', '8'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp009':
+                self.assertEqual(list(set(['4', '5', '6', '9', '10'])), list(set(hosts[1])))
+                print hosts[0]
+            elif hosts[0] == 'bcpp010':
+                self.assertEqual(list(set(['15', '11', '12'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp012':
+                self.assertEqual(list(set(['17', '13', '14', '16'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp014':
+                self.assertEqual(list(set(['18', '19'])), list(set(hosts[1])))
+
+    def test_final_list_no_plots(self):
+        list_with_duplicates = [
+            ['bcpp011', []],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10']],
+            ['bcpp039', ['11', '12', '13', '14']],
+            ['bcpp010', ['15']],
+            ['bcpp012', ['16']],
+            ['bcpp013', ['17']],
+            ['bcpp014', ['19']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        new_final_plots = notebook.allocated_shared_plots
+        for hosts in new_final_plots:
+            if hosts[0] == 'bcpp011':
+                self.assertEqual(list(set(['7', '8'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp009':
+                self.assertEqual(list(set(['4', '5', '6', '9', '10'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp010':
+                self.assertEqual(list(set(['15', '11', '12'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp012':
+                self.assertEqual(list(set(['13', '14', '16'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp014':
+                self.assertEqual(list(set(['19', '17'])), list(set(hosts[1])))
+
+    def test_final_list_no_plots1(self):
+        list_with_duplicates = [
+            ['bcpp011', []],
+            ['bcpp009', ['4', '5', '6']],
+            ['bcpp038', ['7', '8', '9', '10']],
+            ['bcpp039', ['11', '12', '13', '14']],
+            ['bcpp010', ['15']],
+            ['bcpp012', []],
+            ['bcpp013', ['17']],
+            ['bcpp014', ['19']],
+        ]
+        notebook = NotebookPlotAllocation(list_with_duplicates)
+        new_final_plots = notebook.allocated_shared_plots
+        for hosts in new_final_plots:
+            if hosts[0] == 'bcpp011':
+                self.assertEqual(list(set(['7', '8'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp009':
+                self.assertEqual(list(set(['4', '5', '6', '9', '10'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp010':
+                self.assertEqual(list(set(['15', '11', '12'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp012':
+                self.assertEqual(list(set(['13', '14'])), list(set(hosts[1])))
+            elif hosts[0] == 'bcpp014':
+                self.assertEqual(list(set(['19', '17'])), list(set(hosts[1])))
 
     def test_filtering_hosts(self):
         notebook = NotebookPlotAllocation()
