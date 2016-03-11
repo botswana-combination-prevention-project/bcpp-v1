@@ -1,6 +1,8 @@
 import copy
 
 from django.conf import settings
+from django.db.models import Q
+
 from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
 
 
@@ -9,12 +11,17 @@ class NotebookPlotAllocation(object):
     notebook_plot_lists = []
 
     def __init__(self, sectioned_plots=None):
-        self.path = '/Users/tsetsiba/source/bhp066_project/bhp066/apps/bcpp_household/annual_notebook_list/new_lerala_share3.txt'
+        self.path = '/Use""rs/tsetsiba/source/bhp066_project/bhp066'
+        '/apps/bcpp_household/annual_notebook_list/new_lerala_share3.txt'
         self.community = settings.CURRENT_COMMUNITY
         self.sectioned_plots = sectioned_plots or self.current_community_plot
 
+    def not_allocated_plots(self):
+        pass
+
     @property
     def current_community_plot(self):
+        print ("Generating plot allocation using given custom plot allocation config file.")
         generated_plot_list = []
         for host in self.filtering_hosts:
             hostname_created = host.strip()
@@ -29,6 +36,8 @@ class NotebookPlotAllocation(object):
                     host_plots.append(consent.household_member.household_structure.household.plot.plot_identifier)
             temp.append(host_plots)
             generated_plot_list.append(temp)
+        if len(generated_plot_list) > 1:
+            print("Plot allocation is ready.")
         return generated_plot_list
 
     @property
@@ -55,8 +64,10 @@ class NotebookPlotAllocation(object):
         return sub_section
 
     def update_sectioned_plots(self):
+        updated_plots = []
         for plots_data in self.allocate_sections:
             hostname, plots_identifiers, sections = plots_data
+            print("{} has been allocated {} plot(s).".format(hostname, len(set(plots_identifiers))))
             for plot_identifier in list(set(plots_identifiers)):
                 hostname = hostname
                 section, sub_section = sections
@@ -64,12 +75,27 @@ class NotebookPlotAllocation(object):
                 plot.section = section
                 plot.sub_section = sub_section
                 plot.save(update_fields=['section', 'sub_section'])
+                updated_plots.append(plot_identifier)
+        print("{} plot(s) has been sectioned.".format(len(list(set(updated_plots)))))
+        print("Determing plots which are not allocated and sectioned.")
+        consents = SubjectConsent.objects.filter(
+            ~Q(household_member__household_structure__household__plot__plot_identifier__in=updated_plots))
+        machines = list(set(consents.values_list('hostname_created')))
+        number_of_plots = consents.values_list(
+            'household_member__household_structure__household__plot__plot_identifier')
+        print ("There are {} for these "
+               "machines -({}) not "
+               "allocated.".format(len(list(set(consents.values_list('hostname_created')))), machines))
+        print ("Overall number of plots not being allocated: {}.".format(list(set(number_of_plots))))
+        return updated_plots
 
     @property
     def allocate_sections(self):
         sectioned_plots = []
         plots = copy.deepcopy(self.allocated_shared_plots)
         j = 0
+        if plots:
+            print("Allocating generated sectioning.")
         for sections in self.sections:
             section = sections[0]
             sub_section = 0
@@ -124,7 +150,16 @@ class NotebookPlotAllocation(object):
             raise (
                 "Specific the distribution config file for the current community-{}".format(settings.CURRENT_COMMUNITY))
         self.file = open(self.path)
+        not_allowed_characters = [',', '.', '>']
         for line in self.file.readlines():
+            for character in not_allowed_characters:
+                if character in line:
+                    raise("Allow character in the configuration "
+                          "file are [< , & , (, )] e.g bcpp001 < bcpp001 & bcpp002 & bcpp012(half)")
+            if line == '':
+                continue
+            if not ('<' in line):
+                raise("Specific filtering hostname e.g bcpp001 < bcpp001. (<) allocation symbol is missing.")
             hosts.append(line.strip())
         return hosts
 
@@ -220,6 +255,8 @@ class NotebookPlotAllocation(object):
     def allocated_shared_plots(self):
         original_plots = self.remove_duplicates_and_load_balance_plots
         all_plots = copy.deepcopy(self.prepare_notebook_plot_list)
+        if all_plots:
+            print("Plot duplication across the machines has been removed.")
         for shared in self.custom_allocation_config_shared:
             shared_hostname = shared[0].strip()[:7]
             sharing_hosts = shared[1]

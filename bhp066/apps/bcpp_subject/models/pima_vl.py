@@ -93,7 +93,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         max_length=20,
     )
 
-    vl_value_quatifier_other = OtherCharField()
+    #vl_value_quatifier_other = OtherCharField()
 
     poc_vl_value = models.DecimalField(
         verbose_name="POC viral load count",
