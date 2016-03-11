@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
+from bhp066.apps.bcpp_household.models import Plot
 
 
 class NotebookPlotAllocation(object):
