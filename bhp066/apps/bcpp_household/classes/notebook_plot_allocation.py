@@ -11,8 +11,7 @@ class NotebookPlotAllocation(object):
     notebook_plot_lists = []
 
     def __init__(self, sectioned_plots=None):
-        self.path = '/Use""rs/tsetsiba/source/bhp066_project/bhp066'
-        '/apps/bcpp_household/annual_notebook_list/new_lerala_share3.txt'
+        self.path = None
         self.community = settings.CURRENT_COMMUNITY
         self.sectioned_plots = sectioned_plots or self.current_community_plot
 
@@ -150,16 +149,7 @@ class NotebookPlotAllocation(object):
             raise (
                 "Specific the distribution config file for the current community-{}".format(settings.CURRENT_COMMUNITY))
         self.file = open(self.path)
-        not_allowed_characters = [',', '.', '>']
         for line in self.file.readlines():
-            for character in not_allowed_characters:
-                if character in line:
-                    raise("Allow character in the configuration "
-                          "file are [< , & , (, )] e.g bcpp001 < bcpp001 & bcpp002 & bcpp012(half)")
-            if line == '':
-                continue
-            if not ('<' in line):
-                raise("Specific filtering hostname e.g bcpp001 < bcpp001. (<) allocation symbol is missing.")
             hosts.append(line.strip())
         return hosts
 
