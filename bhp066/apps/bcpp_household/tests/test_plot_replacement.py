@@ -11,7 +11,7 @@ from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegist
 from edc.core.crypto_fields.models import Crypt
 from edc.subject.rule_groups.classes import site_rule_groups
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from edc_constants.constants import DONT_KNOW
+from ..constants import DONT_KNOW
 
 from bhp066.apps.bcpp_dispatch.classes import BcppDispatchController
 from bhp066.apps.bcpp_household.constants import (

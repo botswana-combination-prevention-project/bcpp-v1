@@ -18,3 +18,4 @@ TWENTY_PERCENT = '1'
 UNCONFIRMED = 'unconfirmed'
 UNKNOWN_OCCUPIED = 'unknown'  # replaced
 VISIT_ATTEMPTS = 3
+DONT_KNOW = 'Do not Know'

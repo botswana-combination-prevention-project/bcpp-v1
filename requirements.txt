@@ -45,3 +45,4 @@ python-mimeparse==0.1.4
 six==1.7.3
 smmap==0.8.2
 wsgiref==0.1.2
+selenium
