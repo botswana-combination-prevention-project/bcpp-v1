@@ -10,7 +10,8 @@ class Command(BaseCommand):
     help = 'Creates annual plot sectioning base on custom plot allocation plan for a particular community.'
 
     def handle(self, *args, **options):
-        print ("Creating plot sectioning for {} - {}. This process takes few minutes.".format(settings.CURRENT_COMMUNITY, settings.CURRENT_SURVEY))
+        print ("Creating plot sectioning for {} - {}. This process takes few minutes.".format(
+            settings.CURRENT_COMMUNITY, settings.CURRENT_SURVEY))
         plot_section = NotebookPlotAllocation()
         print("There are {} machines and generated section "
               "plan {} ".format(len(plot_section.community_hosts), plot_section.sections))

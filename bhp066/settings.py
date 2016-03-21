@@ -77,7 +77,7 @@ MANAGERS = ADMINS
 CONN_MAX_AGE = 15
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
-#     KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
+    # KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
     if testing_db_name == 'sqlite':
