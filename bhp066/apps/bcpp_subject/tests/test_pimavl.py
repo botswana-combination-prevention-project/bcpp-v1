@@ -31,20 +31,7 @@ from .factories import SubjectConsentFactory, SubjectVisitFactory
 
 from edc_quota.client.models import Quota
 from edc_quota.client.exceptions import QuotaReachedError
-from edc.map.classes import Mapper
 from edc.map.classes.controller import site_mappers
-
-
-class TestPlotMapper(Mapper):
-    map_area = 'test_community'
-    map_code = '01'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.011111
-    gps_center_lon = 25.741111
-    radius = 5.5
-    location_boundary = ()
 
 
 class TestPimaVL(TestCase):
@@ -52,13 +39,6 @@ class TestPimaVL(TestCase):
     app_label = 'bcpp_subject'
     community = 'test_community'
 
-    @override_settings(
-        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
-        CURRENT_COMMUNITY_CHECK=False,
-        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
-        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
-        FILTERED_DEFAULT_SEARCH=True,
-    )
     def setUp(self):
         site_mappers.autodiscover()
         from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -148,7 +128,7 @@ class TestPimaVL(TestCase):
             app_label='bcpp_subject',
             model_name='PimaVl',
             target=1,
-            start_date=timezone.now().date(), 
+            start_date=timezone.now().date(),
             expiration_date=timezone.now().date() + timedelta(days=1)
         )
         self.assertEqual(1, Quota.objects.all().count())

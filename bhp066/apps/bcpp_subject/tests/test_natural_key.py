@@ -30,7 +30,6 @@ from bhp066.apps.bcpp_subject.tests.factories import (
     SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory, CallLogEntryFactory,
     CallListFactory)
 from bhp066.apps.bcpp_survey.models import Survey
-from django.test.utils import override_settings
 
 
 class TestNaturalKey(TestCase):
@@ -38,13 +37,6 @@ class TestNaturalKey(TestCase):
     app_label = 'bcpp_subject'
     community = 'test_community'
 
-    @override_settings(
-        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
-        CURRENT_COMMUNITY_CHECK=False,
-        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
-        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
-        FILTERED_DEFAULT_SEARCH=True,
-    )
     def setUp(self):
         site_mappers.autodiscover()
         from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -75,13 +67,6 @@ class TestNaturalKey(TestCase):
                 self.assertTrue('get_by_natural_key' in dir(model.objects),
                                 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
-    @override_settings(
-        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
-        CURRENT_COMMUNITY_CHECK=False,
-        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
-        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
-        FILTERED_DEFAULT_SEARCH=True,
-    )
     def test_p3(self):
         mapper = site_mappers.get_mapper(site_mappers.current_community)
         community = mapper.map_area
