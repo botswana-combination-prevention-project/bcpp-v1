@@ -75,4 +75,3 @@ class BaseSeleniumTest(LiveServerTestCase):
             uploaded_map_17=None,
             uploaded_map_16=None,
         )
-        print (Plot.objects.all()[0].__dict__)

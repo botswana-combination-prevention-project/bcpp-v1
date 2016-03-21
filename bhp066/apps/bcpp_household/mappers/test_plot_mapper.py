@@ -37,16 +37,10 @@ class TestPlotMapper(BasePlotMapper):
             smc_start_date=date(2016, 2, 29)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2016, 4, 30),
-            full_enrollment_date=date(2016, 5, 30),
-            end_date=date(2016, 5, 30),
-            smc_start_date=date(2016, 5, 29)),
-        'bcpp-year-3': SurveyDatesTuple(
-            name='t2',
-            start_date=date(2016, 6, 20),
-            full_enrollment_date=date(2016, 6, 30),
-            end_date=date(2016, 6, 30),
-            smc_start_date=date(2016, 6, 30)),
+            start_date=date(2016, 3, 13),
+            full_enrollment_date=date(2016, 4, 30),
+            end_date=date(2016, 10, 30),
+            smc_start_date=date(2016, 5, 30)),
     }
 
     clinic_days = {

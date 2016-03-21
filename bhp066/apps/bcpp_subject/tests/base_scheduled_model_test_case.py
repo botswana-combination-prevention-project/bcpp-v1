@@ -14,9 +14,10 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 from edc_constants.constants import NOT_APPLICABLE
 
-from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
@@ -34,7 +35,7 @@ class BaseScheduledModelTestCase(TestCase):
     subject_visit_female = None
     subject_visit_male = None
 
-    def startup(self):
+    def setUp(self):
 
         site_mappers.autodiscover()
         from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -42,26 +43,17 @@ class BaseScheduledModelTestCase(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        bcpp_app_configuration.prepare()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
-        bcpp_app_configuration.prep_survey_for_tests()
-#         site_visit_schedules.autodiscover()
-#         site_visit_schedules.build_all()
+        BcppAppConfiguration().prep_survey_for_tests()
 
         self.household_structure = None
         self.registered_subject = None
         self.representative_eligibility = None
         self.study_site = None
         self.intervention = None
-#         try:
-#             site_lab_profiles.register(BcppSubjectProfile())
-#         except AlreadyRegisteredLabProfile:
-#             pass
-#         BcppAppConfiguration()
-#         site_lab_tracker.autodiscover()
-#         BcppSubjectVisitSchedule().build()
 
         self.community = site_mappers.get_mapper(site_mappers.current_community).map_area
         self.study_site = StudySite.objects.get(site_code=site_mappers.get_mapper(site_mappers.current_community).map_code)
@@ -70,25 +62,25 @@ class BaseScheduledModelTestCase(TestCase):
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.survey2 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
-        household = Household.objects.get(plot=plot)
-        self.create_baseline(household)
-        self.create_annual(household)
+        self.household = Household.objects.get(plot=plot)
+#         self.create_baseline(household)
+#         self.create_annual(household)
 
-    def create_baseline(self, household):
-        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        self.household_structure = household_structure
-        RepresentativeEligibilityFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
+
+#     def create_baseline(self, household):
+        self.household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure)
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        HouseholdMemberFactory(household_structure=self.household_structure)
 
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
 
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure,
+        self.household_member_female = HouseholdMemberFactory(household_structure=self.household_structure,
                                                               first_name='SUE', initials='SW', gender='F',
                                                               age_in_years=25, study_resident='Yes', relation='sister',
                                                               inability_to_participate=NOT_APPLICABLE)
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure,
+        self.household_member_male = HouseholdMemberFactory(household_structure=self.household_structure,
                                                             first_name='ERIK', initials='EW', gender='M',
                                                             age_in_years=25, study_resident='Yes', relation='brother',
                                                             inability_to_participate=NOT_APPLICABLE)
@@ -104,7 +96,6 @@ class BaseScheduledModelTestCase(TestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_female = HouseholdMember.objects.get(pk=self.household_member_female.pk)
-        # print self.household_member_female.member_status
 
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
@@ -115,9 +106,8 @@ class BaseScheduledModelTestCase(TestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_male = HouseholdMember.objects.get(pk=self.household_member_male.pk)
-        # print self.household_member_male.member_status
 
-        subject_consent_female = SubjectConsentFactory(
+        self.subject_consent_female = SubjectConsentFactory(
             consent_datetime=datetime.today(),
             household_member=self.household_member_female,
             gender='F',
@@ -129,7 +119,7 @@ class BaseScheduledModelTestCase(TestCase):
             identity='101129811',
             initials=enrollment_female.initials,
             study_site=self.study_site)
-        subject_consent_male = SubjectConsentFactory(
+        self.subject_consent_male = SubjectConsentFactory(
             consent_datetime=datetime.today(),
             household_member=self.household_member_male,
             gender='M',
@@ -142,34 +132,30 @@ class BaseScheduledModelTestCase(TestCase):
             initials=enrollment_male.initials,
             study_site=self.study_site)
 
-        # FIXME: need this to be fixed, not getting gender right!
-        self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
-        self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
+        self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=self.subject_consent_female.subject_identifier)
+        self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=self.subject_consent_male.subject_identifier)
         self.appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=0)
         self.subject_visit_female = SubjectVisitFactory(
             report_datetime=datetime.today(),
             appointment=self.appointment_female, household_member=self.household_member_female)
         self.appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__time_point=0)
-        self.subject_visit_male = self.new_subject_visit_male()
-
-    def new_subject_visit_male(self):
-        return SubjectVisitFactory(
+        self.subject_visit_male = SubjectVisitFactory(
             report_datetime=datetime.today(),
             appointment=self.appointment_male, household_member=self.household_member_male)
 
-    def create_annual(self, household):
-        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey2)
-        RepresentativeEligibilityFactory(household_structure=household_structure)
+#     def create_annual(self, household):
+        self.household_structure1 = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure1)
 
-        HouseholdStructure.objects.add_household_members_from_survey(household, self.survey1, self.survey2)
+        HouseholdStructure.objects.add_household_members_from_survey(self.household, self.survey1, self.survey2)
 
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         self.household_member_female_annual = HouseholdMember.objects.get(
             internal_identifier=self.household_member_female.internal_identifier,
-            household_structure=household_structure)
+            household_structure=self.household_structure1)
         self.household_member_male_annual = HouseholdMember.objects.get(
             internal_identifier=self.household_member_male.internal_identifier,
-            household_structure=household_structure)
+            household_structure=self.household_structure1)
 
         self.registered_subject_female_annual = self.household_member_female_annual.registered_subject
         self.registered_subject_male_annual = self.household_member_male_annual.registered_subject
@@ -183,3 +169,5 @@ class BaseScheduledModelTestCase(TestCase):
             report_datetime=datetime.today(),
             appointment=appointment_male_annual,
             household_member=self.household_member_male_annual)
+        SubjectLocatorFactory(subject_visit=self.subject_visit_male)
+        SubjectLocatorFactory(subject_visit=self.subject_visit_female)

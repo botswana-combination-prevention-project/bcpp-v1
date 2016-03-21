@@ -266,6 +266,7 @@ class CallLogEntry (BaseSyncUuidModel):
                     outcome.append('Do not call')
         except IndexError:
             pass
+        return outcome
 
     def update_call_list(self):
         """Update the call list."""

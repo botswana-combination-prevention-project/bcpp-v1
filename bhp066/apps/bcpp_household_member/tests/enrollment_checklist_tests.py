@@ -147,8 +147,6 @@ class EnrollmentChecklistTests(TestCase):
         self.subject_consent = SubjectConsentFactory(dob=self.enrollment_checklist.dob,study_site=self.study_site, citizen='Yes',initials=self.enrollment_checklist.initials,
                                                      household_member=self.household_member, registered_subject=self.household_member.registered_subject,
                                                      guardian_name="THUSO, THUSO")
-        print self.subject_consent.subject_identifier
-        print 'get registered subject'
         self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_consent.subject_identifier)
         #Assert that you cannot save enrollment checklist after consent entered
 

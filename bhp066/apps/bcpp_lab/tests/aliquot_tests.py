@@ -24,7 +24,6 @@ class TestAliquots(BaseScheduledModelTestCase):
     def test_create_aliquot_on_receive(self):
         """Asserts a primary aliquot is created on receiving a requisition."""
         self.startup()
-        report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         subject_requisition = SubjectRequisitionFactory(
             subject_visit=self.subject_visit_male,
@@ -43,7 +42,6 @@ class TestAliquots(BaseScheduledModelTestCase):
     def test_create_aliquot_on_receive_action(self):
         """Asserts a primary aliquot is created on receiving a requisition (using the action func)."""
         self.startup()
-        report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         subject_requisition = SubjectRequisitionFactory(
             subject_visit=self.subject_visit_male,

@@ -62,12 +62,8 @@ class FormsTests(TestCase):
         visit_definition.schedule_group.add(schedule_group)
 
         survey = SurveyFactory()
-        print('get site mappers')
         site_mappers.autodiscover()
-        print('get one mapper')
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        print('mapper is {0}'.format(mapper().get_map_area()))
-        print('Create a plot')
         plot = PlotFactory(community=mapper().get_map_area())
         household = HouseholdFactory(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=survey)
@@ -84,43 +80,29 @@ class FormsTests(TestCase):
             if self.app_label == model._meta.app_label:
                 models.append(model)
                 inline_models = inline_models + [m.model for m in model_admin.inlines]
-        print('Inline models are {0}'.format(', '.join([m._meta.object_name for m in inline_models])))
         for model, model_admin in admin.site._registry.iteritems():
             if self.app_label == model._meta.app_label:
                 if model in models and model not in inline_models:
                     n += 1
                     model_name = model._meta.object_name
-                    print('{0}_{1}_add'.format(model._meta.app_label, model_name.lower()))
                     url = reverse('admin:{0}_{1}_add'.format(model._meta.app_label, model_name.lower()))
                     response = self.client.get(url)
-                    print('  assert response=200')
                     self.assertEqual(response.status_code, 200)
-                    print('  assert template')
                     self.assertTemplateUsed(response, 'admin/change_form.html')
                     factory_mod = __import__('{0}.tests.factories'.format(self.app_label), fromlist=['{0}Factory'.format(model_name)])
                     factory = getattr(factory_mod, '{0}Factory'.format(model_name))
-                    print('  instantiate the factory')
                     model_instance = factory()
-                    print('  get admin change url for pk={0}'.format(model_instance.id))
                     url = reverse('admin:{0}_{1}_change'.format(model_instance._meta.app_label, model_instance._meta.object_name.lower()), args=(model_instance.id, ))
-                    print('  url = {0}'.format(url))
                     if model_admin.inlines:
                         for inline_admin in model_admin.inlines:
-                            print('  inline model {0}'.format(inline_admin.model))
-                            print('    {0}_{1}_add'.format(inline_admin.model._meta.app_label, inline_admin.model._meta.object_name.lower()))
                             url = reverse('admin:{0}_{1}_add'.format(inline_admin.model._meta.app_label, inline_admin.model._meta.object_name.lower()))
                             response = self.client.get(url)
-                            print('    assert response=200')
                             self.assertEqual(response.status_code, 200)
-                            print('    assert template')
                             self.assertTemplateUsed(response, 'admin/change_form.html')
                             factory_mod = __import__('bcpp_subject.tests.factories', fromlist=['{0}Factory'.format(inline_admin.model._meta.object_name)])
                             factory = getattr(factory_mod, '{0}Factory'.format(inline_admin.model._meta.object_name))
-                            print('    instantiate the factory {0}'.format(factory))
                             factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
                             factory(**{convert_from_camel(model_instance._meta.object_name): model_instance, 'subject_visit': model_instance.subject_visit})
 
-                    print('  post url')
                     response = self.client.post(url, model_instance.__dict__)
                     self.assertEqual(response.status_code, 200)
-        print('tested {0} forms'.format(n))

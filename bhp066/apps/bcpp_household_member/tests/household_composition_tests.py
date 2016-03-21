@@ -50,44 +50,30 @@ class HouseholdCompositionTests(TestCase):
         adminuser.save()
         self.client.login(username=adminuser.username, password='pass')
 
-        print 'create a survey'
         survey1 = SurveyFactory()
         survey2 = SurveyFactory()
-        print 'get site mappers'
         site_mappers.autodiscover()
-        print 'get one mapper'
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        print 'mapper is {0}'.format(mapper().get_map_area())
-        print 'create a plot model instance for community {0}'.format(mapper().get_map_area())
         self.assertEqual(Household.objects.all().count(), 0)
-        print 'Create a plot'
         plot = PlotFactory(community=mapper().get_map_area())
         plot.save()
-        print 'create a household on this plot for survey={0}'.format(survey1)
         household = HouseholdFactory(plot=plot)
-        print 'assert hs created'
         self.assertRaises(IntegrityError, HouseholdStructureFactory, household=household, survey=survey1)
         household_structure1 = HouseholdStructure.objects.get(household=household, survey=survey1)
-        print 'add members'
         hm1 = HouseholdMemberFactory(household_structure=household_structure1, first_name='ERIK', initials='EW')
         hm2 = HouseholdMemberFactory(household_structure=household_structure1, first_name='ERIK', initials='E1W')
         hm3 = HouseholdMemberFactory(household_structure=household_structure1, first_name='ERIK', initials='E2W')
-        print 'change members'
         hm1.save()
         hm2.save()
         hm3.save()
-        print 'resave household on this plot for survey={0}'.format(survey2)
         household.save()
         self.assertRaises(IntegrityError, HouseholdStructureFactory, household=household, survey=survey2)
         household_structure2 = HouseholdStructure.objects.get(household=household, survey=survey2)
-        print 'assert using different hs'
         self.assertNotEqual(household_structure1, household_structure2)
-        print 'add members'
         HouseholdMemberFactory(household_structure=household_structure2)
         HouseholdMemberFactory(household_structure=household_structure2, first_name='ERIK', initials='E1W')
         HouseholdMemberFactory(household_structure=household_structure2, first_name='ERIK', initials='E2W')
         HouseholdMemberFactory(household_structure=household_structure2, first_name='ERIK', initials='EW')
-        print 'change members'
         hm1.save()
         hm2.save()
         hm3.save()

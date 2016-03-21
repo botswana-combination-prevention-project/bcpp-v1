@@ -56,8 +56,6 @@ if socket.gethostname() == 'mac2.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() in DEVELOPER_HOSTS:
     KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
-elif 'test' in sys.argv:
-    KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bcpp/bhp066/keys'
 elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
@@ -79,6 +77,7 @@ MANAGERS = ADMINS
 CONN_MAX_AGE = 15
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
+#     KEY_PATH = os.path.join(PROJECT_ROOT, 'crypto_fields/test_keys')
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
     if testing_db_name == 'sqlite':
@@ -87,7 +86,7 @@ if 'test' in sys.argv:
         DATABASES = TRAVIS_MYSQL
 else:
     DATABASES = PRODUCTION_MYSQL
-
+print KEY_PATH, "this is the key path"
 # CACHES = {
 #     'default': {
 #         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',

@@ -45,7 +45,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
         return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
 
     def get_site_code(self):
-        return site_mappers.get(self.community).map_code
+        return site_mappers.get_mapper(self.community).map_code
 
     def get_visit(self):
         return self.subject_visit

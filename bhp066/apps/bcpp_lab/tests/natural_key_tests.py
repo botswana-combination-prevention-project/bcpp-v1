@@ -40,7 +40,6 @@ class NaturalKeyTests(TestCase):
         app = get_app('bcpp_lab')
         for model in get_models(app):
             if 'Audit' not in model._meta.object_name:
-                print 'checking for natural key on {0}.'.format(model._meta.object_name)
                 self.assertTrue('natural_key' in dir(model), 'natural key not found in {0}'.format(model._meta.object_name))
 
     def test_p2(self):
@@ -48,15 +47,14 @@ class NaturalKeyTests(TestCase):
         app = get_app('bcpp_lab')
         for model in get_models(app):
             if 'Audit' not in model._meta.object_name:
-                print 'checking for get_by_natural_key manager method key on {0}.'.format(model._meta.object_name)
                 self.assertTrue('get_by_natural_key' in dir(model.objects), 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
     def test_p3(self):
         instances = []
         plot = PlotFactory(community='test_community6', household_count=1, status='residential_habitable')
-        household = Household.objects.get(plot=plot)
+        Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        representative_eligibility = RepresentativeEligibilityFactory(household_structure=household_structure)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(household_structure=household_structure)
         enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='Yes', dob=date(1989, 01, 01))
         self.assertTrue(enrollment_checklist.is_eligible)
@@ -68,8 +66,8 @@ class NaturalKeyTests(TestCase):
                                                 dob=enrollment_checklist.dob, initials=enrollment_checklist.initials)
         instances.append(subject_consent)
         self.assertEqual(Appointment.objects.all().count(), 1)
-        appointment = Appointment.objects.get(registered_subject = registered_subject)
-        subject_visit = SubjectVisitFactory(household_member=household_member, appointment = appointment)
+        appointment = Appointment.objects.get(registered_subject=registered_subject)
+        subject_visit = SubjectVisitFactory(household_member=household_member, appointment=appointment)
         instances.append(subject_visit)
         aliquot_type = AliquotType.objects.all()[0]
         panel = Panel.objects.all()[0]
@@ -92,20 +90,13 @@ class NaturalKeyTests(TestCase):
         packing_list = PackingListFactory(list_items=aliquot.aliquot_identifier)
         instances.append(packing_list)
         packing_list.list_items = al.aliquot_identifier
-        print packing_list.list_items
         packing_list.save()
-        #self.assertEquals(PackingListItem.objects.all().count(), 1)
-        #instances.append(PackingListItem.objects.all()[0])
 
-        print 'INSTANCE: ' + str(instances)
         for obj in instances:
-            print 'test natural key on {0}'.format(obj._meta.object_name)
             natural_key = obj.natural_key()
             get_obj = obj.__class__.objects.get_by_natural_key(*natural_key)
             self.assertEqual(obj.pk, get_obj.pk)
-        # pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
-            print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
             outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj, False, True, 'default')
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)

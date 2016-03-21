@@ -158,7 +158,7 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
     """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome')."""
     if not raw:
         if isinstance(instance, CallLogEntry):
-            instance.udate_call_list()
+            instance.update_call_list()
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')

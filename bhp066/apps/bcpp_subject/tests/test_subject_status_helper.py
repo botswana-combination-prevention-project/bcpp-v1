@@ -37,7 +37,6 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result(self):
         """"""
-        self.startup()
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
@@ -48,7 +47,6 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result1(self):
         """"""
-        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -63,7 +61,6 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result2(self):
         """"""
-        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -78,7 +75,6 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result2a(self):
         """"""
-        self.startup()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
@@ -95,7 +91,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result3(self):
         """"""
-        self.startup()
+
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -107,7 +103,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result4a(self):
         """"""
-        self.startup()
+
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
@@ -127,7 +123,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
     def tests_hiv_result4a1(self):
         """Asserts that hiv_result, result_datetime are carried over from baseline if
         HIV result is POS and at annual, new_pos is False."""
-        self.startup()
+
         report_datetime_baseline = self.subject_visit_male.report_datetime
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
@@ -150,7 +146,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result4a2(self):
         """"""
-        self.startup()
+
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
                                   panel=panel,
@@ -185,7 +181,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result5(self):
         """"""
-        self.startup()
+
         result_date = datetime(2014, 2, 9)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='NEG', hiv_test_date=result_date)
@@ -197,7 +193,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result4(self):
         """"""
-        self.startup()
+
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -205,7 +201,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_on_arv1(self):
         """"""
-        self.startup()
+
         with transaction.atomic():
             HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
             HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
@@ -214,7 +210,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_on_arv2(self):
         """"""
-        self.startup()
+
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='Yes')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -222,7 +218,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_on_arv3(self):
         """"""
-        self.startup()
+
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -230,7 +226,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_on_arv4(self):
         """"""
-        self.startup()
+
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
@@ -330,7 +326,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result8(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
-        self.startup()
+
         self.assertTrue(RequisitionMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment,
             lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
@@ -409,7 +405,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result10(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
-        self.startup()
+
         self.assertTrue(RequisitionMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment,
             lab_entry__requisition_panel__name='Microtube',
