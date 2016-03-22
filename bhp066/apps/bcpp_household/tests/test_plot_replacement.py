@@ -121,7 +121,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=FIVE_PERCENT,
@@ -159,7 +159,7 @@ class TestPlotReplacement(TestCase):
                 time_of_week='Weekdays',
                 time_of_day='Morning',
                 gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(i)),
+                gps_minutes_s=1.97562 + float('0.000000{}'.format(i)),
                 gps_degrees_e=25,
                 gps_minutes_e=44.366660 + float('0.000000{}'.format(i)),
                 selected=FIVE_PERCENT,)
@@ -187,7 +187,7 @@ class TestPlotReplacement(TestCase):
                 time_of_week='Weekdays',
                 time_of_day='Morning',
                 gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(i)),
+                gps_minutes_s=1.97562 + float('0.000000{}'.format(i)),
                 gps_degrees_e=25,
                 gps_minutes_e=44.366660 + float('0.000000{}'.format(i)),
                 selected=FIVE_PERCENT,
@@ -211,7 +211,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -252,7 +252,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -308,7 +308,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -376,7 +376,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -446,7 +446,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -496,7 +496,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -534,7 +534,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -587,7 +587,7 @@ class TestPlotReplacement(TestCase):
             gps_degrees_e = 25,
             gps_degrees_s = 25,
             gps_minutes_s = .011111 * 60,
-            gps_minutes_e = .741111 * 60,
+            gps_minutes_e = 44.366660,
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
@@ -630,7 +630,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -683,7 +683,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -742,7 +742,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -770,7 +770,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -823,7 +823,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -869,7 +869,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -917,7 +917,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -969,7 +969,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1006,7 +1006,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1036,7 +1036,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1066,7 +1066,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1109,7 +1109,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1156,7 +1156,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1186,7 +1186,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1225,7 +1225,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1272,7 +1272,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1303,7 +1303,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1349,7 +1349,7 @@ class TestPlotReplacement(TestCase):
             community='test_community',
             status=RESIDENTIAL_HABITABLE,
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             replaces='H140993-02',
@@ -1399,7 +1399,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1430,7 +1430,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -1473,7 +1473,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
@@ -1503,7 +1503,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1540,7 +1540,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
@@ -1584,7 +1584,7 @@ class TestPlotReplacement(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.786540,
+            gps_minutes_s=1.97562,
             gps_degrees_e=25,
             gps_minutes_e=44.8981199,
             selected=1)
