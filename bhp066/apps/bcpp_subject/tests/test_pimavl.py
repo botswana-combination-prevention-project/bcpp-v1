@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.utils import timezone
-from django.test.utils import override_settings
 
 from datetime import timedelta, datetime
 
