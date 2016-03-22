@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 from edc.map.classes import site_mappers
 from edc.notification.models import Notification, NotificationPlan
 from edc.export.models import ExportPlan
-from edc_consent.models import ConsentType
 
 from bhp066.apps.bcpp_lab.models import AliquotType, Panel
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
@@ -17,15 +16,10 @@ from .factories import (
     HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
-from edc.subject.appointment.models import Appointment
-from edc.subject.registration.models import RegisteredSubject
 from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
-from edc_constants.constants import POS, NEG, NOT_REQUIRED, REQUIRED, NOT_APPLICABLE, YES, NO
+from edc_constants.constants import POS, NEG, NOT_REQUIRED, REQUIRED, YES, NO
 from edc.export.models.export_transaction import ExportTransaction
-from bhp066.apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
-from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
 from bhp066.apps.bcpp_subject.models import HivCareAdherence, HivTestingHistory, HivTestReview, SubjectReferral, Pima
 
 
