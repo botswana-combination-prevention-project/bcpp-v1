@@ -34,7 +34,8 @@ from .factories.household_log_entry_factory import HouseholdLogEntryFactory
 from .factories.household_refusal_factory import HouseholdRefusalFactory
 from .factories.household_assessment_factory import HouseholdAssessmentFactory
 from .factories.reprentative_eligibility_factory import RepresentativeEligibilityFactory
-from edc.device.sync.tests.factories.producer_factory import ProducerFactory
+# from edc.device.sync.tests.factories.producer_factory import ProducerFactory
+from edc.device.sync.models import Producer
 from edc.map.classes.controller import site_mappers
 from edc.device.sync.models.outgoing_transaction import OutgoingTransaction
 
@@ -55,7 +56,11 @@ class TestPlotReplacement(TestCase):
         self.community = 'test_community'
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.dispatch_test_db = 'dispatch_destination'
-        self.producer = ProducerFactory(is_active=True)
+        self.producer = Producer.objects.create(
+            is_active=True,
+            name='dispatch_destination',
+            settings_key='dispatch_destination',
+            url='http://')
         self.producer = update_producer_from_settings(self.producer)
 
     def teardown(self, producer_name):
@@ -579,10 +584,10 @@ class TestPlotReplacement(TestCase):
             description="A blue house with yellow screen wall",
             time_of_week='Weekdays',
             time_of_day='Morning',
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
+            gps_degrees_e = 25,
+            gps_degrees_s = 25,
+            gps_minutes_s = .011111 * 60,
+            gps_minutes_e = .741111 * 60,
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
