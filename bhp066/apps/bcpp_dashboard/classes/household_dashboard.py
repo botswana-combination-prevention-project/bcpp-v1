@@ -278,7 +278,8 @@ class HouseholdDashboard(Dashboard):
                 self._household_log = HouseholdLog.objects.get(
                     household_structure=self.household_structure)
             except HouseholdLog.DoesNotExist:
-                self._household_log = None
+                if self.household_structure:
+                    self._household_log = HouseholdLog.objects.create(household_structure=self.household_structure)
         return self._household_log
 
     @property
