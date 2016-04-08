@@ -21,5 +21,6 @@ class SubjectRequisitionSurveyFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             requisition = SubjectRequisition.objects.filter(subject_visit__household_member__household_structure__survey__survey_slug=self.value())
-            return queryset.filter(receive__in=requisition)
+            req_ids = [req.id for req in requisition]
+            return queryset.filter(id__in=req_ids)
         return queryset
