@@ -80,5 +80,11 @@ docs/_build/
 # PyBuilder
 target/
 
+<<<<<<< HEAD
 # Keys
 bhp066/keys/
+=======
+# keys
+bhp066/keys
+
+>>>>>>> master
