@@ -6,7 +6,7 @@ from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..actions import print_requisition_label
-from ..filters import PocVLRequsitionFilter
+from ..filters import PocVLRequsitionFilter, SubjectRequisitionSurveyFilter
 from ..forms import SubjectRequisitionForm
 from ..models import SubjectRequisition, Panel
 
@@ -21,6 +21,7 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
         self.list_filter.append('community')
         self.list_filter.insert(0, PocVLRequsitionFilter)
         self.list_display.append('is_poc_vl')
+        self.list_display.append(SubjectRequisitionSurveyFilter)
 
     visit_model = SubjectVisit
     visit_fieldname = 'subject_visit'
