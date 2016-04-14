@@ -207,21 +207,23 @@ class BaseCorrectConsent(models.Model):
         enrollment_checklist = self.update_is_literate(enrollment_checklist)
         self.update_witness()
         if enrollment_checklist:
+            self.subject_consent.household_member.user_modified = self.update_user_modified()
+            enrollment_checklist.user_modified = self.update_user_modified()
             self.subject_consent.household_member.save(
-                update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
+                update_fields=['first_name', 'initials', 'gender', 'age_in_years', 'user_modified'])
             enrollment_checklist.save(
-                update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
+                update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
-                'is_literate', 'witness_name', 'dob', 'guardian_name'])
-            self.unverify_consent()
+                'is_literate', 'witness_name', 'dob', 'guardian_name',
+                'is_verified', 'is_verified_datetime', 'verified_by', 'user_modified'])
         else:
             self.subject_consent.household_member.save(
-                update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
+                update_fields=['first_name', 'initials', 'gender', 'age_in_years', 'user_modified'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
-                'is_literate', 'witness_name', 'dob', 'guardian_name'])
-            self.unverify_consent()
+                'is_literate', 'witness_name', 'dob', 'guardian_name',
+                'is_verified', 'is_verified_datetime', 'verified_by', 'user_modified'])
 
     def update_initials(self, first_name, last_name):
         initials = '{}{}'.format(first_name[0], last_name[0])
@@ -239,6 +241,7 @@ class BaseCorrectConsent(models.Model):
             self.subject_consent.household_member.gender = self.new_gender
             if enrollment_checklist:
                 enrollment_checklist.gender = self.new_gender
+                enrollment_checklist.user_modified = self.update_user_modified()
             self.subject_consent.gender = self.new_gender
         return enrollment_checklist
 
@@ -253,7 +256,8 @@ class BaseCorrectConsent(models.Model):
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=self.subject_consent.household_member)
                 hic_enrollment.dob = self.new_dob
-                hic_enrollment.save(update_fields=['dob'])
+                hic_enrollment.user_modified = self.update_user_modified()
+                hic_enrollment.save(update_fields=['dob', 'user_modified'])
             except HicEnrollment.DoesNotExist:
                 pass
         return enrollment_checklist
@@ -295,16 +299,21 @@ class BaseCorrectConsent(models.Model):
         initials = self.update_initials(first_name, last_name)
         self.subject_consent.household_member.initials = initials
         self.subject_consent.initials = initials
+        self.subject_consent.is_verified = False
+        self.subject_consent.is_verified_datetime = None
+        self.subject_consent.verified_by = None
+        self.subject_consent.user_modified = self.update_user_modified()
         if enrollment_checklist:
             enrollment_checklist.initials = initials
         return enrollment_checklist
 
-    def unverify_consent(self):
-        """Un-verify a consent after the consent is updated by correct consent."""
-        self.subject_consent.is_verified = False
-        self.subject_consent.is_verified_datetime = None
-        self.subject_consent.verified_by = None
-        self.subject_consent.save(update_fields=['is_verified', 'is_verified_datetime', 'verified_by'])
+    def update_user_modified(self):
+        user_modified = None
+        if not self.id:
+            user_modified = self.user_created
+        else:
+            user_modified = self.user_modified
+        return user_modified
 
     class Meta:
         abstract = True
