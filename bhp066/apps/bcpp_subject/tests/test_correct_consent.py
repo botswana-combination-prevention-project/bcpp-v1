@@ -11,13 +11,20 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
 
+from edc_constants.constants import NEG
+
 from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_subject.tests.factories import (HicEnrollmentFactory, ResidencyMobilityFactory,
+                                                      SubjectLocatorFactory, HivResultFactory)
+from bhp066.apps.bcpp_subject.models import HicEnrollment
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, SubjectVisitFactory
 from bhp066.apps.bcpp_household_member.models import HouseholdMember, EnrollmentChecklist
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_lab.models import Panel, AliquotType
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -29,7 +36,7 @@ from ..models import SubjectConsent
 class TestCorrectConsent(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'bokaa'
+    community = 'test_community'
 
     def setUp(self):
         try:
@@ -40,7 +47,7 @@ class TestCorrectConsent(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
-        self.study_site = StudySite.objects.get(site_code='17')
+        self.study_site = StudySite.objects.get(site_code='01')
         self.survey = Survey.objects.all()[0]
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         survey = Survey.objects.all().order_by('datetime_start')[0]
@@ -78,6 +85,15 @@ class TestCorrectConsent(TestCase):
         self.appointment_female_T0 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T0')
         self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
         self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.locator_female_T0 = SubjectLocatorFactory(subject_visit=self.subject_visit_female_T0, registered_subject=self.registered_subject_female)
+        self.residency_mobility_female_T0 = ResidencyMobilityFactory(subject_visit=self.subject_visit_female_T0)
+        microtube_panel = Panel.objects.get(name='Microtube')
+        aliquot_type = AliquotType.objects.all()[0]
+        self.subject_requisition_T0 = SubjectRequisitionFactory(
+            subject_visit=self.subject_visit_female_T0,
+            panel=microtube_panel,
+            aliquot_type=aliquot_type)
+        self.hiv_result_today_T0 = HivResultFactory(subject_visit=self.subject_visit_female_T0, hiv_result=NEG)
 
     def test_lastname_and_initials(self):
         CorrectConsentFactory(
@@ -89,6 +105,9 @@ class TestCorrectConsent(TestCase):
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'ED')
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).initials, 'ED')
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).last_name, 'DIMSTAR')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
 
     def test_firstname_and_initials(self):
         CorrectConsentFactory(
@@ -100,18 +119,26 @@ class TestCorrectConsent(TestCase):
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'GW')
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).first_name, 'GAME')
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).first_name, 'GAME')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
 
-#     def test_dob(self):
-#         hic = HicEnrollmentFactory(subject_visit=self.subject_visit_female)
-#         CorrectConsentFactory(
-#             subject_consent=self.subject_consent_female,
-#             old_dob=date(1989, 10, 10),
-#             new_dob=date(1988, 1, 1),
-#         )
-#         self.assertEquals(self.household_member_female.age_in_years, 27)
-#         self.assertEquals(self.enrollment_checklist_female.dob, date(1988, 1, 1))
-#         self.assertEquals(self.subject_consent_female.dob, date(1988, 1, 1))
-#         self.assertEquals(hic.dob, date(1988, 1, 1))
+    def test_dob(self):
+        HicEnrollmentFactory(subject_visit=self.subject_visit_female_T0, dob=self.female_dob)
+        new_dob = date(1988, 1, 1)
+        age_in_years = relativedelta(self.subject_consent_female.consent_datetime, new_dob).years
+        CorrectConsentFactory(
+            subject_consent=self.subject_consent_female,
+            old_dob=self.female_dob,
+            new_dob=new_dob,
+        )
+        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).age_in_years, age_in_years)
+        self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).dob, new_dob)
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).dob, new_dob)
+        self.assertEquals(HicEnrollment.objects.get(subject_visit=self.subject_visit_female_T0).dob, new_dob)
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
 
     def test_gender(self):
         CorrectConsentFactory(
@@ -122,9 +149,12 @@ class TestCorrectConsent(TestCase):
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).gender, 'M')
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).gender, 'M')
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).gender, 'M')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
 
     def test_witness(self):
-        self.subject_consent_female.witness_name='DIMO'
+        self.subject_consent_female.witness_name = 'DIMO'
         self.subject_consent_female.save(update_fields=['witness_name'])
         CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
@@ -132,3 +162,6 @@ class TestCorrectConsent(TestCase):
             new_witness_name='BIMO',
         )
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).witness_name, 'BIMO')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)

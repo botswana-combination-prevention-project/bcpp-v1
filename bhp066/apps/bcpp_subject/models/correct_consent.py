@@ -214,12 +214,14 @@ class BaseCorrectConsent(models.Model):
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name'])
+            self.unverify_consent()
         else:
             self.subject_consent.household_member.save(
                 update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
             self.subject_consent.save(update_fields=[
                 'first_name', 'last_name', 'initials', 'gender',
                 'is_literate', 'witness_name', 'dob', 'guardian_name'])
+            self.unverify_consent()
 
     def update_initials(self, first_name, last_name):
         initials = '{}{}'.format(first_name[0], last_name[0])
@@ -243,7 +245,7 @@ class BaseCorrectConsent(models.Model):
     def update_dob(self, enrollment_checklist):
         if self.new_dob:
             self.subject_consent.household_member.age_in_years = relativedelta(
-                date.today(), self.new_dob).years
+                self.subject_consent.consent_datetime, self.new_dob).years
             if enrollment_checklist:
                 enrollment_checklist.dob = self.new_dob
             self.subject_consent.dob = self.new_dob
@@ -296,6 +298,13 @@ class BaseCorrectConsent(models.Model):
         if enrollment_checklist:
             enrollment_checklist.initials = initials
         return enrollment_checklist
+
+    def unverify_consent(self):
+        """Un-verify a consent after the consent is updated by correct consent."""
+        self.subject_consent.is_verified = False
+        self.subject_consent.is_verified_datetime = None
+        self.subject_consent.verified_by = None
+        self.subject_consent.save(update_fields=['is_verified', 'is_verified_datetime', 'verified_by'])
 
     class Meta:
         abstract = True
