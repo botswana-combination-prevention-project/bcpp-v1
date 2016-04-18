@@ -104,72 +104,113 @@ class TestCorrectConsent(TestCase):
         self.hiv_result_today_T0 = HivResultFactory(subject_visit=self.subject_visit_female_T0, hiv_result=NEG)
 
     def test_lastname_and_initials(self):
-        CorrectConsentFactory(
+        correct_consent = CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_last_name=self.female_last_name,
             new_last_name='DIMSTAR',
         )
-        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).initials, 'ED')
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
+        self.assertEquals(subject_consent.initials, 'ED')
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'ED')
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).initials, 'ED')
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).last_name, 'DIMSTAR')
-        self.assertFalse(self.subject_consent_female.is_verified)
-        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
-        self.assertIsNone(self.subject_consent_female.verified_by)
+        self.assertEquals(subject_consent.initials, 'ED')
+        self.assertEquals(subject_consent.last_name, 'DIMSTAR')
+        self.assertFalse(subject_consent.is_verified)
+        self.assertIsNone(subject_consent.is_verified_datetime)
+        self.assertIsNone(subject_consent.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
 
     def test_firstname_and_initials(self):
-        CorrectConsentFactory(
+        correct_consent = CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_first_name=self.female_first_name,
             new_first_name='GAME',
         )
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).initials, 'GW')
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'GW')
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).first_name, 'GAME')
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).first_name, 'GAME')
-        self.assertFalse(self.subject_consent_female.is_verified)
-        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
-        self.assertIsNone(self.subject_consent_female.verified_by)
+        self.assertEquals(subject_consent.first_name, 'GAME')
+        self.assertFalse(subject_consent.is_verified)
+        self.assertIsNone(subject_consent.is_verified_datetime)
+        self.assertIsNone(subject_consent.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
 
     def test_dob(self):
-        HicEnrollmentFactory(subject_visit=self.subject_visit_female_T0, dob=self.female_dob)
+        hic = HicEnrollmentFactory(subject_visit=self.subject_visit_female_T0, dob=self.female_dob)
         new_dob = date(1988, 1, 1)
         age_in_years = relativedelta(self.subject_consent_female.consent_datetime, new_dob).years
-        CorrectConsentFactory(
+        correct_consent = CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_dob=self.female_dob,
             new_dob=new_dob,
         )
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).age_in_years, age_in_years)
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).dob, new_dob)
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).dob, new_dob)
+        self.assertEquals(subject_consent.dob, new_dob)
         self.assertEquals(HicEnrollment.objects.get(subject_visit=self.subject_visit_female_T0).dob, new_dob)
-        self.assertFalse(self.subject_consent_female.is_verified)
-        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
-        self.assertIsNone(self.subject_consent_female.verified_by)
+        self.assertFalse(subject_consent.is_verified)
+        self.assertIsNone(subject_consent.is_verified_datetime)
+        self.assertIsNone(subject_consent.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
+            self.assertEquals(hic.user_modified, correct_consent.user_created)
 
     def test_gender(self):
-        CorrectConsentFactory(
+        correct_consent = CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_gender='F',
             new_gender='M',
         )
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
         self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).gender, 'M')
         self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).gender, 'M')
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).gender, 'M')
-        self.assertFalse(self.subject_consent_female.is_verified)
-        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
-        self.assertIsNone(self.subject_consent_female.verified_by)
+        self.assertEquals(subject_consent.gender, 'M')
+        self.assertFalse(subject_consent.is_verified)
+        self.assertIsNone(subject_consent.is_verified_datetime)
+        self.assertIsNone(subject_consent.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
 
     def test_witness(self):
         self.subject_consent_female.witness_name = 'DIMO'
         self.subject_consent_female.save(update_fields=['witness_name'])
-        CorrectConsentFactory(
+        correct_consent = CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_witness_name='DIMO',
             new_witness_name='BIMO',
         )
-        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).witness_name, 'BIMO')
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
+        self.assertEquals(subject_consent.witness_name, 'BIMO')
+        self.assertFalse(subject_consent.is_verified)
+        self.assertIsNone(subject_consent.is_verified_datetime)
+        self.assertIsNone(subject_consent.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
+
+    def test_to_unverify_consent(self):
+        self.subject_consent_female.witness_name = 'DIMO'
         self.assertFalse(self.subject_consent_female.is_verified)
         self.assertIsNone(self.subject_consent_female.is_verified_datetime)
         self.assertIsNone(self.subject_consent_female.verified_by)
+        self.subject_consent_female.is_verified = True
+        self.subject_consent_female.is_verified_datetime = datetime(2016, 4, 18, 10, 3, 42, 215477)
+        self.subject_consent_female.verified_by = 'ckgathi'
+        self.subject_consent_female.save(update_fields=['witness_name', 'verified_by', 'is_verified_datetime', 'is_verified'])
+        self.assertTrue(self.subject_consent_female.is_verified)
+        self.assertEqual(self.subject_consent_female.is_verified_datetime, datetime(2016, 4, 18, 10, 3, 42, 215477))
+        self.assertEqual(self.subject_consent_female.verified_by, 'ckgathi')
+        correct_consent = CorrectConsentFactory(
+            subject_consent=self.subject_consent_female,
+            old_witness_name='DIMO',
+            new_witness_name='BIMO',
+        )
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
+        self.assertEquals(subject_consent.witness_name, 'BIMO')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
