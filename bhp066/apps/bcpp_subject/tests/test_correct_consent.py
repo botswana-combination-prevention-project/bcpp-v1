@@ -181,3 +181,28 @@ class TestCorrectConsent(TestCase):
         self.assertIsNone(subject_consent.verified_by)
         if not correct_consent.id:
             self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
+
+    def test_to_unverify_consent(self):
+        self.subject_consent_female.witness_name = 'DIMO'
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
+        self.subject_consent_female.is_verified = True
+        self.subject_consent_female.is_verified_datetime = datetime(2016, 4, 18, 10, 3, 42, 215477)
+        self.subject_consent_female.verified_by = 'ckgathi'
+        self.subject_consent_female.save(update_fields=['witness_name', 'verified_by', 'is_verified_datetime', 'is_verified'])
+        self.assertTrue(self.subject_consent_female.is_verified)
+        self.assertEqual(self.subject_consent_female.is_verified_datetime, datetime(2016, 4, 18, 10, 3, 42, 215477))
+        self.assertEqual(self.subject_consent_female.verified_by, 'ckgathi')
+        correct_consent = CorrectConsentFactory(
+            subject_consent=self.subject_consent_female,
+            old_witness_name='DIMO',
+            new_witness_name='BIMO',
+        )
+        subject_consent = SubjectConsent.objects.get(id=self.subject_consent_female.id)
+        self.assertEquals(subject_consent.witness_name, 'BIMO')
+        self.assertFalse(self.subject_consent_female.is_verified)
+        self.assertIsNone(self.subject_consent_female.is_verified_datetime)
+        self.assertIsNone(self.subject_consent_female.verified_by)
+        if not correct_consent.id:
+            self.assertEquals(subject_consent.user_modified, correct_consent.user_created)
