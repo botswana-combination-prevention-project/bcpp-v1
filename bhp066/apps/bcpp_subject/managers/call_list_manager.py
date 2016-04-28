@@ -3,6 +3,8 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
+
 
 class CallListManager(models.Manager):
 
@@ -14,7 +16,13 @@ class CallListManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_mapper(site_mappers.current_community).map_area
-            return super(CallListManager, self).get_queryset().filter(
-                household_member__household_structure__household__plot__community=community)
+            community = site_mappers.get_current_mapper().map_area
+            if PlotIdentifier.get_notebook_plot_lists():
+                community = site_mappers.get_current_mapper().map_area
+                return super(CallListManager, self).get_queryset().filter(
+                    household_member__household_structure__household__plot__community=community,
+                    household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
+            else:
+                return super(CallListManager, self).get_queryset().filter(
+                    household_member__household_structure__household__plot__community=community)
         return super(CallListManager, self).get_queryset()
