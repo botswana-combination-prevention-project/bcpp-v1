@@ -59,6 +59,11 @@ class MolapowabojangPlotMapper(BasePlotMapper):
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
+        'bcpp-year-3': {
+            'IDCC': ClinicDaysTuple((WE, TH), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-3'].smc_start_date)},
     }
 
 site_mappers.register(MolapowabojangPlotMapper)
