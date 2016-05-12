@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
-from bhp066.apps.bcpp_subject.utils import update_call_list
+from bhp066.apps.bcpp_subject.classes import UpdateCallList
 from bhp066.apps.bcpp_survey.models import Survey
 
 
@@ -30,6 +30,6 @@ class Command(BaseCommand):
             label = args[2]
         except IndexError:
             raise CommandError('Specify a label')
-        update_call_list(community, survey_slug, label, verbose=True)
+        UpdateCallList().update_call_list(community, survey_slug, label, verbose=True)
         new_count = CallList.objects.all().count()
         print 'Added {} records to the Call List for {}: {}.'.format(new_count - count, survey_slug, label)

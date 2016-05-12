@@ -181,7 +181,7 @@ class EnumerationHelper(object):
                     new_household_member.save(update_fields=['is_consented'])
                 if source_household_member.member_status == BHS:
                     new_household_member.member_status = ANNUAL
-                new_household_member.save_base(update_fields=['member_status'])
+                new_household_member.save(update_fields=['member_status'])
             except ValidationError:
                 # 'representative eligibility' for an eligible representative has not been completed.'
                 pass

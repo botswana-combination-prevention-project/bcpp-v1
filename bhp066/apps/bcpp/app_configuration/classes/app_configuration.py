@@ -2,7 +2,10 @@ import socket
 
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 from django.conf import settings
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
@@ -101,13 +104,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
              'datetime_start': datetime(2016, 2, 12, 0, 0, 0),
-             'datetime_end': datetime(2016, 2, 28, 23, 59, 0),
+             'datetime_end': datetime(2016, 6, 1, 23, 59, 0),
              'chronological_order': 2},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
              'survey_slug': 'bcpp-year-3',
              'survey_abbrev': 'Y3',
-             'datetime_start': datetime(2016, 4, 1, 0, 0, 0),
+             'datetime_start': datetime(2016, 10, 1, 0, 0, 0),
              'datetime_end': datetime(2017, 10, 29, 23, 59, 0),
              'chronological_order': 3},
     }
@@ -492,6 +495,82 @@ class BcppAppConfiguration(BaseAppConfiguration):
             end_date = start_date + timedelta(days=30)
             full_enrollment_date = end_date
         return survey_dates
+<<<<<<< HEAD
+=======
+
+    def update_survey(self, survey, survey_dates):
+        survey.datetime_start, survey.datetime_end, full_enrollment_date = survey_dates
+        full_enrollment_date = full_enrollment_date
+        survey.save()
+
+    def prep_survey_for_tests(self):
+        surveys = Survey.objects.all()
+        mapper = site_mappers.get_mapper(site_mappers.current_community)
+        if socket.gethostname() in settings.ADMINS_HOST:
+            survey_slug = [(1, 2, 3), (2, 1, 3), (3, 1, 2)][int(settings.CURRENT_SURVEY[-1]) - 1]
+            for j, survey_dates in enumerate(self.survey_dates):
+                survey_year = 'bcpp-year-{}'.format(survey_slug[j])
+                survey = surveys.filter(survey_slug=survey_year).first()
+                self.update_survey(survey, survey_dates)
+                self.update_site_mapper(mapper, survey_year, survey_dates)
+
+    def update_site_mapper(self, mapper, survey_year, survey_dates):
+        from collections import namedtuple
+        SurveyDatesTuple = namedtuple(
+            'SurveyDatesTuple', 'name start_date full_enrollment_date end_date smc_start_date')
+        start_date, end_date, full_enrollment_date = survey_dates
+        start_date = start_date + timedelta(days=1)
+        survey_date = SurveyDatesTuple(
+            name='t{}'.format(survey_year[-1]),
+            start_date=start_date.date(),
+            full_enrollment_date=full_enrollment_date.date(),
+            end_date=end_date.date(),
+            smc_start_date=datetime.today().date())
+        mapper.survey_dates[survey_year] = survey_date
+        return mapper
+
+#     def create_quota(self):
+#         for ct in ContentType.objects.filter(app_label='bcpp_subject'):
+#             if ct is None:
+#                 continue
+#             if issubclass(ct.model_class(), QuotaMixin):
+#                 if device.is_community_server:
+#                     try:
+#                         ControllerQuota.objects.get(
+#                             app_label=ct.model_class()._meta.app_label,
+#                             model_name=ct.model_class()._meta.model_name,
+#                         )
+#                     except ControllerQuota.DoesNotExist:
+#                         ControllerQuota.objects.create(
+#                             app_label=ct.model_class()._meta.app_label,
+#                             model_name=ct.model_class()._meta.model_name,
+#                             target=100,
+#                             expiration_date=timezone.now().date() + timedelta(days=28),
+#                         )
+#                     for hostname in self.quota_client_setup:
+#                         try:
+#                             Client.objects.get(hostname=hostname)
+#                         except Client.DoesNotExist:
+#                             Client.objects.create(
+#                                 hostname=hostname,
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                             )
+#                 else:
+#                     if not device.is_central_server:
+#                         try:
+#                             Quota.objects.get(
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                             )
+#                         except Quota.DoesNotExist:
+#                             Quota.objects.create(
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                                 target=0,
+#                                 expiration_date=timezone.now()
+#                             )
+>>>>>>> master
 
     def update_survey(self, survey, survey_dates):
         survey.datetime_start, survey.datetime_end, full_enrollment_date = survey_dates

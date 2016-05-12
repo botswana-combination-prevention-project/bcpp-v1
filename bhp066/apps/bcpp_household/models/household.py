@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel

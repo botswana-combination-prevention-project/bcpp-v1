@@ -27,7 +27,7 @@ ADMINS = (('erikvw', 'ew@2789@gmail.com'),
           ('ckgathi', 'ckgathi@bhp.org.bw'),)
 
 APP_NAME = APP_NAME
-
+ADMINS_HOST = ['ckgathi', 'tsetsiba', 'One-2.local', 'mac2.local']
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -49,6 +49,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 
 DEVELOPER_HOSTS = [
     'mac2-2.local', 'ckgathi', 'one-2.local', 'One-2.local', 'tsetsiba', 'leslie']
+ALLOW_ENROLLMENT = False
 
 # edc.crytpo_fields encryption keys
 # developers should set by catching their hostname instead of setting explicitly

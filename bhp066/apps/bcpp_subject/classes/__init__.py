@@ -15,3 +15,4 @@ from .rule_group_utilities import (
     art_naive_at_enrollment, sero_converter, func_rbd_drawn_in_past, func_baseline_pima_keyed,
     func_baseline_hiv_care_adherance_keyed, func_known_pos_in_prev_year, func_baseline_hiv_positive_and_not_on_art,
     func_baseline_pos_and_testreview_documentation_pos, func_baseline_vl_drawn)
+from .update_call_list import UpdateCallList
