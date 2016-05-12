@@ -66,15 +66,19 @@ class SurveyManager(models.Manager):
                                            'may not overlap between Surveys. ({}). See app configuration.'.format(
                                                report_date, community))
             except self.model.DoesNotExist:
-                raise ImproperlyConfigured(
-                    'Expected survey \'{0}\'. {2} {1} does not fall within '
-                    'the start/end dates of Survey \'{0}\' ({3}). See app_configuration or reload urls.'.format(
-                        survey_slug,
-                        report_date.strftime('%Y-%m-%d'),
-                        '{}{}'.format(datetime_label[0].upper(), datetime_label[1:]),
-                        community,
+                if settings.ALLOW_ENROLLMENT:
+                    raise ImproperlyConfigured(
+                        'Expected survey \'{0}\'. {2} {1} does not fall within '
+                        'the start/end dates of Survey \'{0}\' ({3}). See app_configuration or reload urls.'.format(
+                            survey_slug,
+                            report_date.strftime('%Y-%m-%d'),
+                            '{}{}'.format(datetime_label[0].upper(), datetime_label[1:]),
+                            community,
+                        )
                     )
-                )
+                else:
+                    if survey_slug:
+                        survey = self.get(survey_slug=survey_slug)
             except OperationalError:
                 print 'Call app_configuration first.'
                 raise

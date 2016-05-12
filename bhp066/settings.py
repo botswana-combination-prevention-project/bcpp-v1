@@ -27,7 +27,7 @@ ADMINS = (('erikvw', 'ew@2789@gmail.com'),
           ('ckgathi', 'ckgathi@bhp.org.bw'),)
 
 APP_NAME = APP_NAME
-
+ADMINS_HOST = ['ckgathi', 'tsetsiba', 'One-2.local', 'mac2.local']
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -47,12 +47,14 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
+ALLOW_ENROLLMENT = False
+
 # edc.crytpo_fields encryption keys
 # developers should set by catching their hostname instead of setting explicitly
 if socket.gethostname() == 'mac2.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
-    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+    KEY_PATH = '/Users/ckgathi/source/bcpp/bhp066/keys'
 elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':

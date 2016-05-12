@@ -4,3 +4,4 @@ from .subject_referral_helper import SubjectReferralHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
 from .call_helper import CallHelper
 from .rule_group_utilities import *
+from .update_call_list import UpdateCallList
