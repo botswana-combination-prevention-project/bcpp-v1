@@ -15,6 +15,7 @@ from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
                                        SampleCollectionFieldsMixin, CitizenFieldsMixin)
 from edc_constants.constants import YES, NO
+from edc_constants.choices import YES_NO
 
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
@@ -184,8 +185,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
                 'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before consent.')
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
-        if enrollment_checklist.initials != subject_consent.initials:
-            raise exception_cls('Initials do not match those on the enrollment checklist')
+        if not self.household_member.personal_details_changed == YES:
+            if enrollment_checklist.initials != subject_consent.initials:
+                raise exception_cls('Initials do not match those on the enrollment checklist')
         if subject_consent.consent_datetime:
             if subject_consent.minor:
                 if (enrollment_checklist.guardian == YES and

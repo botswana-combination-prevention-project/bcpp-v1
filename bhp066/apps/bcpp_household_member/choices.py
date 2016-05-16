@@ -103,3 +103,8 @@ UNDECIDED_REASON = (
     ('wishes to test with partner', _('wishes to test with partner')),
     ('OTHER', _('Other...')),
 )
+
+DETAILS_CHANGE_REASON = (
+    ('married', 'Married'),
+    ('parent_married', 'Parent Married'),
+)

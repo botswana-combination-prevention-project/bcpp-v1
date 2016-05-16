@@ -49,7 +49,9 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
               'inability_to_participate',
               'inability_to_participate_other',
               'study_resident',
-              'relation']
+              'relation',
+              'personal_details_changed',
+              'details_change_reason']
 
     radio_fields = {
         "gender": admin.VERTICAL,
@@ -98,6 +100,10 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
                    'auto_filled',
                    'updated_after_auto_filled',
                    )
+
+    def get_fields(self, request, obj=None):
+        fields = self.all_required_fields()
+        return [(None, {'fields': fields})]
 
     list_per_page = 15
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
