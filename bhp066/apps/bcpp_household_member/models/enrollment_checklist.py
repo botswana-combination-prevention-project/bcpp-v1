@@ -247,27 +247,29 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Ba
     def passes_enrollment_criteria(self, using):
         """Creates or updates (or deletes) the enrollment loss based on the
         reason for not passing the enrollment checklist."""
+        from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
         loss_reason = []
         age_in_years = relativedelta(date.today(), self.dob).years
-        if not (age_in_years >= 16 and age_in_years <= 64):
-            loss_reason.append('Must be aged between >=16 and <=64 years.')
-        if self.has_identity.lower() == 'no':
-            loss_reason.append('No valid identity.')
-        if self.household_residency.lower() == 'No':
-            loss_reason.append('Failed household residency requirement')
-        if self.part_time_resident.lower() != 'yes':
-            loss_reason.append('Does not spend 3 or more nights per month in the community.')
-        if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
-            loss_reason.append('Not a citizen and not married to a citizen.')
-        if (self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and
-                self.marriage_certificate.lower() == 'no'):
-            loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
-        if self.literacy.lower() == 'no':
-            loss_reason.append('Illiterate with no literate witness.')
-        if self.household_member.is_minor and self.guardian.lower() != 'yes':
-            loss_reason.append('Minor without guardian available.')
-        if self.confirm_participation.lower() == 'block':
-            loss_reason.append('Already enrolled.')
+        if not (SubjectConsent.objects.filter(household_member=self.household_member)):
+            if not (age_in_years >= 16 and age_in_years <= 64):
+                loss_reason.append('Must be aged between >=16 and <=64 years.')
+            if self.has_identity.lower() == 'no':
+                loss_reason.append('No valid identity.')
+            if self.household_residency.lower() == 'No':
+                loss_reason.append('Failed household residency requirement')
+            if self.part_time_resident.lower() != 'yes':
+                loss_reason.append('Does not spend 3 or more nights per month in the community.')
+            if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
+                loss_reason.append('Not a citizen and not married to a citizen.')
+            if (self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and
+                    self.marriage_certificate.lower() == 'no'):
+                loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
+            if self.literacy.lower() == 'no':
+                loss_reason.append('Illiterate with no literate witness.')
+            if self.household_member.is_minor and self.guardian.lower() != 'yes':
+                loss_reason.append('Minor without guardian available.')
+            if self.confirm_participation.lower() == 'block':
+                loss_reason.append('Already enrolled.')
         return (False if loss_reason else True, loss_reason)
 
     def deserialize_prep(self, **kwargs):

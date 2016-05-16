@@ -30,7 +30,7 @@ from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from bhp066.apps.bcpp_survey.models import Survey
 
-from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
+from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS, DETAILS_CHANGE_REASON
 from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DECEASED
 from ..managers import HouseholdMemberManager
@@ -244,6 +244,24 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             'for Members added to the data from the clinic section where '
             'household_structure is always the same value.'),
     )
+
+    personal_details_changed = models.CharField(
+        verbose_name=("Has your personal details changed?"),
+        max_length=10,
+        null=True,
+        blank=True,
+        default='-',
+        choices=YES_NO,
+        help_text=('if your surname has because of marriage or other reasons.'))
+
+    details_change_reason = models.CharField(
+        verbose_name=("If your personal details have changed provide a reason."),
+        max_length=30,
+        null=True,
+        blank=True,
+        default='-',
+        choices=DETAILS_CHANGE_REASON,
+        help_text=('if your surname has because of marriage or other reasons.'))
 
     objects = HouseholdMemberManager()
 

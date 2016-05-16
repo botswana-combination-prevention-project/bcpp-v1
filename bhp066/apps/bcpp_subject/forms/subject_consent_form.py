@@ -1,30 +1,41 @@
+import pytz
+
 from django import forms
 from django.forms import ValidationError
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
+from django.utils.timezone import is_naive
+from django.forms.util import ErrorList
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
+from django.db.models import Max, Min
 
+from edc_constants.constants import YES, NO
+from edc_base.utils import formatted_age
 from edc.map.classes import site_mappers
-from edc.subject.registration.models import RegisteredSubject
 from edc_consent.forms.base_consent_form import BaseConsentForm
-from edc_constants.constants import NOT_APPLICABLE, NO, YES
+from edc_constants.constants import NOT_APPLICABLE
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 from bhp066.apps.bcpp_household_member.models import HouseholdInfo
+from bhp066.apps.bcpp_household.models import HouseholdLogEntry
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectConsent, SubjectConsentExtended
 from copy import deepcopy
+
+tz = pytz.timezone(settings.TIME_ZONE)
 
 
 class BaseBcppConsentForm(BaseConsentForm):
 
     def clean(self):
         cleaned_data = super(BaseBcppConsentForm, self).clean()
-        self.clean_identity_and_household_member()
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
+        self.validate_household_log_entry()
         self.limit_edit_to_current_survey()
         self.household_info()
         try:
@@ -111,6 +122,7 @@ class BaseBcppConsentForm(BaseConsentForm):
                 limit = False
             if limit:
                 current_survey = Survey.objects.current_survey()
+                print current_survey, household_member.household_structure.survey
                 if household_member.household_structure.survey != current_survey:
                     raise forms.ValidationError(
                         'Form may not be saved. Only data from %(current_survey)s '
@@ -152,36 +164,86 @@ class BaseBcppConsentForm(BaseConsentForm):
             raise forms.ValidationError("Please select the household member.")
         return household_member
 
-    def clean_identity_and_household_member(self):
-        instance = None
-        if self.instance.id:
-            instance = self.instance
-        else:
-            instance = SubjectConsent(**self.cleaned_data)
-        identity = self.cleaned_data.get('identity')
+    @property
+    def personal_details_changed(self):
+        household_member = self.cleaned_data.get("household_member")
+        if household_member.personal_details_changed == YES:
+            return True
+        return False
 
-        try:
-            identity = super(BaseBcppConsentForm, self).clean_identity()
-        except AttributeError:
-            pass
-        try:
-            if not instance.id:
-                RegisteredSubject.objects.get(identity=identity)
-                household_member = self.cleaned_data.get("household_member")
-                if household_member.member_status == 'BHS_ELIGIBLE':
+    def clean_identity_with_unique_fields(self):
+        identity = self.cleaned_data.get('identity')
+        first_name = self.cleaned_data.get('first_name')
+        initials = self.cleaned_data.get('initials')
+        dob = self.cleaned_data.get('dob')
+        unique_together_form = self.unique_together_string(first_name, initials, dob)
+        for consent in self._meta.model.objects.filter(identity=identity):
+            unique_together_model = self.unique_together_string(consent.first_name, consent.initials, consent.dob)
+            if not self.personal_details_changed:
+                if unique_together_form != unique_together_model:
                     raise ValidationError(
-                        "Identity already used by another participant."
-                        " Got \'%(identity)s\'.",
-                        params={'identity': identity},
+                        'Identity \'%(identity)s\' is already in use by subject %(subject_identifier)s. '
+                        'Please resolve.',
+                        params={'subject_identifier': consent.subject_identifier, 'identity': identity},
                         code='invalid')
-        except MultipleObjectsReturned:
-            raise forms.ValidationError(
-                "More than one subject is using this identity \'%(identity)s\'. Cannot continue.",
-                params={'identity': identity},
+        for consent in self._meta.model.objects.filter(first_name=first_name, initials=initials, dob=dob):
+            if consent.identity != identity:
+                raise ValidationError(
+                    'Subject\'s identity was previously reported as \'%(existing_identity)s\'. '
+                    'You wrote \'%(identity)s\'. Please resolve.',
+                    params={'existing_identity': consent.identity, 'identity': identity},
+                    code='invalid')
+
+    def clean_dob_relative_to_consent_datetime(self):
+        """Validates that the dob is within the bounds of MIN and MAX set on the model."""
+        dob = self.cleaned_data.get('dob')
+        consent_datetime = self.cleaned_data.get('consent_datetime', self.instance.consent_datetime)
+        if not consent_datetime:
+            self._errors["consent_datetime"] = ErrorList([u"This field is required. Please fill consent date and time."])
+            raise ValidationError('Please correct the errors below.')
+
+        if is_naive(consent_datetime):
+            consent_datetime = tz.localize(consent_datetime)
+        MIN_AGE_OF_CONSENT = self.get_model_attr('MIN_AGE_OF_CONSENT')
+        MAX_AGE_OF_CONSENT = self.get_model_attr('MAX_AGE_OF_CONSENT')
+        identity = self.cleaned_data.get('identity')
+        consents = SubjectConsent.objects.filter(
+            household_member__registered_subject__identity=identity).order_by('-created')
+        if not consents:
+            rdelta = relativedelta(consent_datetime.date(), dob)
+            if rdelta.years < MIN_AGE_OF_CONSENT:
+                raise ValidationError(
+                    'Subject\'s age is %(age)s. Subject is not eligible for consent.',
+                    params={'age': formatted_age(dob, consent_datetime.date())},
+                    code='invalid')
+            if rdelta.years > MAX_AGE_OF_CONSENT:
+                raise ValidationError(
+                    'Subject\'s age is %(age)s. Subject is not eligible for consent.',
+                    params={'age': formatted_age(dob, consent_datetime.date())},
+                    code='invalid')
+
+    def validate_household_log_entry(self):
+        household_member = self.cleaned_data.get("household_member")
+        household_structure = household_member.household_structure
+        try:
+            log_entry = HouseholdLogEntry.objects.filter(
+                household_log__household_structure=household_structure).last()
+            if not log_entry.report_datetime == datetime.today().date():
+                raise ValidationError(
+                    'Please fill household log entry before completing subject consent.',
+                    params={},
+                    code='invalid')
+        except HouseholdLogEntry.DoesNotExist:
+            raise ValidationError(
+                'Please fill household log entry before completing subject consent.',
+                params={},
                 code='invalid')
-        except RegisteredSubject.DoesNotExist:
-            pass
-        return identity
+        except AttributeError:
+            raise ValidationError(
+                'Please fill household log entry before completing subject consent.',
+                params={},
+                code='invalid')
+
 
 class SubjectConsentForm(BaseBcppConsentForm):
 
