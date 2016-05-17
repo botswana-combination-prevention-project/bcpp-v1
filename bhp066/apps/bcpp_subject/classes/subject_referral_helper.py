@@ -378,7 +378,7 @@ class SubjectReferralHelper(object):
     def urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals
         list and sets to true on a match."""
-        URGENT_REFERRALS = ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS#-PR', 'POS!-PR']
+        URGENT_REFERRALS = ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS!-HI', 'POS#-HI', 'POS#-PR', 'POS!-PR']
         return True if [code for code in self.referral_code_list if code in URGENT_REFERRALS] else False
 
     @property
@@ -477,4 +477,3 @@ class SubjectReferralHelper(object):
     @property
     def cd4_result_datetime(self):
         return self.subject_status_helper.cd4_result_datetime
-

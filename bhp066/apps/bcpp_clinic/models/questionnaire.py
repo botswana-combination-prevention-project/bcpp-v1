@@ -13,7 +13,6 @@ from .clinic_visit import ClinicVisit
 REGISTRATION_TYPES = (
     ('initiation', 'Initiation Visit'),
     ('masa_vl_scheduled', 'MASA Scheduled Viral Load Visit'),
-    ('etc_scheduled', 'ETC Enrollment Visit'),
     ('OTHER', 'Other NON-Viral Load Visit')
 )
 

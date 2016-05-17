@@ -1,5 +1,7 @@
 from datetime import datetime
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from bhp066.apps.bcpp_subject.exceptions import CLinicReferalDateError
 
 from .split_weekdays import split_weekdays
 
@@ -12,6 +14,7 @@ def next_clinic_date(community_clinic_days, base_datetime=None, allow_same_day=N
     """
     clinic_dates = []
     next_clinic_datetime = None
+    last_referal_date = datetime.today() + timedelta(days=7)
     if community_clinic_days:
         base_datetime = base_datetime or datetime.today()
         for DAY in community_clinic_days.days:
@@ -35,4 +38,7 @@ def next_clinic_date(community_clinic_days, base_datetime=None, allow_same_day=N
                     break
                 elif next_clinic_datetime < base_datetime:
                     break
+#         if not (datetime.today() < next_clinic_datetime < last_referal_date):
+#             raise CLinicReferalDateError(
+#                 "The next clinic date: {0} is not within 7 days. Participant to be referred within 7 days.".format(next_clinic_datetime))
     return next_clinic_datetime

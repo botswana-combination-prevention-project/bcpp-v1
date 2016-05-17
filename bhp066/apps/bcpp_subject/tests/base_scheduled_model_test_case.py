@@ -13,6 +13,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 from edc_constants.constants import NOT_APPLICABLE
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -78,22 +79,22 @@ class BaseScheduledModelTestCase(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.household_structure = household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
+#         HouseholdMemberFactory(household_structure=household_structure)
+#         HouseholdMemberFactory(household_structure=household_structure)
+#         HouseholdMemberFactory(household_structure=household_structure)
 
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
 
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure,
+        self.household_member_female = HouseholdMember.objects.create(household_structure=household_structure,
                                                               first_name='SUE', initials='SW', gender='F',
                                                               age_in_years=25, study_resident='Yes', relation='sister',
                                                               inability_to_participate=NOT_APPLICABLE)
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure,
+        self.household_member_male = HouseholdMember.objects.create(household_structure=household_structure,
                                                             first_name='ERIK', initials='EW', gender='M',
                                                             age_in_years=25, study_resident='Yes', relation='brother',
                                                             inability_to_participate=NOT_APPLICABLE)
-        self.household_member_female.save()
-        self.household_member_male.save()
+#         self.household_member_female.save()
+#         self.household_member_male.save()
 
         enrollment_male = EnrollmentChecklistFactory(
             household_member=self.household_member_male,
@@ -104,7 +105,6 @@ class BaseScheduledModelTestCase(TestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_female = HouseholdMember.objects.get(pk=self.household_member_female.pk)
-        # print self.household_member_female.member_status
 
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
@@ -115,11 +115,12 @@ class BaseScheduledModelTestCase(TestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_male = HouseholdMember.objects.get(pk=self.household_member_male.pk)
-        # print self.household_member_male.member_status
+
 
         subject_consent_female = SubjectConsentFactory(
             consent_datetime=datetime.today(),
             household_member=self.household_member_female,
+            registered_subject=self.household_member_female.registered_subject,
             gender='F',
             dob=enrollment_female.dob,
             first_name='SUE',
@@ -132,9 +133,10 @@ class BaseScheduledModelTestCase(TestCase):
         subject_consent_male = SubjectConsentFactory(
             consent_datetime=datetime.today(),
             household_member=self.household_member_male,
+            registered_subject=self.household_member_male.registered_subject,
             gender='M',
             dob=enrollment_male.dob,
-            first_name='ERIK',
+            first_name=self.household_member_male.first_name,
             last_name='W',
             citizen='Yes',
             confirm_identity='101119811',
@@ -163,9 +165,11 @@ class BaseScheduledModelTestCase(TestCase):
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         self.household_member_female_annual = HouseholdMember.objects.get(
             internal_identifier=self.household_member_female.internal_identifier,
+            registered_subject=self.household_member_female.registered_subject,
             household_structure=household_structure)
         self.household_member_male_annual = HouseholdMember.objects.get(
             internal_identifier=self.household_member_male.internal_identifier,
+            registered_subject=self.household_member_male.registered_subject,
             household_structure=household_structure)
 
         self.registered_subject_female_annual = self.household_member_female_annual.registered_subject

@@ -3,7 +3,6 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import TestCase
 
-from ..classes import SubjectReferralApptHelper
 from bhp066.apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
 
 CLINIC_DAYS = {
@@ -33,6 +32,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -58,7 +58,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1a(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
-
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -84,7 +84,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1b(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
-
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -110,6 +110,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1c(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Th'
         expected_appt_day = 'Mon'
         today = date(2015, 2, 13)
@@ -137,7 +138,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa2(self):
         """Assert give next clinic day MASA client at the IDCC that is a suspected defaulter with no appointment"""
-
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 8, 27, 7, 30, 0)
@@ -163,7 +164,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa2a(self):
         """Assert give next clinic day MASA client at the IDCC that is a suspected defaulter with an appointment"""
-
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
         scheduled_appt_date = date(2014, 9, 17)
@@ -189,6 +190,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa3(self):
         """Assert give next clinic day in 3 weels for a MASA client at the IDCC with a scheduled appt in 3 weeks"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Tue'
         expected_appt_day = 'Wed'
         today = date(2014, 8, 26)
@@ -217,6 +219,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa4(self):
         """Assert give next clinic day in two weeks for a MASA client at the IDCC with a scheduled appt in 2 weeks"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Tue'
         expected_appt_day = 'Wed'
         today = date(2014, 8, 26)
@@ -245,6 +248,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa5(self):
         """Assert give two week appointment if scheduled appt is more than a month away."""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Tue'
         expected_appt_day = 'Mon'
         today = date(2014, 8, 26)
@@ -273,6 +277,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_smc1(self):
         """Assert referred on smc_start date for SMC subjected seen on a date before the smc start date"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 8, 30)
@@ -302,6 +307,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_smc1a(self):
         """Assert referred on ECC smc_start date for SMC subjected seen on a date before the smc start date (start date is SAT)"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Wed'
         today = date(2014, 8, 30)
@@ -331,6 +337,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_smc2(self):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (TU->WE)"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Tue'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 28)
@@ -360,6 +367,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_smc3(self):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (SA->MO)"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 29)
@@ -389,6 +397,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_hiv1(self):
         """Assert referred to VCT testing"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
@@ -417,6 +426,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_hiv2(self):
         """Assert referred POS#-HI to IDCC testing"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
@@ -445,6 +455,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_hiv3(self):
         """Assert referred POS#-HI to IDCC testing"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
@@ -473,6 +484,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_hiv4(self):
         """Assert referred POS#-HI to IDCC testing"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
@@ -501,6 +513,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_hiv5(self):
         """Assert referred POS#-HI to IDCC testing"""
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
@@ -529,7 +542,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_POS_next_clinic_day(self):
         """Test that POS! will get the next clinic date"""
-
+        from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         expected_appt_day = 'Wed'
         today = date(2015, 3, 2)
         scheduled_appt_date = None
