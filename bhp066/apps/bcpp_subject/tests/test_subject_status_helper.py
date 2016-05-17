@@ -9,7 +9,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 
 from bhp066.apps.bcpp_lab.models import AliquotType, Panel
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from ..classes import SubjectStatusHelper
+from bhp066.apps.bcpp_subject.classes import SubjectStatusHelper
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 from .factories import (

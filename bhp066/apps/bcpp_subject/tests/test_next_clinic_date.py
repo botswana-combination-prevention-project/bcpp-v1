@@ -11,12 +11,12 @@ from ..utils import next_clinic_date
 CLINIC_DAYS = {
     '11': {'IDCC': ClinicDaysTuple((MO, WE), None),
            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),
-           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2016, 05, 17)),
+           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2016, 05, 17))},
     '12': {'IDCC': ClinicDaysTuple((MO, WE), None),
            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),
-           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2016, 05, 17)),
+           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2016, 05, 17))},
 }
 
 
@@ -35,6 +35,7 @@ class TestNextClinicDate(SimpleTestCase):
 
     def calc_date(self):
         self.community_clinic_days = CLINIC_DAYS.get(self.community_code)
+        print self.community_clinic_days
         self.assertEqual(self.today.strftime('%a'), self.today_day, 'Today is not a {0}'.format(self.today_day))
         self.assertEqual(self.expected_appt_datetime.strftime('%a'),
                          self.expected_appt_day,
@@ -58,8 +59,8 @@ class TestNextClinicDate(SimpleTestCase):
         """Assert give Mon get Tue"""
         self.today_day = 'Mon'
         self.expected_appt_day = 'Wed'
-        self.today = date(2014, 8, 18)
-        self.expected_appt_datetime = datetime(2014, 8, 20, 7, 30, 0)
+        self.today = date(2016, 05, 16)
+        self.expected_appt_datetime = datetime(2016, 05, 18, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
         self.calc_date()

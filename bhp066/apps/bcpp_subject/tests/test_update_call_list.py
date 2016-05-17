@@ -16,7 +16,7 @@ from edc.map.classes import site_mappers
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from bhp066.apps.bcpp_household_member.choices import ANNUAL, ABSENT, REFUSED, HTC_ELIGIBLE
+from bhp066.apps.bcpp_household_member.choices import ANNUAL, ABSENT, REFUSED
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 

@@ -8,3 +8,7 @@ class DeniedPermissionPimaVLError(Exception):
 
 class ConsentError(Exception):
     pass
+
+
+class CLinicReferalDateError(Exception):
+    pass
