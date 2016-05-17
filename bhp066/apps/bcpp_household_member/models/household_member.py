@@ -294,7 +294,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         else:
             self.clear_death_flags
         self.eligible_member = self.is_eligible_member
-        if not self.id and self.present_today == NO and not self.survival_status == DEAD:
+        if self.present_today == NO and not self.survival_status == DEAD:
             self.absent = True
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
