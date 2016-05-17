@@ -17,8 +17,8 @@ class HouseholdMemberHelper(object):
     def update_member_status(self, selected_member_status):
         member_status = None
         if selected_member_status == DECEASED:
-            member_status = DECEASED
-        if self.household_member.is_consented:
+            return DECEASED
+        elif self.household_member.is_consented and not self.household_member.absent:
             if self.household_member.consented_in_previous_survey:
                 member_status = self.annual_member_status(selected_member_status)
             else:

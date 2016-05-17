@@ -448,6 +448,8 @@ class TestMemberStatus(TestCase):
         """Asserts that a member member that was not consented year one can now be consented in y2."""
         household_member = self.enroll_household()
         HouseholdMemberFactory(
+            first_name='DIMO',
+            initials='DD',
             household_structure=household_member.household_structure,
             gender='M',
             age_in_years=20,
@@ -460,6 +462,8 @@ class TestMemberStatus(TestCase):
         RepresentativeEligibilityFactory(
             household_structure=year2_structure)
         household_member_y2 = HouseholdMemberFactory(
+            first_name='DIMO',
+            initials='DD',
             household_structure=year2_structure,
             gender='M',
             age_in_years=21,

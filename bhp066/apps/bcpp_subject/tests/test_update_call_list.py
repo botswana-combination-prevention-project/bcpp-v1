@@ -12,6 +12,7 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 from edc.map.classes import site_mappers
+from edc_constants.constants import NO
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -192,7 +193,7 @@ class TestUpdateCallList(TestCase):
         FILTERED_DEFAULT_SEARCH=True,
     )
     def test_annual_member_refusal(self):
-        """Test if the member status of an annual member who is absent is calculated correctly."""
+        """Test if the member status of an annual member who has refused is calculated correctly."""
         self.update_call_list_class.update_call_list('test_community', 'bcpp-year-1', 't1-prep')
         self.assertEqual(HouseholdMember.objects.filter(
             household_structure__survey__survey_slug='bcpp-year-2').count(), 1)
@@ -216,3 +217,27 @@ class TestUpdateCallList(TestCase):
 #             self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
 #             self.assertTrue(household_member.refused)
 #         self.assertEqual(household_member.member_status, REFUSED)
+
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
+    def test_annual_member_absent(self):
+        """Test if the member status of an annual member who is absent is calculated correctly."""
+        self.update_call_list_class.update_call_list('test_community', 'bcpp-year-1', 't1-prep')
+        self.assertEqual(HouseholdMember.objects.filter(
+            household_structure__survey__survey_slug='bcpp-year-2').count(), 1)
+
+        household_member = HouseholdMember.objects.get(household_structure__survey__survey_slug='bcpp-year-2', internal_identifier=self.household_member_male_T0.internal_identifier)
+        self.assertEqual(household_member.member_status, ANNUAL)
+        self.assertEqual(CallList.objects.filter(household_member=household_member).count(), 1)
+
+        household_member.present_today = NO
+        household_member.save(update_fields=['present_today'])
+
+        household_member = HouseholdMember.objects.get(pk=household_member.pk)
+        self.assertTrue(household_member.absent)
+        self.assertEqual(household_member.member_status, ABSENT)

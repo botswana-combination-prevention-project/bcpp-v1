@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
-from bhp066.apps.bcpp_subject.classes import UpdateCallList
 from bhp066.apps.bcpp_survey.models import Survey
 
 
@@ -12,6 +11,7 @@ class Command(BaseCommand):
     help = 'Add to the call list info from all subject consents from the specified survey.'
 
     def handle(self, *args, **options):
+        from bhp066.apps.bcpp_subject.classes import UpdateCallList
         CallList = get_model('bcpp_subject', 'CallList')
         count = CallList.objects.all().count()
         try:
