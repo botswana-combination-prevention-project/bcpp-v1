@@ -55,13 +55,13 @@
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
     
     <td>{{ forloop.counter }}.&nbsp;
-    {% if household_member.survival_status == 'dead'%}
+    {% if household_member.survival_status == 'dead' or household_member.personal_details_changed == 'Yes' or household_member.personal_details_changed == 'No' %}
         {{ household_member.first_name|encrypted }}        
     {% else %}            
         <A href="{% url 'admin:bcpp_household_member_householdmember_change' household_member.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{{ household_member.first_name|encrypted }}</A>
     {% endif %} 
 
-    {% if household_member.auto_filled and not household_member.updated_after_auto_filled %}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
+    {% if household_member.auto_filled and not household_member.updated_after_auto_filled  or household_member.personal_details_changed == '-'  %}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
 
     </td>
         

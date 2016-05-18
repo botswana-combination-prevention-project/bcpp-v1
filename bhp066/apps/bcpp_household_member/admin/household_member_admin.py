@@ -59,6 +59,8 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
         "present_today": admin.VERTICAL,
         "inability_to_participate": admin.VERTICAL,
         "study_resident": admin.VERTICAL,
+        "personal_details_changed": admin.VERTICAL,
+        "details_change_reason": admin.VERTICAL
     }
 
     list_display = ('first_name', 'initials',
@@ -101,8 +103,11 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
                    'updated_after_auto_filled',
                    )
 
-    def get_fields(self, request, obj=None):
-        fields = self.all_required_fields()
+    def get_fieldsets(self, request, obj=None):
+        fields = self.fields
+        if not obj:
+            fields.remove('personal_details_changed')
+            fields.remove('details_change_reason')
         return [(None, {'fields': fields})]
 
     list_per_page = 15

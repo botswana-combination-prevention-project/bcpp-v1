@@ -21,6 +21,7 @@ from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 from bhp066.apps.bcpp_household_member.models import HouseholdInfo
 from bhp066.apps.bcpp_household.models import HouseholdLogEntry
 from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models.household_head_eligibility import HouseholdHeadEligibility
 
 from ..models import SubjectConsent, SubjectConsentExtended
 from copy import deepcopy
@@ -47,6 +48,12 @@ class BaseBcppConsentForm(BaseConsentForm):
             subject_consent = model(**cleaned_data)
             subject_consent.matches_enrollment_checklist(
                 subject_consent, exception_cls=forms.ValidationError)
+            try:
+                HouseholdHeadEligibility.objects.get(household_structure=household_member.household_structure)
+            except HouseholdHeadEligibility.DoesNotExist:
+                raise forms.ValidationError(
+                    'Please fill household head eligibility form before completing subject consent.',
+                    code='invalid')
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):
@@ -226,23 +233,27 @@ class BaseBcppConsentForm(BaseConsentForm):
         household_member = self.cleaned_data.get("household_member")
         household_structure = household_member.household_structure
         try:
-            log_entry = HouseholdLogEntry.objects.filter(
-                household_log__household_structure=household_structure).last()
-            if not log_entry.report_datetime == datetime.today().date():
+            SubjectConsent.objects.get(household_member=household_member)
+            print "household_member household_member", household_member
+        except SubjectConsent.DoesNotExist:
+            try:
+                log_entry = HouseholdLogEntry.objects.filter(
+                    household_log__household_structure=household_structure).last()
+                if not log_entry.report_datetime == datetime.today().date():
+                    raise ValidationError(
+                        'Please fill household log entry before completing subject consent.',
+                        params={},
+                        code='invalid')
+            except HouseholdLogEntry.DoesNotExist:
                 raise ValidationError(
                     'Please fill household log entry before completing subject consent.',
                     params={},
                     code='invalid')
-        except HouseholdLogEntry.DoesNotExist:
-            raise ValidationError(
-                'Please fill household log entry before completing subject consent.',
-                params={},
-                code='invalid')
-        except AttributeError:
-            raise ValidationError(
-                'Please fill household log entry before completing subject consent.',
-                params={},
-                code='invalid')
+            except AttributeError:
+                raise ValidationError(
+                    'Please fill household log entry before completing subject consent.',
+                    params={},
+                    code='invalid')
 
 
 class SubjectConsentForm(BaseBcppConsentForm):

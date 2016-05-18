@@ -246,22 +246,22 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     )
 
     personal_details_changed = models.CharField(
-        verbose_name=("Has your personal details changed?"),
+        verbose_name=("Have your personal details (name/surname) changed since the last time we visited you?"),
         max_length=10,
         null=True,
         blank=True,
         default='-',
         choices=YES_NO,
-        help_text=('if your surname has because of marriage or other reasons.'))
+        help_text=('personal details (name/surname)'))
 
     details_change_reason = models.CharField(
-        verbose_name=("If your personal details have changed provide a reason."),
+        verbose_name=("If YES, please specify the reason"),
         max_length=30,
         null=True,
         blank=True,
         default='-',
         choices=DETAILS_CHANGE_REASON,
-        help_text=('if your surname has because of marriage or other reasons.'))
+        help_text=('if personal detail changed choice a reason above.'))
 
     objects = HouseholdMemberManager()
 
