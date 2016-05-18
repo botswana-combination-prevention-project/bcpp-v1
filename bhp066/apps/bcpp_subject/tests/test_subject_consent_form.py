@@ -4,17 +4,15 @@ from django.test.utils import override_settings
 
 from dateutil.relativedelta import relativedelta
 from datetime import date, datetime
-from bhp066.apps.bcpp_clinic.tests.factories.clinic_eligibility_factory import ClinicEligibilityFactory
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 
-from edc_constants.choices import YES, NO
+from edc_constants.choices import YES
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -26,13 +24,13 @@ from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 
-from edc.map.classes import Mapper
 from edc.map.classes.controller import site_mappers
 from bhp066.apps.bcpp_subject.tests.factories.subject_consent_factory import SubjectConsentFactory
 from bhp066.apps.bcpp_subject.models import SubjectConsent
-from bhp066.apps.bcpp_household.models.household import Household
 from bhp066.apps.bcpp_household.models.household_log import HouseholdLog, HouseholdLogEntry
 from bhp066.apps.bcpp_household.tests.factories.household_log_entry_factory import HouseholdLogEntryFactory
+from bhp066.apps.bcpp_household_member.tests.factories.head_household_factory import HeadHouseholdEligibilityFactory
+from bhp066.apps.bcpp_household_member.tests.factories.household_info_factory import HouseholdInfoFactory
 
 
 class TestSubjectConsentForm(TestCase):
@@ -72,7 +70,7 @@ class TestSubjectConsentForm(TestCase):
         self.household_structure_bhs = HouseholdStructure.objects.get(household__plot=plot, survey=self.survey_bhs)
         self.household_structure_ahs = HouseholdStructure.objects.get(household__plot=plot, survey=self.survey_ahs)
         self.create_household_log_entry(self.household_structure_bhs)
-
+       
         RepresentativeEligibilityFactory(household_structure=self.household_structure_bhs)
 
         self.male_dob = date.today() - relativedelta(years=25)
@@ -85,6 +83,16 @@ class TestSubjectConsentForm(TestCase):
             household_structure=self.household_structure_bhs, gender='M',
             age_in_years=self.male_age_in_years, first_name=self.male_first_name,
             initials=self.male_initials
+        )
+        HeadHouseholdEligibilityFactory(
+            household_member=self.household_member_male_T0, household_structure=self.household_structure_bhs)
+        self.household_member_male_T0.eligible_hoh = True
+        
+        self.household_member_male_T0.save()
+
+        HouseholdInfoFactory(
+            household_member=self.household_member_male_T0, household_structure=self.household_structure_bhs,
+            registered_subject=self.household_member_male_T0.registered_subject
         )
 
         self.enrollment = EnrollmentChecklistFactory(
@@ -176,6 +184,7 @@ class TestSubjectConsentForm(TestCase):
         self.data['identity'] = '317918514'
         self.data['confirm_identity'] = '317918514'
         consent_form = SubjectConsentForm(data=self.data)
+        print consent_form.errors
         consent_form.save()
         self.assertEqual(RegisteredSubject.objects.filter(identity=self.data['identity']).count(), 1)
 
@@ -211,6 +220,8 @@ class TestSubjectConsentForm(TestCase):
         self.household_member.age_in_years = 65
         self.household_member.save_base()
 
+        HeadHouseholdEligibilityFactory(
+            household_member=self.household_member, household_structure=self.household_member.household_structure)
         self.enrollment.dob = dob
         self.enrollment.save_base()
 
@@ -247,6 +258,8 @@ class TestSubjectConsentForm(TestCase):
             registered_subject__identity='101119811',
             household_structure__survey=self.survey_ahs
         )
+        HeadHouseholdEligibilityFactory(
+            household_member=self.household_member, household_structure=self.household_member.household_structure)
         self.subject_consent = SubjectConsent.objects.get(household_member=self.household_member_male_T0)
         self.subject_consent.version = 2
         self.subject_consent.save_base()
@@ -286,6 +299,9 @@ class TestSubjectConsentForm(TestCase):
 
         self.create_household_log_entry(self.household_structure_ahs)
 
+        HeadHouseholdEligibilityFactory(
+            household_member=self.household_member, household_structure=self.household_member.household_structure)
+
         self.subject_consent = SubjectConsent.objects.get(household_member=self.household_member_male_T0)
         self.subject_consent.version = 2
         self.subject_consent.save_base()
@@ -296,4 +312,7 @@ class TestSubjectConsentForm(TestCase):
         self.data['initials'] = 'ES'
         consent_form = SubjectConsentForm(data=self.data)
         self.assertTrue(consent_form.is_valid())
+        consent_form.save()
+        consent = SubjectConsent.objects.get(household_member=self.household_member)
+        consent_form = SubjectConsentForm(data=self.data, instance=consent)
         consent_form.save()

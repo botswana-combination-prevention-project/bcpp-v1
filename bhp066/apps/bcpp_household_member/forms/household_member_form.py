@@ -43,6 +43,10 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
             # instance cannot be head if another head already exists
             self.instance.check_head_household(
                 cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
+        if cleaned_data.get('personal_details_changed') == YES:
+            if not cleaned_data.get('details_change_reason'):
+                raise forms.ValidationError(
+                    'Provide why personal details has changed.')
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.instance)
             enrollment_checklist.matches_household_member_values(
