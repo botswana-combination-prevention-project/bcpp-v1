@@ -1,5 +1,4 @@
 from datetime import datetime
-from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from bhp066.apps.bcpp_subject.exceptions import CLinicReferalDateError
 
@@ -14,7 +13,6 @@ def next_clinic_date(community_clinic_days, base_datetime=None, allow_same_day=N
     """
     clinic_dates = []
     next_clinic_datetime = None
-    last_referal_date = datetime.today() + timedelta(days=7)
     if community_clinic_days:
         base_datetime = base_datetime or datetime.today()
         for DAY in community_clinic_days.days:
