@@ -106,8 +106,11 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
     def get_fieldsets(self, request, obj=None):
         fields = self.fields
         if not obj:
-            fields.remove('personal_details_changed')
-            fields.remove('details_change_reason')
+            try:
+                fields.remove('personal_details_changed')
+                fields.remove('details_change_reason')
+            except ValueError:
+                pass
         return [(None, {'fields': fields})]
 
     list_per_page = 15

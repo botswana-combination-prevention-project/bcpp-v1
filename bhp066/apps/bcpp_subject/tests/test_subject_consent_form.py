@@ -87,7 +87,6 @@ class TestSubjectConsentForm(TestCase):
         HeadHouseholdEligibilityFactory(
             household_member=self.household_member_male_T0, household_structure=self.household_structure_bhs)
         self.household_member_male_T0.eligible_hoh = True
-        
         self.household_member_male_T0.save()
 
         HouseholdInfoFactory(
