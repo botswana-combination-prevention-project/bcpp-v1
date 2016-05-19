@@ -9,6 +9,7 @@ from edc.map.classes import site_mappers
 from edc_constants.constants import NOT_REQUIRED, KEYED, CLOSED, POS, NEG
 
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
+from bhp066.apps.bcpp_subject.models import HivCareAdherence
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..choices import REFERRAL_CODES
@@ -122,6 +123,16 @@ class SubjectReferralHelper(object):
     @property
     def hiv_result(self):
         return self.subject_status_helper.hiv_result
+
+    @property
+    def hiv_care_adherence_next_appointment(self):
+        """Return the next appoint date from the HIV care and adherence."""
+        try:
+            hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
+            next_appointment_date = hiv_care_adherence.next_appointment_date
+        except HivCareAdherence.DoesNotExist:
+            next_appointment_date = None
+        return next_appointment_date
 
     @property
     def on_art(self):
@@ -427,6 +438,7 @@ class SubjectReferralHelper(object):
             self.referral_code,
             base_date=self.subject_referral.report_datetime,
             scheduled_appt_date=self.subject_referral.scheduled_appt_date,
+            hiv_care_adherence_next_appointment=self.hiv_care_adherence_next_appointment
         )
 
     @property

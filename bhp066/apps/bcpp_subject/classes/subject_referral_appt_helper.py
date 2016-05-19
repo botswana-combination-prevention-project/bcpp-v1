@@ -20,7 +20,7 @@ class SubjectReferralApptHelper(object):
     """
 
     def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
-                 community_code=None, community_clinic_days=None, intervention_communities=None):
+                 community_code=None, community_clinic_days=None, intervention_communities=None, hiv_care_adherence_next_appointment=None):
         """This class and its needed attribute values are wrapped by
         the SubjectReferralHelper.
 
@@ -36,8 +36,9 @@ class SubjectReferralApptHelper(object):
         self._base_date = base_date or datetime.today()  # should come from the user as today's date??
         self._intervention_communities = intervention_communities
         self._referral_code = None
-        self.community_code = community_code or site_mappers.get_mapper(site_mappers.current_community).map_code
-        self.community_name = community_code or site_mappers.get_mapper(site_mappers.current_community).map_area
+        self.hiv_care_adherence_next_appointment = hiv_care_adherence_next_appointment
+        self.community_code = community_code or site_mappers.get_current_mapper().map_code
+        self.community_name = community_code or site_mappers.get_current_mapper().map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:
@@ -83,7 +84,15 @@ class SubjectReferralApptHelper(object):
         elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
             pass  # will be next clinic date and will ignore a scheduled_appt_date
         else:
-            self.referral_appt_datetime_other()
+            try:
+                if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
+                    referral_appt_datetime = self.scheduled_appt_datetime
+            except TypeError as error_msg:
+                if "can't compare datetime.datetime to NoneType" not in error_msg:
+                    raise TypeError(error_msg)
+                pass
+            if 'MASA-CC' == self.referral_code:
+                referral_appt_datetime = self.masa_appt_datetime
         return referral_appt_datetime or next_clinic_date(self.clinic_days,
                                                           self.base_datetime)
 
@@ -149,10 +158,7 @@ class SubjectReferralApptHelper(object):
     def masa_appt_datetime(self):
         """Returns a date as long as the date is within 1 month
         of today otherwise returns two weeks from base."""
-        return next_clinic_date(self.clinic_days,
-                                self.base_datetime + relativedelta(weeks=2),
-                                allow_same_day=True,
-                                subtract=True)
+        return self.hiv_care_adherence_next_appointment
 
     @property
     def smc_appt_datetime(self):

@@ -26,7 +26,7 @@ class TestPlotMapper(BasePlotMapper):
     radius = 3.5
     location_boundary = ()
 
-    intervention = False
+    intervention = True
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(

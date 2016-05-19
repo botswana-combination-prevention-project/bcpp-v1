@@ -39,6 +39,7 @@ class TestSubjectReferralApptHelper(TestCase):
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
+        hiv_care_adherence_next_appointment = datetime(2014, 9, 8, 7, 30, 0)
         community_code = '97'
         referral_code = 'MASA-CC'
         scheduled_appt_date = None
@@ -47,7 +48,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             scheduled_appt_date=scheduled_appt_date,
             community_code=community_code,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -65,6 +67,7 @@ class TestSubjectReferralApptHelper(TestCase):
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
+        hiv_care_adherence_next_appointment = datetime(2014, 9, 8, 7, 30, 0)
         community_code = '98'
         referral_code = 'MASA-CC'
         scheduled_appt_date = None
@@ -73,7 +76,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             scheduled_appt_date=scheduled_appt_date,
             community_code=community_code,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -91,6 +95,7 @@ class TestSubjectReferralApptHelper(TestCase):
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
+        hiv_care_adherence_next_appointment = datetime(2014, 9, 8, 7, 30, 0)
         community_code = '96'
         referral_code = 'MASA-CC'
         scheduled_appt_date = None
@@ -99,7 +104,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             scheduled_appt_date=scheduled_appt_date,
             community_code=community_code,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -118,6 +124,7 @@ class TestSubjectReferralApptHelper(TestCase):
         expected_appt_day = 'Mon'
         today = date(2015, 2, 13)
         expected_appt_datetime = datetime(2015, 2, 23, 7, 30, 0)
+        hiv_care_adherence_next_appointment = datetime(2015, 2, 23, 7, 30, 0)
         community_code = '97'
         referral_code = 'MASA-CC'
         scheduled_appt_date = None#date(2015, 2, 25)
@@ -127,7 +134,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             scheduled_appt_date=scheduled_appt_date,
             community_code=community_code,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -199,6 +207,7 @@ class TestSubjectReferralApptHelper(TestCase):
         today = date(2014, 8, 26)
         scheduled_appt_date = date(2014, 9, 17)
         expected_appt_datetime = datetime(2014, 9, 17, 7, 30, 0)
+        hiv_care_adherence_next_appointment =  datetime(2014, 9, 17, 7, 30, 0)
         community_code = '98'
         referral_code = 'MASA-CC'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -206,7 +215,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
@@ -224,10 +234,11 @@ class TestSubjectReferralApptHelper(TestCase):
         """Assert give next clinic day in two weeks for a MASA client at the IDCC with a scheduled appt in 2 weeks"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
         today_day = 'Tue'
-        expected_appt_day = 'Wed'
+        expected_appt_day = 'Mon'
         today = date(2014, 8, 26)
         scheduled_appt_date = datetime(2014, 9, 9, 7, 30, 0)
-        expected_appt_datetime = datetime(2014, 9, 10, 7, 30, 0)
+        expected_appt_datetime = datetime(2014, 9, 15, 7, 30, 0)
+        hiv_care_adherence_next_appointment = datetime(2014, 9, 15, 7, 30, 0)
         community_code = '98'
         referral_code = 'MASA-CC'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -235,7 +246,8 @@ class TestSubjectReferralApptHelper(TestCase):
             base_date=today,
             community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
@@ -256,15 +268,17 @@ class TestSubjectReferralApptHelper(TestCase):
         expected_appt_day = 'Mon'
         today = date(2014, 8, 26)
         scheduled_appt_date = datetime(2014, 9, 29, 7, 30, 0)
-        expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
+        expected_appt_datetime = datetime(2014, 9, 29, 7, 30, 0)
         community_code = '98'
         referral_code = 'MASA-CC'
+        hiv_care_adherence_next_appointment = datetime(2014, 9, 29, 7, 30, 0)
         subject_referral_appt_helper = SubjectReferralApptHelper(
             referral_code,
             base_date=today,
             community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
-            community_clinic_days=CLINIC_DAYS.get(community_code))
+            community_clinic_days=CLINIC_DAYS.get(community_code),
+            hiv_care_adherence_next_appointment=hiv_care_adherence_next_appointment)
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '

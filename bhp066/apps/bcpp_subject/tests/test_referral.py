@@ -344,7 +344,7 @@ class TestReferral(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.study_site, panel=panel,
                                   aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result=POS)
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv=YES)
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv=YES, next_appointment_date=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
