@@ -36,10 +36,10 @@ class MetsimotlhabePlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 8, 10)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 05, 19),
+            full_enrollment_date=date(2016, 06, 10),
+            end_date=date(2016, 06, 10),
+            smc_start_date=date(2016, 06, 10)),
     }
 
     clinic_days = {
@@ -49,7 +49,7 @@ class MetsimotlhabePlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((MO, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
