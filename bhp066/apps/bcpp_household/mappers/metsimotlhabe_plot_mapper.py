@@ -49,7 +49,7 @@ class MetsimotlhabePlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((MO, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
