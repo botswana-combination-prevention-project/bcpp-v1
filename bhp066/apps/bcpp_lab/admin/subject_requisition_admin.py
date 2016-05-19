@@ -18,7 +18,6 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
     def __init__(self, *args, **kwargs):
         super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
-        print self.fields.remove('estimated_volume')
         self.list_filter.append('community')
         self.list_filter.insert(0, PocVLRequsitionFilter)
         self.list_filter.append(SubjectRequisitionSurveyFilter)
