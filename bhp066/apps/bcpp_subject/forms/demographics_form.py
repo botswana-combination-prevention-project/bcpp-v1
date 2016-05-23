@@ -41,18 +41,19 @@ class DemographicsForm(BaseSubjectModelForm):
             num_wives = cleaned_data.get('num_wives', 0)
             subject_visit = cleaned_data.get('subject_visit')
             subject_identifier = subject_visit.subject_identifier
-            consent = SubjectConsent.objects.get(
-                household_member__registered_subject__subject_identifier=subject_identifier)
-            if husband_wives > 0:
+            consent = SubjectConsent.objects.filter(
+                household_member__registered_subject__subject_identifier=subject_identifier).last()
+            if num_wives > 0:
                 if consent.gender == MALE:
                     raise forms.ValidationError('You should fill the number of wives.')
-            if num_wives > 0:
+            if husband_wives > 0:
                 if consent.gender == FEMALE:
                     raise forms.ValidationError('You should fill the number of husband(s).')
             if not (husband_wives > 0 or num_wives > 0):
                 raise forms.ValidationError(
                     'If participant is married, write the number of wives for the husband [WOMEN:] OR the number '
                     'of wives he is married to [MEN:].')
+        return cleaned_data
 
     class Meta:
         model = Demographics
