@@ -2,6 +2,7 @@ import socket
 
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
+
 from django.conf import settings
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
@@ -506,48 +507,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
             smc_start_date=datetime.today().date())
         mapper.survey_dates[survey_year] = survey_date
         return mapper
-
-#     def create_quota(self):
-#         for ct in ContentType.objects.filter(app_label='bcpp_subject'):
-#             if ct is None:
-#                 continue
-#             if issubclass(ct.model_class(), QuotaMixin):
-#                 if device.is_community_server:
-#                     try:
-#                         ControllerQuota.objects.get(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                         )
-#                     except ControllerQuota.DoesNotExist:
-#                         ControllerQuota.objects.create(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                             target=100,
-#                             expiration_date=timezone.now().date() + timedelta(days=28),
-#                         )
-#                     for hostname in self.quota_client_setup:
-#                         try:
-#                             Client.objects.get(hostname=hostname)
-#                         except Client.DoesNotExist:
-#                             Client.objects.create(
-#                                 hostname=hostname,
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                             )
-#                 else:
-#                     if not device.is_central_server:
-#                         try:
-#                             Quota.objects.get(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                             )
-#                         except Quota.DoesNotExist:
-#                             Quota.objects.create(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                                 target=0,
-#                                 expiration_date=timezone.now()
-#                             )
 
 bcpp_app_configuration = BcppAppConfiguration()
 

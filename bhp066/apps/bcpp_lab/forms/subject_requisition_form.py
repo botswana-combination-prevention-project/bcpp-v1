@@ -10,11 +10,12 @@ class SubjectRequisitionForm(BaseRequisitionForm):
         cleaned_data = super(SubjectRequisitionForm, self).clean()
         panel = cleaned_data.get('panel')
         if panel:
+            estimated_volume = cleaned_data.get('estimated_volume')
             if panel.name in ['Research Blood Draw', 'Viral Load']:
-                if (self.estimated_volume < 8.0 or self.estimated_volume > 10.0):
+                if (estimated_volume < 8.0 or estimated_volume > 10.0):
                     raise forms.ValidationError("The estimated volume should between 8.0 and 10.0 ml.")
             elif panel.name == 'Microtube':
-                if (self.estimated_volume < 3.0 or self.estimated_volume > 5.0):
+                if (estimated_volume < 3.0 or estimated_volume > 5.0):
                     raise forms.ValidationError("The estimated volume should between 3.0 and 5.0 ml.")
         return cleaned_data
 

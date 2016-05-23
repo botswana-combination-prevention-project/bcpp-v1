@@ -30,6 +30,8 @@ from bhp066.apps.bcpp_subject.tests.factories._subject_visit_factory import Subj
 from bhp066.apps.bcpp_list.models.religion import Religion
 from bhp066.apps.bcpp_list.models.live_with import LiveWith
 from bhp066.apps.bcpp_list.models.ethnic_groups import EthnicGroups
+from bhp066.apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
+from bhp066.apps.bcpp_household_member.models.household_member import HouseholdMember
 
 
 class TestSubjectConsentForm(TestCase):
@@ -156,13 +158,90 @@ class TestSubjectConsentForm(TestCase):
         HouseholdLogEntry.objects.all().delete()
         HouseholdLogEntryFactory(household_log=household_log)
 
-    def test_marriage_gender_female(self):
+    def test_marriage_gender_female_valid(self):
         """ Test identity on
         """
         self.data['num_wives'] = None
         self.data['husband_wives'] = 10
         from bhp066.apps.bcpp_subject.forms import DemographicsForm
         demo_form = DemographicsForm(data=self.data)
+        self.assertTrue(demo_form.is_valid())
+
+    def test_marriage_gender_female_not_valid(self):
+        """ Test identity on
+        """
+        self.data['num_wives'] = 10
+        self.data['husband_wives'] = None
+        from bhp066.apps.bcpp_subject.forms import DemographicsForm
+        demo_form = DemographicsForm(data=self.data)
+        self.assertFalse(demo_form.is_valid())
         self.assertIn(
             u"You should fill the number of wives.", demo_form.errors.get("__all__"))
 
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
+    def test_marriage_gender_female_annual_valid(self):
+        """ Test identity on
+        """
+        enumeration_helper_T2 = EnumerationHelper(self.household_structure_bhs.household, self.survey_bhs, self.survey_ahs)
+        enumeration_helper_T2.add_members_from_survey()
+        self.data['num_wives'] = None
+        self.data['husband_wives'] = 10
+        self.household_member_male = HouseholdMember.objects.get(household_structure=self.household_structure_ahs)
+        self.subject_consent_male.version = 2
+        self.subject_consent_male.save_base()
+        self.subject_consent_male = SubjectConsentFactory(
+            household_member=self.household_member_male, confirm_identity='101119811', identity='101119811',
+            study_site=self.study_site, gender='M', dob=self.male_dob, first_name=self.male_first_name,
+            initials=self.male_initials, version=4)
+
+        appointment_male = Appointment.objects.get(
+            registered_subject=self.household_member_male_T0.registered_subject, visit_definition__code='T1')
+
+        subject_visit_male = SubjectVisitFactory(
+            appointment=appointment_male, household_member=self.household_member_male)
+        self.data['subject_visit'] = subject_visit_male.id
+        from bhp066.apps.bcpp_subject.forms import DemographicsForm
+        demo_form = DemographicsForm(data=self.data)
+        self.assertTrue(demo_form.is_valid())
+#         self.assertIn(
+#             u"You should fill the number of wives.", demo_form.errors.get("__all__"))
+
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
+    def test_marriage_gender_female_annual_notvalid(self):
+        """ Test identity on
+        """
+        enumeration_helper_T2 = EnumerationHelper(self.household_structure_bhs.household, self.survey_bhs, self.survey_ahs)
+        enumeration_helper_T2.add_members_from_survey()
+        self.data['num_wives'] = 10
+        self.data['husband_wives'] = None
+        self.household_member_male = HouseholdMember.objects.get(household_structure=self.household_structure_ahs)
+        self.subject_consent_male.version = 2
+        self.subject_consent_male.save_base()
+        self.subject_consent_male = SubjectConsentFactory(
+            household_member=self.household_member_male, confirm_identity='101119811', identity='101119811',
+            study_site=self.study_site, gender='M', dob=self.male_dob, first_name=self.male_first_name,
+            initials=self.male_initials, version=4)
+
+        appointment_male = Appointment.objects.get(
+            registered_subject=self.household_member_male_T0.registered_subject, visit_definition__code='T1')
+
+        subject_visit_male = SubjectVisitFactory(
+            appointment=appointment_male, household_member=self.household_member_male)
+        self.data['subject_visit'] = subject_visit_male.id
+        from bhp066.apps.bcpp_subject.forms import DemographicsForm
+        demo_form = DemographicsForm(data=self.data)
+        self.assertFalse(demo_form.is_valid())
+        self.assertIn(
+            u"You should fill the number of wives.", demo_form.errors.get("__all__"))
