@@ -115,7 +115,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'app_label': 'bcpp_subject',
             'model_name': 'subjectconsent',
             'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
-            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'end_datetime': datetime(2016, 5, 22, 23, 59, 0),
             'version': '4',
         },
         {
@@ -128,8 +128,22 @@ class BcppAppConfiguration(BaseAppConfiguration):
         {
             'app_label': 'bcpp_subject',
             'model_name': 'subjectconsentextended',
-            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'start_datetime': datetime(2016, 5, 23, 0, 0, 0),
             'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '5',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2016, 5, 23, 0, 0, 0),
+            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '5',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsentextended',
+            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'end_datetime': datetime(2016, 5, 22, 23, 59, 0),
             'version': '4',
         },
         {
