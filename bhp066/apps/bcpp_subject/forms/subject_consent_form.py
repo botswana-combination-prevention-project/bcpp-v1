@@ -238,7 +238,7 @@ class BaseBcppConsentForm(BaseConsentForm):
         except SubjectConsent.DoesNotExist:
             try:
                 log_entry = HouseholdLogEntry.objects.filter(
-                    household_log__household_structure=household_structure).last()
+                    household_log__household_structure=household_structure).order_by('created').last()
                 if not log_entry.report_datetime == datetime.today().date():
                     raise ValidationError(
                         'Please fill household log entry before completing subject consent.',
