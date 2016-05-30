@@ -14,7 +14,7 @@ from edc_base.encrypted_fields import (
     EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)

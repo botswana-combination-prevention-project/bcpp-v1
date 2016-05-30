@@ -12,7 +12,7 @@ from django.db.models import Max, Min
 
 from edc_constants.constants import YES, NO
 from edc_base.utils import formatted_age
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc_consent.forms.base_consent_form import BaseConsentForm
 from edc_constants.constants import NOT_APPLICABLE
 

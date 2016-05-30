@@ -8,7 +8,7 @@
 # from django.test import TestCase
 #
 # from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-# from edc.map.classes import Mapper, site_mappers
+# from edc_map.classes import Mapper, site_mappers
 #
 # from bhp066.apps.bcpp_household.models import HouseholdStructure
 # from bhp066.apps.bcpp_household.tests.factories import PlotFactory

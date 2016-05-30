@@ -1,7 +1,7 @@
 from datetime import date
 
 from edc_device import device
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_survey.models import Survey
 

@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_constants.constants import NOT_APPLICABLE, OTHER
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp.choices import (
     YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,

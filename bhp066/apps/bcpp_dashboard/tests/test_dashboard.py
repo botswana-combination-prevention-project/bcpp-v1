@@ -2,7 +2,7 @@
 #
 # from datetime import date
 #
-# from edc.map.classes import site_mappers
+# from edc_map.classes import site_mappers
 # from edc.subject.lab_tracker.classes import site_lab_tracker
 # from edc.lab.lab_profile.classes import site_lab_profiles
 # from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile

@@ -7,7 +7,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.subject.entry.models import LabEntry, Entry
 from edc_base.audit_trail import AuditTrail
 

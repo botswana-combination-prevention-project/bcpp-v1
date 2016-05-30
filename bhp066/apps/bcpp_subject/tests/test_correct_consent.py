@@ -10,7 +10,7 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from edc_constants.constants import NEG
 

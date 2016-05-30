@@ -1,4 +1,4 @@
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..classes import Community
 

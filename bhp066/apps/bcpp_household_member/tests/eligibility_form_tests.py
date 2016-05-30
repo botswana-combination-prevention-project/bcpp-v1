@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from django.forms import ValidationError
 
-from edc.map.classes import Mapper
+from edc_map.classes import Mapper
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile

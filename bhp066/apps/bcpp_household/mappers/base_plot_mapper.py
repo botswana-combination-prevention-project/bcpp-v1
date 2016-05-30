@@ -3,7 +3,7 @@ from datetime import datetime, time
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
-from edc.map.classes import Mapper
+from edc_map.classes import Mapper
 from edc.map.choices import ICONS, OTHER_ICONS
 from edc_device import device
 

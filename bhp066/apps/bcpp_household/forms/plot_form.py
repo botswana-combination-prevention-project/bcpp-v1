@@ -1,7 +1,7 @@
 from django import forms
 
 from bhp066.apps.bcpp.base_model_form import BaseModelForm
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..models import Plot, PlotLog
 

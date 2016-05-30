@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from edc.lab.lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..forms import PackingListForm, PackingListItemForm
 from ..models import PackingList, PackingListItem

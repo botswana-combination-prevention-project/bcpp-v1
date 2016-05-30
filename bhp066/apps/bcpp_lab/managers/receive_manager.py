@@ -1,7 +1,7 @@
 from django.db.models import Manager
 from django.conf import settings
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 
 class ReceiveManager(Manager):

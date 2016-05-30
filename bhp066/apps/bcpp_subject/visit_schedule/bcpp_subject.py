@@ -3,7 +3,7 @@ from collections import OrderedDict
 from django.db.models import get_model
 
 from edc_constants.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site_visit_schedules,
                                                 EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
                                                 RequisitionPanelTuple)

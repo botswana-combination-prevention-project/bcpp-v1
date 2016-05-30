@@ -17,7 +17,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory

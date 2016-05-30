@@ -4,7 +4,7 @@ import socket
 
 from unipath import Path
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 from .bcpp_settings import MAX_HOUSEHOLDS_PER_PLOT
 from .databases import NETBOOK_MYSQL

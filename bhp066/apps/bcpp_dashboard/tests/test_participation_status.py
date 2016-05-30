@@ -7,7 +7,7 @@
 # from edc.core.bhp_variables.tests.factories import StudySiteFactory
 # from edc.lab.lab_profile.classes import site_lab_profiles
 # from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-# from edc.map.classes import Mapper, site_mappers
+# from edc_map.classes import Mapper, site_mappers
 # from edc.subject.appointment_helper.models import prepare_appointments_on_post_save
 # from edc.subject.lab_tracker.classes import site_lab_tracker
 #

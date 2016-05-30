@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import Count
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..models import PackingListItem, Aliquot
 

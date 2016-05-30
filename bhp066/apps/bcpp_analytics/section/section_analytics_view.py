@@ -1,5 +1,5 @@
 from edc.dashboard.section.classes import BaseSectionView, site_sections
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 
 site_mappers.autodiscover()

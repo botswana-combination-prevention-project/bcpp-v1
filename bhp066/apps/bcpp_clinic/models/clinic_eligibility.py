@@ -6,7 +6,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator, Regex
 from django.db import models
 
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import FirstnameField

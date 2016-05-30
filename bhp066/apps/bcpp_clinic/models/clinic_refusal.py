@@ -5,7 +5,7 @@ from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future, date_not_before_study_start
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 

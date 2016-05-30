@@ -5,7 +5,7 @@ from django.db.models import Max
 
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
-# from edc.map.classes import site_mappers
+# from edc_map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE

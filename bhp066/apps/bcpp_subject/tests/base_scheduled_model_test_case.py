@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import get_model
 from django.test import TestCase
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.appointment.models import Appointment

@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 
 from django.db import transaction
 
-from edc.map.classes import Mapper, site_mappers
+from edc_map.classes import Mapper, site_mappers
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc_constants.constants import REQUIRED, NOT_REQUIRED, KEYED
 from edc.subject.rule_groups.classes import site_rule_groups

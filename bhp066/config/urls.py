@@ -14,7 +14,7 @@ from edc.data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.dashboard.subject.views import additional_requisition
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules

@@ -3,7 +3,7 @@ from django.db.models import signals
 from django.forms import ValidationError
 from django.core.exceptions import ImproperlyConfigured
 
-from edc.map.classes import Mapper, site_mappers
+from edc_map.classes import Mapper, site_mappers
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
@@ -24,7 +24,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.test import TestCase
  
-from edc.map.classes import site_mappers, Mapper
+from edc_map.classes import site_mappers, Mapper
 from edc.map.exceptions import MapperError
 
 

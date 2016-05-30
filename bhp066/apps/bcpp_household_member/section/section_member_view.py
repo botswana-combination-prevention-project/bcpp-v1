@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household.constants import CONFIRMED
 from bhp066.apps.bcpp_survey.models import Survey

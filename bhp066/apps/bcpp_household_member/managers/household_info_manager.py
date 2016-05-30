@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import get_model
 from django.conf import settings
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 
 class HouseholdInfoManager(models.Manager):

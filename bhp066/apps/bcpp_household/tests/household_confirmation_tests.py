@@ -2,7 +2,7 @@
 #
 # from django.test import TestCase
 #
-# from edc.map.classes import site_mappers
+# from edc_map.classes import site_mappers
 #
 # from bhp066.apps.bcpp_household.models import Household
 # from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory

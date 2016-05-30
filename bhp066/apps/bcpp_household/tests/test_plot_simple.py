@@ -5,7 +5,7 @@ from django.db.models import Model
 from django.test import TestCase
 from django.test.utils import override_settings
 
-# from edc.map.classes import site_mappers
+# from edc_map.classes import site_mappers
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile

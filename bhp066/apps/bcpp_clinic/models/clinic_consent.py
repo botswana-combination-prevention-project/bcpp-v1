@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models.fields import (

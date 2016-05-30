@@ -12,7 +12,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc_constants.constants import NOT_APPLICABLE
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from bhp066.apps.bcpp_household.models import HouseholdStructure

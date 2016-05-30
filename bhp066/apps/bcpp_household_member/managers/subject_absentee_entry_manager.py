@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.db import models
 from django.conf import settings
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household.classes import PlotIdentifier
 

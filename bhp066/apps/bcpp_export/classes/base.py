@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from django_revision import site_revision
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..mixins import DenormalizeMixin, FormatForExportMixin, ConsoleMixin
 

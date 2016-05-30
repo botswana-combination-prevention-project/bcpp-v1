@@ -5,7 +5,7 @@ from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.encrypted_fields import EncryptedTextField, EncryptedDecimalField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdManager

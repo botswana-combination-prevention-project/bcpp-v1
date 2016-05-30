@@ -4,7 +4,7 @@ from django.db import models
 
 from edc.core.bhp_variables.models import StudySite
 from edc.core.identifier.exceptions import IdentifierError
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject

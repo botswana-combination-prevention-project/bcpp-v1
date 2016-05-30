@@ -2,7 +2,7 @@ from datetime import datetime, time
 
 from django.core.exceptions import ValidationError
 
-from edc.map.classes import site_mappers
+from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_survey.models import Survey
 
