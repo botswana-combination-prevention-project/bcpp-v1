@@ -2,12 +2,13 @@ from django.db import models
 
 from edc_base.audit_trail import AuditTrail
 from edc_constants.constants import CLOSED, OPEN, NEW
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from ..models import HouseholdStructure
 
 
-class FollowUpList(BaseSyncUuidModel):
+class FollowUpList(SyncModelMixin, BaseUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure)
 

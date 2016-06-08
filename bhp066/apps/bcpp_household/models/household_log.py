@@ -6,7 +6,8 @@ from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import date_not_before_study_start, date_not_future
 from edc_base.model.models import BaseUuidModel
 from edc_base.encrypted_fields import EncryptedTextField
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_LOG_STATUS
@@ -17,7 +18,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdLog(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A system model that links the household log to the household."""
     household_structure = models.ForeignKey(HouseholdStructure)
 

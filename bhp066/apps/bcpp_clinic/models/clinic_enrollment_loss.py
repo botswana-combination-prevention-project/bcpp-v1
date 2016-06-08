@@ -3,7 +3,8 @@ from datetime import datetime
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -11,7 +12,7 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..managers import BaseClinicHouseholdMemberManager
 
 
-class ClinicEnrollmentLoss(BaseSyncUuidModel):
+class ClinicEnrollmentLoss(SyncModelMixin, BaseUuidModel):
     """A model completed by the system triggered by an ineligible potential participant.
 
     This model is deleted if the criteria is changed resulting in an eligible potential

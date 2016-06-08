@@ -3,7 +3,8 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import FirstnameField
 from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
@@ -18,7 +19,7 @@ from ..managers import CallListManager
 from .subject_consent import SubjectConsent
 
 
-class CallList (BaseSyncUuidModel):
+class CallList (SyncModelMixin, BaseUuidModel):
 
     CONSENT_MODEL = SubjectConsent
 

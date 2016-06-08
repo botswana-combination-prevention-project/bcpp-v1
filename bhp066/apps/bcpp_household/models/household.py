@@ -2,7 +2,8 @@ from django.db import models
 from django.conf import settings
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.encrypted_fields import EncryptedTextField, EncryptedDecimalField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_map.classes import site_mappers
@@ -13,7 +14,7 @@ from ..managers import HouseholdManager
 from .plot import Plot
 
 
-class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class Household(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A system model that represents the household asset. See also HouseholdStructure."""
 
     plot = models.ForeignKey(Plot, null=True)

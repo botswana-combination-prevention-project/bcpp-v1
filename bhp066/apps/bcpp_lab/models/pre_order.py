@@ -4,7 +4,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_constants.constants import NEW, PENDING
 
@@ -15,7 +16,7 @@ from ..managers import PreOrderManager
 from ..models import Aliquot, Panel
 
 
-class PreOrder(BaseSyncUuidModel):
+class PreOrder(SyncModelMixin, BaseUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 

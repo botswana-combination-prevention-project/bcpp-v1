@@ -2,14 +2,15 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.subject.registration.models import RegisteredSubject
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from lis.specimen.lab_receive.models import BaseReceive
 
 from ..managers import ReceiveManager
 
 
-class Receive(BaseReceive, BaseSyncUuidModel):
+class Receive(BaseReceive, SyncModelMixin, BaseUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, related_name='bcpp_receive')
 

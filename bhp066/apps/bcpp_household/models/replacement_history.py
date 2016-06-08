@@ -2,12 +2,14 @@ from django.db import models
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
+
 
 from ..managers import ReplacementHistoryManager
 
 
-class ReplacementHistory(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class ReplacementHistory(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A system model that tracks replaced, and replaced by, plots and households."""
     replacing_item = models.CharField(
         verbose_name='Replaced by',

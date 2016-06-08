@@ -4,7 +4,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import get_model
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_constants.constants import CLOSED, OPEN, ALIVE
 from ..classes import CallHelper
 from edc_base.audit_trail import AuditTrail
@@ -25,7 +26,7 @@ from .subject_locator import SubjectLocator
 from .subject_consent import SubjectConsent
 
 
-class CallLog (BaseSyncUuidModel):
+class CallLog (SyncModelMixin, BaseUuidModel):
 
     CONSENT_MODEL = SubjectConsent
 

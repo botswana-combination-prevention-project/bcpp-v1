@@ -1,10 +1,11 @@
 from django.db import models
 
 from edc.core.identifier.models import BaseIdentifierModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 
-class HouseholdIdentifierHistory(BaseIdentifierModel, BaseSyncUuidModel):
+class HouseholdIdentifierHistory(BaseIdentifierModel, SyncModelMixin, BaseUuidModel):
     """A system model to track allocated household identifiers."""
 
     plot_identifier = models.CharField(max_length=25)

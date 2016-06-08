@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
@@ -25,7 +26,7 @@ from .subject_consent import SubjectConsent
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, RequiresConsentMixin,
-                     TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+                     TimePointStatusMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 

@@ -11,7 +11,7 @@ from bhp066.apps.bcpp_household.models import Plot
 from django.core.exceptions import ImproperlyConfigured
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
-from edc_device import device
+from edc_device import Device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc_map.classes import site_mappers
@@ -30,6 +30,7 @@ except ImportError:
 
 study_start_datetime = datetime(2013, 10, 18, 0, 0, 0)
 study_end_datetime = datetime(2016, 10, 17, 23, 0, 0)
+device = Device()
 
 
 class BcppAppConfiguration(BaseAppConfiguration):

@@ -2,7 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_constants.choices import YES_NO_DONT_KNOW
 
@@ -15,7 +16,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdAssessment(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdAssessment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user to assess a household that could not
     be enumerated."""
     household_structure = models.OneToOneField(HouseholdStructure)

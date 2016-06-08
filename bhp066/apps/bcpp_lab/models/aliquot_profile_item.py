@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.lab.lab_profile.models import BaseProfileItem
+from edc_lab.lab_profile.models import BaseProfileItem
 from edc_base.model.models import BaseUuidModel
 
 from ..managers import ProfileItemManager

@@ -1,8 +1,9 @@
 from edc.core.identifier.models import BaseIdentifierModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 
-class OrderIdentifierHistory(BaseIdentifierModel, BaseSyncUuidModel):
+class OrderIdentifierHistory(BaseIdentifierModel, SyncModelMixin, BaseUuidModel):
 
     def ignore_for_dispatch(self):
         return True

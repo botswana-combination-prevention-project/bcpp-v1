@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import EncryptedCharField, EncryptedDecimalField
 from edc_base.model.fields import OtherCharField
@@ -55,7 +56,7 @@ class HouseholdComposition (BaseScheduledVisitModel):
         verbose_name_plural = "Household Composition"
 
 
-class Respondent (BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class Respondent (BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     household_composition = models.ForeignKey(HouseholdComposition)
 

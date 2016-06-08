@@ -2,7 +2,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp_survey.models import Survey
@@ -14,7 +15,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdWorkList(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdWorkList(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration

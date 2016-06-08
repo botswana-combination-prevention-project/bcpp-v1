@@ -5,7 +5,8 @@ from edc_base.audit_trail import AuditTrail
 from edc_constants.choices import TIME_OF_DAY, TIME_OF_WEEK
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment.choices import APPT_STATUS
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp_survey.models import Survey
 
@@ -14,7 +15,7 @@ from ..managers import MemberAppointmentManager
 from .household_member import HouseholdMember
 
 
-class MemberAppointment(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class MemberAppointment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     """A model created by the system and updated by the user for annual survey appointments."""
 

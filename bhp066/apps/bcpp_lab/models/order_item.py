@@ -3,7 +3,8 @@ from datetime import datetime
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from .aliquot import Aliquot
 from .order import Order
@@ -12,7 +13,7 @@ from .panel import Panel
 from ..managers import OrderItemManager
 
 
-class OrderItem(BaseSyncUuidModel):
+class OrderItem(SyncModelMixin, BaseUuidModel):
 
     order = models.ForeignKey(Order)
 

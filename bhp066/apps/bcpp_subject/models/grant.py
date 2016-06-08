@@ -7,7 +7,8 @@ from edc_base.model.fields import OtherCharField
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp_household.models import Plot
 
@@ -19,7 +20,7 @@ from .labour_market_wages import LabourMarketWages
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     """Inline for labour_market_wages."""
 

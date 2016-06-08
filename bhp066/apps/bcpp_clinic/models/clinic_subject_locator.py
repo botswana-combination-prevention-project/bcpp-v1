@@ -2,7 +2,8 @@ from django.db import models
 
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
@@ -21,7 +22,7 @@ from .clinic_visit import ClinicVisit
 
 
 class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseLocator, RequiresConsentMixin,
-                           TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+                           TimePointStatusMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     """A model completed by the user for locator data from consented participants."""
 

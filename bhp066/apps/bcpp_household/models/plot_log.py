@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.encrypted_fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -14,7 +15,7 @@ from ..managers import PlotLogManager, PlotLogEntryManager
 from .plot import Plot
 
 
-class PlotLog(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class PlotLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot (related)."""
     plot = models.OneToOneField(Plot)
 

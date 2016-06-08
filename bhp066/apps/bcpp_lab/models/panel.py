@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc.lab.lab_clinic_api.choices import PANEL_TYPE
-from edc.lab.lab_clinic_api.models import TestCode
+from edc_lab.lab_clinic_api.choices import PANEL_TYPE
+from edc_lab.lab_clinic_api.models import TestCode
 
 from lis.specimen.lab_panel.models import BasePanel
 

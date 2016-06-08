@@ -5,7 +5,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp_survey.models import Survey

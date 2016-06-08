@@ -1,10 +1,11 @@
 from django.db import models
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 
-class NotebookPlotList(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class NotebookPlotList(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',

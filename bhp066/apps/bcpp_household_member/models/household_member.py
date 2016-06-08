@@ -15,7 +15,8 @@ from django.db import models
 from edc_constants.choices import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD, YES, NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
@@ -37,7 +38,7 @@ from ..managers import HouseholdMemberManager
 from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
-class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user to represent an enumerated household member."""
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 

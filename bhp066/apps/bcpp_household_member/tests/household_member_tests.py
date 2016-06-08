@@ -25,7 +25,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
  
 from edc_map.classes import site_mappers, Mapper
-from edc.map.exceptions import MapperError
+from edc_map.exceptions import MapperError
 
 
 from edc.lab.lab_profile.classes import site_lab_profiles

@@ -7,7 +7,8 @@ from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
 from edc_consent.models import RequiresConsentMixin
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
@@ -15,7 +16,7 @@ from .clinic_off_study_mixin import ClinicOffStudyMixin
 from .clinic_consent import ClinicConsent
 
 
-class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, BaseSyncUuidModel):
+class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, SyncModelMixin, BaseUuidModel):
     """A model completed by the user to indicate track the actual appointment or visit.
 
     The model captures actual report date, time and location (home, clinic, etc)."""

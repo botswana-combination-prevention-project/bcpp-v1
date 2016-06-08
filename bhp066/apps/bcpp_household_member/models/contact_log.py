@@ -2,7 +2,8 @@ from django.db import models
 from django.core.urlresolvers import reverse
 
 from edc_constants.choices import YES_NO
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp_household.choices import INFO_PROVIDER, STATUS
@@ -10,7 +11,7 @@ from bhp066.apps.bcpp_household.choices import INFO_PROVIDER, STATUS
 from ..managers import ContactLogManager, ContactLogItemManager
 
 
-class ContactLog(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class ContactLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """Not used"""
     objects = ContactLogManager()
 

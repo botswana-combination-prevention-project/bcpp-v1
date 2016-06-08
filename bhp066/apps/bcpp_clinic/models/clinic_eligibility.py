@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 from edc_base.audit_trail import AuditTrail
@@ -31,7 +32,7 @@ from .clinic_household_member import ClinicHouseholdMember
 from .clinic_refusal import ClinicRefusal
 
 
-class ClinicEligibility (BaseSyncUuidModel):
+class ClinicEligibility (SyncModelMixin, BaseUuidModel):
     """A model completed by the user that confirms and saves eligibility
     information for potential participant."""
 

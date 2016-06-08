@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.encrypted_fields import EncryptedCharField, EncryptedTextField
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_before_study_start, date_not_future
@@ -13,7 +14,7 @@ from .base_member_status_model import BaseMemberStatusModel
 from ..choices import NEXT_APPOINTMENT_SOURCE
 
 
-class BaseSubjectEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class BaseSubjectEntry(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """For absentee and undecided log models."""
     report_datetime = models.DateField(
         verbose_name="Report date",

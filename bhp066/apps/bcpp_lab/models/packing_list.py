@@ -1,14 +1,15 @@
 from django.db import models
 
-from edc.lab.lab_packing.models import BasePackingList
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_lab.lab_packing.models import PackingListMixin
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from ..managers import PackingListManager
 from .subject_requisition import SubjectRequisition
 from .aliquot import Aliquot
 
 
-class PackingList(BasePackingList, BaseSyncUuidModel):
+class PackingList(PackingListMixin, SyncModelMixin, BaseUuidModel):
 
     community = models.CharField(
         max_length=25,

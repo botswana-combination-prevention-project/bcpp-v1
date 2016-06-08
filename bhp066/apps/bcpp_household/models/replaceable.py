@@ -1,9 +1,10 @@
 from django.db import models
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 
-class Replaceable(BaseSyncUuidModel):
+class Replaceable(SyncModelMixin, BaseUuidModel):
     """A system model used to track and manage replaceable plots and households."""
     replaced = models.BooleanField(default=False)
 

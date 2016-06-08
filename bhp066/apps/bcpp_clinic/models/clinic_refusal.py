@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future, date_not_before_study_start
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_map.classes import site_mappers
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -12,7 +13,7 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..managers import BaseClinicHouseholdMemberManager
 
 
-class ClinicRefusal(BaseSyncUuidModel):
+class ClinicRefusal(SyncModelMixin, BaseUuidModel):
     "A model completed by the user for eligible participants who decide not to participate."""
     household_member = models.OneToOneField(HouseholdMember, null=True)
 

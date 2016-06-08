@@ -5,7 +5,8 @@ from django.db import models
 from edc.core.bhp_variables.models import StudySite
 from edc.core.identifier.exceptions import IdentifierError
 from edc_map.classes import site_mappers
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models import BaseConsent
@@ -16,7 +17,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp.choices import COMMUNITIES
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuidModel):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, SyncModelMixin, BaseUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 

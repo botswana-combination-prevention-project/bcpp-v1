@@ -1,6 +1,6 @@
 from django.db.models import get_model
 
-from edc.map.exceptions import MapperError
+from edc_map.exceptions import MapperError
 from edc_constants.constants import NEW, YES
 
 from bhp066.apps.bcpp_survey.models import Survey

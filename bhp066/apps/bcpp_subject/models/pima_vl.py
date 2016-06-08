@@ -7,7 +7,8 @@ from django.core.validators import MinValueValidator, RegexValidator
 
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import EncryptedTextField
 from edc_base.model.fields import OtherCharField
@@ -32,7 +33,7 @@ PIMA_SETTING_VL = (
 
 
 class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
-              BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+              BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     CONSENT_MODEL = SubjectConsent
 

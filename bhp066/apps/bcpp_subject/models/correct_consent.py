@@ -5,7 +5,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
 from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
@@ -319,7 +320,7 @@ class BaseCorrectConsent(models.Model):
         abstract = True
 
 
-class CorrectConsent(BaseCorrectConsent, BaseSyncUuidModel):
+class CorrectConsent(BaseCorrectConsent, SyncModelMixin, BaseUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 

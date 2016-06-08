@@ -3,10 +3,11 @@ from django.db import models
 
 from edc_constants.constants import NO, NEW, NOT_REQUIRED, KEYED, UNKEYED
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
-from edc.lab.lab_requisition.models import BaseRequisition
+from lab_requisition.models import RequisitionModelMixin
 from edc_map.classes import site_mappers
 from edc.subject.entry.models import LabEntry, Entry
 from edc_base.audit_trail import AuditTrail
@@ -20,7 +21,7 @@ from .aliquot_type import AliquotType
 from .panel import Panel
 
 
-class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class ClinicRequisition(RequisitionModelMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     clinic_visit = models.ForeignKey(ClinicVisit)
 

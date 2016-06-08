@@ -8,14 +8,15 @@ from django.db import models, IntegrityError, transaction, DatabaseError
 from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc_base.encrypted_fields import (
     EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_map.classes import site_mappers
-from edc.map.exceptions import MapperError
+from edc_map.exceptions import MapperError
 
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
 from ..classes import PlotIdentifier
@@ -30,7 +31,7 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
     plot_identifier = models.CharField(

@@ -6,7 +6,8 @@ from django_extensions.db.fields import UUIDField
 from edc_base.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 
 from ..choices import HOUSEHOLD_REFUSAL
 from ..exceptions import AlreadyReplaced
@@ -16,7 +17,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 

@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.subject.visit_tracking.models import BaseVisitTracking
 from edc_base.audit_trail import AuditTrail
 from edc_consent.models import RequiresConsentMixin
@@ -15,7 +16,7 @@ from .subject_consent import SubjectConsent
 
 
 class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
-                   BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+                   BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""

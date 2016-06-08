@@ -3,7 +3,8 @@ from django.db import models
 from django.db.models import get_model
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
@@ -20,7 +21,7 @@ from ..managers import HouseholdInfoManager
 from .household_member import HouseholdMember
 
 
-class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdInfo(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user that captures household economic status
     from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)

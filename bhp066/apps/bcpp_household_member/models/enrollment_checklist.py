@@ -8,7 +8,8 @@ from django.db import models
 from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_sync.models import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.model.validators import dob_not_future
@@ -170,7 +171,7 @@ class BaseEnrollmentChecklist(models.Model):
         abstract = True
 
 
-class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
 
