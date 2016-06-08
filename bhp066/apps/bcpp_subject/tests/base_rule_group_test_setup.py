@@ -14,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
-from edc_map.classes import site_mappers
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -59,10 +59,9 @@ class BaseRuleGroupTestSetup(TestCase):
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 
-        surveys = Survey.objects.all().order_by('datetime_start')
-        survey_T0 = surveys[0]
-        survey_T1 = surveys[1]
-        survey_T2 = surveys[2]
+        survey_T0 = Survey.objects.get(survey_slug='bcpp-year-1')
+        survey_T1 = Survey.objects.get(survey_slug='bcpp-year-2')
+        survey_T2 = Survey.objects.get(survey_slug='bcpp-year-3')
 
         self.study_site = StudySite.objects.get(site_code='01')
 
@@ -76,6 +75,12 @@ class BaseRuleGroupTestSetup(TestCase):
 
         for _ in range(3):
             HouseholdMemberFactory(household_structure=self.household_structure)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure_y3)
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        #HouseholdMemberFactory(household_structure=self.household_structure)
+        #HouseholdMemberFactory(household_structure=self.household_structure)
 
         male_dob = date.today() - relativedelta(years=25)
         male_age_in_years = 25
@@ -93,6 +98,15 @@ class BaseRuleGroupTestSetup(TestCase):
         self.household_member_female_T0 = self.new_household_member(
             female_dob, female_age_in_years, female_first_name, female_initials, 'F')
 
+        registered_subject = RegisteredSubjectFactory(registration_identifier='123456467')
+        self.household_member_female_T0 = HouseholdMemberFactory(
+            household_structure=self.household_structure, gender='F', age_in_years=female_age_in_years,
+            first_name=female_first_name, initials=female_initials, registered_subject=registered_subject)
+        registered_subject = RegisteredSubjectFactory(registration_identifier='123456468')
+        self.household_member_male_T0 = HouseholdMemberFactory(
+            household_structure=self.household_structure, gender='M',
+            age_in_years=male_age_in_years, first_name=male_first_name,
+            initials=male_initials, registered_subject=registered_subject)
         self.household_member_female_T0.member_status = 'BHS_SCREEN'
         self.household_member_male_T0.member_status = 'BHS_SCREEN'
         self.household_member_female_T0.save()

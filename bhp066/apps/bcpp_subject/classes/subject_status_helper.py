@@ -532,7 +532,7 @@ class SubjectStatusHelper(object):
             try:
                 self._hiv_result_instance = self.models[self.timepoint_key].get(
                     'hiv_result').objects.get(
-                        subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG', 'IND'])
+                        subject_visit=self.subject_visit, hiv_result__in=[POS, 'NEG', 'IND', 'Declined'])
             except self.models[self.timepoint_key].get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
         return self._hiv_result_instance

@@ -35,6 +35,16 @@ def func_is_baseline(visit_instance):
         return True
     return False
 
+def func_declined_at_bhs(visit_instance):
+    """Returns True if the participant is  has refused to test at t0 or t1"""
+    past_visit = func_previous_visit_instance(visit_instance)
+    #if func_is_baseline(past_visit):
+    subject_status_helper = SubjectStatusHelper(past_visit, use_baseline_visit=True)
+    if subject_status_helper.hiv_result:
+        if subject_status_helper.hiv_result == 'Declined':
+            return True
+    return False
+
 
 def func_is_annual(visit_instance):
     if visit_instance.appointment.visit_definition.code not in BASELINE_CODES:
@@ -70,6 +80,7 @@ def func_rbd_ahs(visit_instance):
 
 def func_require_pima(visit_instance):
     """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
+    #print "func_hiv_positive_today(visit_instance)", func_hiv_positive_today(visit_instance), func_declined_at_bhs(visit_instance)
     if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
         return True
     # Hiv -ve at enrollment, now changed to Hiv +ve
@@ -77,6 +88,8 @@ def func_require_pima(visit_instance):
         return True
     # Hiv+ve at enrollment, art naive at enrollment
     elif art_naive_at_enrollment(visit_instance):
+        return True
+    elif func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance):
         return True
     return False
 
@@ -344,6 +357,8 @@ def func_vl(visit_instance):
         return True
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance):
+        return True
+    elif func_declined_at_bhs(visit_instance):
         return True
     return False
 

@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.test import TestCase
 
 
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
 from edc.map.classes.controller import site_mappers
 
@@ -295,11 +296,12 @@ class TestSubjectReferralApptHelper(TestCase):
     def test_smc1(self):
         """Assert referred on smc_start date for SMC subjected seen on a date before the smc start date"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
-        today_day = date.today().strftime("%A")[:3]
-        expected_appt_day = (datetime.today() + timedelta(days=1)).strftime("%A")[:3]
-        today = date.today()
+        today = datetime.today().date()
+        today_day = self.next_workday(today).strftime("%A")[:3]
+        expected_appt_day = self.next_workday(today).strftime("%A")[:3]
         scheduled_appt_date = None
         expected_appt_datetime = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day,  7, 30, 0)
+        expected_appt_datetime = self.next_workday(expected_appt_datetime)
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -325,11 +327,12 @@ class TestSubjectReferralApptHelper(TestCase):
     def test_smc1a(self):
         """Assert referred on ECC smc_start date for SMC subjected seen on a date before the smc start date (start date is SAT)"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
-        today_day = date.today().strftime("%A")[:3]
-        expected_appt_day = (datetime.today() + timedelta(days=1)).strftime("%A")[:3]
-        today = date.today()
+        today = datetime.today().date()
+        today_day = self.next_workday(today).strftime("%A")[:3]
+        expected_appt_day = self.next_workday(today).strftime("%A")[:3]
         scheduled_appt_date = None
         expected_appt_datetime = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day,  7, 30, 0)
+        expected_appt_datetime = self.next_workday(expected_appt_datetime)
         community_code = '99'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -355,11 +358,12 @@ class TestSubjectReferralApptHelper(TestCase):
     def test_smc1b(self):
         """Assert referred on CPC smc_start date for SMC subjected seen on a date over the weekend (start date is SAT)"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
-        today_day = date.today().strftime("%A")[:3]
-        expected_appt_day = (datetime.today() + timedelta(days=1)).strftime("%A")[:3]
-        today = date.today()
+        today = datetime.today().date()
+        today_day = self.next_workday(today).strftime("%A")[:3]
+        expected_appt_day = self.next_workday(today).strftime("%A")[:3]
         scheduled_appt_date = None
         expected_appt_datetime = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+        expected_appt_datetime = self.next_workday(expected_appt_datetime)
         community_code = '99'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -403,11 +407,12 @@ class TestSubjectReferralApptHelper(TestCase):
     def test_smc2(self):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (TU->WE)"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
-        today_day = date.today().strftime("%A")[:3]
-        expected_appt_day = (datetime.today() + timedelta(days=1)).strftime("%A")[:3]
-        today = date.today()
+        today = datetime.today().date()
+        today_day = self.next_workday(today).strftime("%A")[:3]
+        expected_appt_day = self.next_workday(today).strftime("%A")[:3]
         scheduled_appt_date = None
         expected_appt_datetime = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day,  7, 30, 0)
+        expected_appt_datetime = self.next_workday(expected_appt_datetime)
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -419,6 +424,7 @@ class TestSubjectReferralApptHelper(TestCase):
         self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
+        print "referral_appt_day", referral_appt_day
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
                                              referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
@@ -433,11 +439,12 @@ class TestSubjectReferralApptHelper(TestCase):
     def test_smc3(self):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (SA->MO)"""
         from bhp066.apps.bcpp_subject.classes import SubjectReferralApptHelper
-        today_day = date.today().strftime("%A")[:3]
-        expected_appt_day = (datetime.today() + timedelta(days=1)).strftime("%A")[:3]
-        today = date.today()
+        today = datetime.today().date()
+        today_day = self.next_workday(today).strftime("%A")[:3]
+        expected_appt_day = self.next_workday(today).strftime("%A")[:3]
         scheduled_appt_date = None
         expected_appt_datetime = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day,  7, 30, 0)
+        expected_appt_datetime = self.next_workday(expected_appt_datetime)
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
@@ -655,3 +662,18 @@ class TestSubjectReferralApptHelper(TestCase):
                              expected_appt_datetime,
                              referral_appt_day,
                              referral_appt_datetime))
+    def next_workday(self, today):
+        """This method returns the next week day that is not a holyday and is not a weekend."""
+        holidays = []
+        next_workday = datetime((today + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+        for _, holyday_date in BcppAppConfiguration.holidays_setup.iteritems():
+            holidays.append(holyday_date)
+        if next_workday.date() not in holidays:
+            if next_workday.isoweekday() == 6:
+                next_workday = datetime(( next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=3)).day, 7, 30, 0)
+            elif next_workday.isoweekday() == 7 and next_workday.date() not in holidays:
+                next_workday = datetime((next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+        else:
+            next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+            next_workday()
+        return next_workday

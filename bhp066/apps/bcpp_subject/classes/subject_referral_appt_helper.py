@@ -179,9 +179,9 @@ class SubjectReferralApptHelper(object):
             holidays.append(holyday_date)
         if next_workday.date() not in holidays:
             if next_workday.isoweekday() == 6:
-                next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=2)).day, 7, 30, 0)
+                next_workday = datetime(( next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=3)).day, 7, 30, 0)
             elif next_workday.isoweekday() == 7 and next_workday.date() not in holidays:
-                next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
+                next_workday = datetime((next_workday + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
         else:
             next_workday = datetime((datetime.today() + timedelta(days=1)).year, (datetime.today() + timedelta(days=1)).month, (datetime.today() + timedelta(days=1)).day, 7, 30, 0)
             next_workday()
