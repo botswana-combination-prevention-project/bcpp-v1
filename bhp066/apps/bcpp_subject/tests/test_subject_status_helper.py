@@ -206,35 +206,40 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_on_arv1(self):
         """"""
+        self.startup()
         with transaction.atomic():
             HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
             HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
             subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
-            self.assertEquals(subject_status_helper.on_arv, True)
+            self.assertEquals(subject_status_helper.on_art, True)
 
     def tests_on_arv2(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='Yes')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
-        self.assertEquals(subject_status_helper.on_arv, True)
+        self.assertEquals(subject_status_helper.on_art, True)
 
     def tests_on_arv3(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
-        self.assertEquals(subject_status_helper.on_arv, True)
+        self.assertEquals(subject_status_helper.on_art, True)
 
     def tests_on_arv4(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
-        self.assertEquals(subject_status_helper.on_arv, False)
+        self.assertEquals(subject_status_helper.on_art, False)
 
     def tests_hiv_result6(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        self.startup()
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
@@ -266,6 +271,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result7(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        self.startup()
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
@@ -297,6 +303,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result8(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        self.startup()
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
@@ -313,6 +320,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result9(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        self.startup()
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)
@@ -331,6 +339,7 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result10(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        self.startup()
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Microtube', entry_status=REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Research Blood Draw', entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(RequisitionMetaData.objects.filter(appointment=self.subject_visit_male.appointment, lab_entry__requisition_panel__name='Viral Load', entry_status=NOT_REQUIRED).count() == 1)

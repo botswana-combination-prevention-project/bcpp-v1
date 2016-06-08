@@ -196,7 +196,12 @@ class SubjectReferralHelper(object):
     def referral_code_list(self):
         """Returns a list of referral codes by reviewing the conditions for referral."""
         if not self._referral_code_list:
-            if not self.hiv_result:
+            is_declined = None
+            try:
+                is_declined = True if self.hiv_result=="Declined" else False
+            except AttributeError:
+                pass
+            if not self.hiv_result or is_declined:
                 if self.gender == 'M':
                     if self.circumcised:
                         self._referral_code_list.append('TST-HIV')  # refer if status unknown
