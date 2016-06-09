@@ -358,7 +358,7 @@ def func_vl(visit_instance):
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance):
         return True
-    elif func_declined_at_bhs(visit_instance):
+    elif func_declined_at_bhs(visit_instance) and func_hiv_positive_today(visit_instance):
         return True
     return False
 

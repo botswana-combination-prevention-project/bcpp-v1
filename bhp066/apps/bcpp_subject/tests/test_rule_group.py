@@ -2181,6 +2181,13 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         viral_load_options = {}
         hiv_result_options = {}
+        research_blood_draw_options = {}
+
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
 
         viral_load_options.update(
             lab_entry__app_label='bcpp_lab',
@@ -2202,6 +2209,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
     def test_not_known_neg_runs_hiv_and_cd4_ahs_1(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
@@ -2225,6 +2233,13 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         hiv_result_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='hivresult',
+            appointment=self.subject_visit_male.appointment)
+
+        research_blood_draw_options = {}
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
             appointment=self.subject_visit_male.appointment)
 
         pima_options = {}
@@ -2336,3 +2351,47 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+
+
+    def test_not_known_neg_runs_hiv_and_cd4_ahs(self):
+        """If not a known POS, requires HIV and CD4 (until today's result is known)."""
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        SubjectLocatorFactory(registered_subject=self.subject_visit_male_T0.appointment.registered_subject,
+                              subject_visit=self.subject_visit_male_T0)
+
+        self.hiv_result('Declined', self.subject_visit_male_T0)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+
+        viral_load_options = {}
+        hiv_result_options = {}
+        research_blood_draw_options = {}
+
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+        hiv_result_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresult',
+            appointment=self.subject_visit_male.appointment)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.hiv_result(NEG, self.subject_visit_male)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **research_blood_draw_options).count(), 1)
