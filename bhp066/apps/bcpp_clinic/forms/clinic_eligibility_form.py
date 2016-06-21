@@ -1,4 +1,6 @@
 from django import forms
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
@@ -10,6 +12,7 @@ class ClinicEligibilityForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = super(ClinicEligibilityForm, self).clean()
+        self.validate_guardian()
         try:
             if self.instance.is_consented:
                 raise forms.ValidationError('Household member for this checklist has been consented. '
@@ -29,6 +32,13 @@ class ClinicEligibilityForm(BaseModelForm):
         self._meta.model.check_for_consent(cleaned_data.get('identity'), forms.ValidationError)
 
         return cleaned_data
+
+    def validate_guardian(self):
+        if self.cleaned_data.get('guardian') == 'Yes':
+            age = relativedelta(datetime.today(), self.cleaned_data.get('dob'))
+            if not (age.years in [16, 17]):
+                raise forms.ValidationError(
+                    "A minor age should be 16 or 17 years. Participart's age today {} years.".format(age.years))
 
     class Meta:
         model = ClinicEligibility
