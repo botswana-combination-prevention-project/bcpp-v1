@@ -12,7 +12,7 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 
-from edc_constants.choices import YES
+from edc_constants.choices import YES, NO, NOT_APPLICABLE
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -70,7 +70,7 @@ class TestSubjectConsentForm(TestCase):
         self.household_structure_bhs = HouseholdStructure.objects.get(household__plot=plot, survey=self.survey_bhs)
         self.household_structure_ahs = HouseholdStructure.objects.get(household__plot=plot, survey=self.survey_ahs)
         self.create_household_log_entry(self.household_structure_bhs)
-       
+
         RepresentativeEligibilityFactory(household_structure=self.household_structure_bhs)
 
         self.male_dob = date.today() - relativedelta(years=25)
@@ -315,3 +315,44 @@ class TestSubjectConsentForm(TestCase):
         consent = SubjectConsent.objects.get(household_member=self.household_member)
         consent_form = SubjectConsentForm(data=self.data, instance=consent)
         consent_form.save()
+
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-1',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
+    def test_validate_legal_marriage_at_bhs(self):
+        self.data['citizen'] = NO
+        self.data['identity'] = '101119811'
+        self.data['confirm_identity'] = '101119811'
+        from bhp066.apps.bcpp_subject.forms.subject_consent_form import SubjectConsentForm
+        self.data['legal_marriage'] = YES
+        self.data['marriage_certificate'] = YES
+        self.data['marriage_certificate_no'] = '12421'
+        self.enrollment.citizen = NO
+        self.enrollment.save_base()
+        consent_form = SubjectConsentForm(data=self.data)
+        print consent_form.errors
+        self.assertTrue(consent_form.is_valid())
+
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-1',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
+    def test_validate_legal_marriage_at_bhs_not_valid(self):
+        self.data['citizen'] = NO
+        self.data['identity'] = '101119811'
+        self.data['confirm_identity'] = '101119811'
+        from bhp066.apps.bcpp_subject.forms.subject_consent_form import SubjectConsentForm
+        self.data['legal_marriage'] = YES
+        self.data['marriage_certificate'] = YES
+        self.enrollment.citizen = NO
+        self.enrollment.save_base()
+        consent_form = SubjectConsentForm(data=self.data)
+        self.assertIn(u'You wrote subject is NOT a citizen and has marriage certificate. Please provide certificate number.', consent_form.errors.get("__all__"))
+        self.assertFalse(consent_form.is_valid())
