@@ -1,10 +1,10 @@
 from django import forms
 
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE, NO
 
 from bhp066.apps.bcpp.choices import FIRSTPARTNERHIV_CHOICE, YES_NO_UNSURE
 
-from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
+from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, SexualBehaviour
 
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -43,6 +43,10 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
                 raise forms.ValidationError(
                     'if response in question 3, is In this community or Farm within this community or'
                     'Cattle post within this community. The response in the next question is NOT_APPLICABLE')
+        subject_behaviour = SexualBehaviour.objects.get(subject_visit=cleaned_data.get('subject_visit'))
+        if subject_behaviour.lifetime_sex_partners == 1:
+            if not (cleaned_data.get('concurrent') in [NO, 'DWTA']):
+                raise forms.ValidationError( "You wrote that you have only one partner ever in sexual behavior form. Please correct if you have sex with other partners.")
         return cleaned_data
 
 

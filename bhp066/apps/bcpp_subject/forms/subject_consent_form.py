@@ -38,6 +38,7 @@ class BaseBcppConsentForm(BaseConsentForm):
         self.limit_edit_to_current_community()
         self.validate_household_log_entry()
         self.limit_edit_to_current_survey()
+        #self.validate_legal_marriage()
         self.household_info()
         try:
             model = self._meta.model.proxy_for_model
@@ -96,6 +97,7 @@ class BaseBcppConsentForm(BaseConsentForm):
         citizen = self.cleaned_data.get('citizen')
         legal_marriage = self.cleaned_data.get('legal_marriage')
         marriage_certificate = self.cleaned_data.get('marriage_certificate')
+        marriage_certificate_no = self.cleaned_data.get('marriage_certificate_no');
         if citizen == NO:
             if legal_marriage == NOT_APPLICABLE:
                 raise forms.ValidationError(
@@ -110,6 +112,12 @@ class BaseBcppConsentForm(BaseConsentForm):
                 raise forms.ValidationError(
                     'You wrote subject is NOT a citizen. Subject needs to produce a marriage certificate',
                     code='invalid')
+            elif legal_marriage == YES and marriage_certificate == YES:
+                if not marriage_certificate_no:
+                    raise forms.ValidationError(
+                        'You wrote subject is NOT a citizen and has marriage certificate. Please provide certificate number.',
+                        code='invalid')
+
         if citizen == YES:
             if legal_marriage != NOT_APPLICABLE:
                 raise forms.ValidationError(
@@ -129,7 +137,6 @@ class BaseBcppConsentForm(BaseConsentForm):
                 limit = False
             if limit:
                 current_survey = Survey.objects.current_survey()
-                print current_survey, household_member.household_structure.survey
                 if household_member.household_structure.survey != current_survey:
                     raise forms.ValidationError(
                         'Form may not be saved. Only data from %(current_survey)s '
@@ -177,6 +184,11 @@ class BaseBcppConsentForm(BaseConsentForm):
         if household_member.personal_details_changed == YES:
             return True
         return False
+
+    def validate_legal_marriage(self):
+        if self.cleaned_data.get("legal_marriage") == NO:
+            if not (self.cleaned_data.get("marriage_certificate") in [YES, NO]):
+                raise forms.ValidationError("if married not to a citizen, marriage_certificate proof should be YES or NO.")
 
     def clean_identity_with_unique_fields(self):
         identity = self.cleaned_data.get('identity')
@@ -234,7 +246,6 @@ class BaseBcppConsentForm(BaseConsentForm):
         household_structure = household_member.household_structure
         try:
             SubjectConsent.objects.get(household_member=household_member)
-            print "household_member household_member", household_member
         except SubjectConsent.DoesNotExist:
             try:
                 log_entry = HouseholdLogEntry.objects.filter(
