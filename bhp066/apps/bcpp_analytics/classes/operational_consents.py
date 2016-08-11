@@ -75,27 +75,35 @@ class OperationalConsents(BaseOperationalReport):
             registration_type='masa_vl_scheduled')
         self.data_dict['5. Subjects enrolled by MASA scheduled VL'] = enrolled_by_masa_vl.count()
 
+        enrolled_by_etc_vl = Questionnaire.objects.filter(
+            clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+            created__gte=self.date_from,
+            created__lte=self.date_to,
+            user_created__icontains=self.ra_username,
+            registration_type='etc_scheduled')
+        self.data_dict['6. Subjects enrolled by ETC'] = enrolled_by_etc_vl.count()
+
         enrolled_by_other_non_vl = Questionnaire.objects.filter(
             clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             registration_type='OTHER')
-        self.data_dict['6. Subjects enrolled by Other NON VL'] = enrolled_by_other_non_vl.count()
+        self.data_dict['7. Subjects enrolled by Other NON VL'] = enrolled_by_other_non_vl.count()
 
         enrollment_loss = ClinicEnrollmentLoss.objects.filter(
             household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username)
-        self.data_dict['7. Total enrollment losses'] = enrollment_loss.count()
+        self.data_dict['8. Total enrollment losses'] = enrollment_loss.count()
 
         refused_participants = ClinicRefusal.objects.filter(
             household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username)
-        self.data_dict['8. Total participation refusals'] = refused_participants.count()
+        self.data_dict['9. Total participation refusals'] = refused_participants.count()
 
 #         consent = ClinicConsent.objects.filter(
 #             household_member__registered_subject__study_site__site_name__icontains=self.community,
