@@ -17,7 +17,7 @@ class Command(BaseCommand):
         clinic_consents = ClinicConsent.objects.all()
         count = 0
         total = clinic_consents.count()
-        print("Updating {} consents where version == \'4\' to version 5 ".format(total))
+        print("Updating {} consent versions".format(total))
         for consent in clinic_consents:
             consent.save()
             count += 1
