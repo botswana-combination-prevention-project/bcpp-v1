@@ -11,10 +11,13 @@ class Command(BaseCommand):
     help = ('Updates the subject consent version field from \'?\'.')
 
     def handle(self, *args, **options):
-        self.resave_consents()
+        if not args or len(args) < 1:
+            raise CommandError('Missing \'using\' parameters.')
+        community_name = args[0]
+        self.resave_clinic_consents(community_name)
 
-    def resave_clinic_consents(self):
-        clinic_consents = ClinicConsent.objects.all()
+    def resave_clinic_consents(self, community_name):
+        clinic_consents = ClinicConsent.objects.filter(household_member__household_structure__household__plot__community=community_name)
         count = 0
         total = clinic_consents.count()
         print("Updating {} consent versions".format(total))
