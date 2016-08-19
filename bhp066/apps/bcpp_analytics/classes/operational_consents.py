@@ -27,15 +27,6 @@ class OperationalConsents(BaseOperationalReport):
             is_refused=False)
         self.data_dict['1. ELIGIBLE subjects'] = eligible_subjects.count()
 
-        ineligible_subjects = ClinicEligibility.objects.filter(
-            household_member__registered_subject__study_site__site_name__icontains=self.community,
-            created__gte=self.date_from,
-            created__lte=self.date_to,
-            user_created__icontains=self.ra_username,
-            is_eligible=False,
-            is_refused=False)
-        self.data_dict['1a. INELIGIBLE subjects'] = ineligible_subjects.count()
-
         total_clinic_consents = ClinicConsent.objects.filter(
             household_member__registered_subject__study_site__site_name__icontains=self.community,
             created__gte=self.date_from,
