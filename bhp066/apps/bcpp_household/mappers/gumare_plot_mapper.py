@@ -36,10 +36,10 @@ class GumarePlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 10, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 8, 21),
+            full_enrollment_date=date(2016, 9, 28),
+            end_date=date(2016, 9, 28),
+            smc_start_date=date(2016, 9, 28)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
