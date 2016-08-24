@@ -18,11 +18,15 @@ class ModifyFormLabelMixin:
     def replace_labels(self, form, request):
         WIDGET = 1
         model_obj = None
+        foreign_key_instance = None
         for _, fld in enumerate(form.base_fields.items()):
             for key, value in self.QUERY_MODEL_PARAMETERS.iteritems():
-                foerign_key_instance = self.QUERY_MODEL_PARAMETERS[key][2].objects.get(pk=request.GET.get(self.QUERY_MODEL_PARAMETERS[key][3]))
                 try:
-                    model_obj = self.QUERY_MODEL_PARAMETERS[key][0].objects.get(Q(**{self.QUERY_MODEL_PARAMETERS[key][4]: getattr(foerign_key_instance, self.QUERY_MODEL_PARAMETERS[key][4])}))
+                    foreign_key_instance = self.QUERY_MODEL_PARAMETERS[key][2].objects.get(pk=request.GET.get(self.QUERY_MODEL_PARAMETERS[key][3]))
+                except self.QUERY_MODEL_PARAMETERS[key][2].DoesNotExist:
+                    pass
+                try:
+                    model_obj = self.QUERY_MODEL_PARAMETERS[key][0].objects.get(Q(**{self.QUERY_MODEL_PARAMETERS[key][4]: getattr(foreign_key_instance, self.QUERY_MODEL_PARAMETERS[key][4])}))
                 except self.QUERY_MODEL_PARAMETERS[key][0].DoesNotExist:
                     pass
                 if model_obj:
