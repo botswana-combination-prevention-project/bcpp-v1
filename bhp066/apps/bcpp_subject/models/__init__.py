@@ -64,3 +64,4 @@ from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
 from .review import *
 from .correct_consent import CorrectConsent
+from .hiv_linkage_to_care import HivLinkageToCare

@@ -44,3 +44,4 @@ from .subject_referral_form import SubjectReferralForm
 from .subject_visit_form import SubjectVisitForm
 from .tb_symptoms_form import TbSymptomsForm
 from .viral_load_result_form import ViralLoadResultForm
+from .hiv_linkage_to_care_form import HivLinkageToCareForm
