@@ -48,4 +48,3 @@ from .pima_vl_admin import PimaVlAdmin
 from .hospital_admission_admin import HospitalAdmissionAdmin
 from .hiv_health_care_costs_admin import HivHealthCareCosts
 from .hiv_linkage_to_care_admin import HivLinkageToCareAdmin
-from .modify_form_labels_mixin import ModifyFormLabelMixin

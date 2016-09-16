@@ -3,6 +3,8 @@ from django.db import models
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 
+from edc.subject.appointment.models import Appointment
+
 from bhp066.apps.bcpp.choices import COMMUNITY_NA
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
@@ -50,8 +52,8 @@ class HivLinkageToCare (BaseScheduledVisitModel):
     CONSENT_MODEL = SubjectConsent
 
     kept_appt = models.CharField(
-        verbose_name="We last spoke with you on [] and scheduled an appointment for you "
-                     "in an HIV care clinic on []. Did you keep that appointment?",
+        verbose_name="We last spoke with you on last_visit_date and scheduled an appointment for you "
+                     "in an HIV care clinic on last_appt_date. Did you keep that appointment?",
         max_length=50,
         choices=KEPT_APPT,
         null=True,
@@ -153,7 +155,47 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     evidence_not_refered_other = OtherCharField()
 
+    def save(self, *args, **kwargs):
+        print self.previous_visit(), 'self.previous_visit()'
+        print self.previous_appt(), 'self.previous_appt()'
+        print self.subject_visit, 'self.subject_visit'
+        super(HivLinkageToCare, self).save(*args, **kwargs)
+
     history = AuditTrail()
+
+    def previous_visit(self):
+        """ Returns the next earlier subject_visit of the participant.
+        e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
+        If no previous visit, then the current visit is returned."""
+        registered_subject = self.subject_visit.appointment.registered_subject
+        timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
+        if len(timepoints) > 0:
+            timepoints.reverse()
+        for point in timepoints:
+            try:
+                previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
+                                                               visit_definition__time_point=point)
+                return self.__class__.objects.get(appointment=previous_appointment)
+            except Appointment.DoesNotExist:
+                pass
+            except self.__class__.DoesNotExist:
+                pass
+            except AttributeError:
+                pass
+        return None
+
+    def previous_appt(self):
+        registered_subject = self.subject_visit.appointment.registered_subject
+        timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
+        if len(timepoints) > 0:
+            timepoints.reverse()
+        for point in timepoints:
+            try:
+                return Appointment.objects.get(registered_subject=registered_subject,
+                                               visit_definition__time_point=point)
+            except Appointment.DoesNotExist:
+                pass
+        return None
 
     class Meta:
         app_label = 'bcpp_subject'

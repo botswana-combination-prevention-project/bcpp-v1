@@ -1,25 +1,31 @@
 from django.contrib import admin
 
-from django.utils import timezone
+from edc_field_label.admin_mixin import ModifyFormLabelMixin
 
 from ..forms import HivLinkageToCareForm
 from ..models import HivLinkageToCare
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-from .modify_form_labels_mixin import ModifyFormLabelMixin
-from ..models import SubjectConsent, SubjectVisit
-
-
-def kept_appt_datetime():
-        return timezone.now()
 
 
 class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
 
+    replacements = {
+        'first_rep': {
+            'field_attr': 'kept_appt',
+            'placeholder': 'last_visit_date',
+            'replacement_attr': 'report_datetime',
+            'attr': 'previous_visit',
+        },
+        'second_rep': {
+            'field_attr': 'kept_appt',
+            'placeholder': 'last_appt_date',
+            'replacement_attr': 'appt_datetime',
+            'attr': 'previous_appt',
+        },
+    }
+
     form = HivLinkageToCareForm
-    # QUERY_MODEL_PARAMETERS = {"field_name_to_modify_lable": [query_model, "replacement_model_field_attribute", "foreinkey_model", "foreign_key_field_attribute", "query_model_field_attribute"]}
-    QUERY_MODEL_PARAMETERS = {"kept_appt": [SubjectConsent, "consent_datetime", SubjectVisit, "subject_visit", "subject_identifier"],
-                              "startered_therapy": [SubjectConsent, "consent_datetime", SubjectVisit, "subject_visit", "subject_identifier"]}
 
     fields = (
         "subject_visit",
