@@ -98,8 +98,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2016, 8, 21, 0, 0, 0),
-             'datetime_end': datetime(2016, 9, 28, 23, 59, 0),
+             'datetime_start': datetime(2016, 9, 23, 0, 0, 0),
+             'datetime_end': datetime(2016, 10, 20, 23, 59, 0),
              'chronological_order': 2},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
