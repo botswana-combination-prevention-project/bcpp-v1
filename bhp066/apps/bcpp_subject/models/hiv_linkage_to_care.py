@@ -3,8 +3,6 @@ from django.db import models
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 
-from edc.subject.appointment.models import Appointment
-
 from bhp066.apps.bcpp.choices import COMMUNITY_NA
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
@@ -78,7 +76,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
     )
 
     clinic_first_date = models.DateField(
-        verbose_name="What was the date when you first went to the [name of clinic in #1] clinic?",
+        verbose_name="What was the date when you first went to the community_name clinic?",
         default=None,
         null=True,
         blank=True,
@@ -96,7 +94,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     recommended_therapy = models.CharField(
         verbose_name="[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] Since the last time we spoke with "
-                     "you on [INSERT LAST INTERVIEW DATE], has a doctor/nurse or other healthcare worker recommended "
+                     "you on last_visit_date, has a doctor/nurse or other healthcare worker recommended "
                      "that you start antiretroviral therapy (ARVs), a combination of medicines to treat your "
                      "HIV infection?",
         max_length=50,
@@ -115,7 +113,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     startered_therapy = models.CharField(
         verbose_name="[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] Did you [start/restart] ART since we "
-                     "spoke with you on []?",
+                     "spoke with you on last_visit_date?",
         max_length=50,
         choices=STARTERED_THERAPY,
         null=True,
@@ -155,18 +153,14 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     evidence_not_refered_other = OtherCharField()
 
-    def save(self, *args, **kwargs):
-        print self.previous_visit(), 'self.previous_visit()'
-        print self.previous_appt(), 'self.previous_appt()'
-        print self.subject_visit, 'self.subject_visit'
-        super(HivLinkageToCare, self).save(*args, **kwargs)
-
     history = AuditTrail()
 
     def previous_visit(self):
         """ Returns the next earlier subject_visit of the participant.
         e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
         If no previous visit, then the current visit is returned."""
+        from edc.subject.appointment.models import Appointment
+        from ..models import SubjectVisit
         registered_subject = self.subject_visit.appointment.registered_subject
         timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
         if len(timepoints) > 0:
@@ -175,16 +169,17 @@ class HivLinkageToCare (BaseScheduledVisitModel):
             try:
                 previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
                                                                visit_definition__time_point=point)
-                return self.__class__.objects.get(appointment=previous_appointment)
+                return SubjectVisit.objects.get(appointment=previous_appointment)
             except Appointment.DoesNotExist:
                 pass
-            except self.__class__.DoesNotExist:
+            except SubjectVisit.DoesNotExist:
                 pass
             except AttributeError:
                 pass
         return None
 
     def previous_appt(self):
+        from edc.subject.appointment.models import Appointment
         registered_subject = self.subject_visit.appointment.registered_subject
         timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
         if len(timepoints) > 0:
@@ -196,6 +191,9 @@ class HivLinkageToCare (BaseScheduledVisitModel):
             except Appointment.DoesNotExist:
                 pass
         return None
+
+    def last_community(self):
+        return self.subject_visit.household_member.household_structure.household.plot
 
     class Meta:
         app_label = 'bcpp_subject'

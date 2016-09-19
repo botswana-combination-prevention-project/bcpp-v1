@@ -23,6 +23,24 @@ class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
             'replacement_attr': 'appt_datetime',
             'attr': 'previous_appt',
         },
+        'third_rep': {
+            'field_attr': 'recommended_therapy',
+            'placeholder': 'last_visit_date',
+            'replacement_attr': 'report_datetime',
+            'attr': 'previous_visit',
+        },
+        'forth_rep': {
+            'field_attr': 'startered_therapy',
+            'placeholder': 'last_visit_date',
+            'replacement_attr': 'report_datetime',
+            'attr': 'previous_visit',
+        },
+        'fifth_rep': {
+            'field_attr': 'clinic_first_date',
+            'placeholder': 'community_name',
+            'replacement_attr': 'community',
+            'attr': 'last_community',
+        },
     }
 
     form = HivLinkageToCareForm
