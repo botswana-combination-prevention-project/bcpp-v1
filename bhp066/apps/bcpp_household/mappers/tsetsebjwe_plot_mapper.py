@@ -30,16 +30,16 @@ class TsetsebjwePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 9, 9),
-            full_enrollment_date=date(2015, 10, 7),
-            end_date=date(2015, 10, 28),
+            start_date=date(2014, 9, 9),
+            full_enrollment_date=date(2014, 10, 7),
+            end_date=date(2014, 10, 28),
             smc_start_date=date(2015, 9, 9)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 9, 23),
+            full_enrollment_date=date(2016, 10, 17),
+            end_date=date(2016, 10, 17),
+            smc_start_date=date(2016, 10, 17)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
