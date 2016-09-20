@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc_field_label.admin_mixin import ModifyFormLabelMixin
+
 from ..constants import ANNUAL
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from ..models import Circumcision, Circumcised, Uncircumcised
@@ -8,12 +10,24 @@ from ..models import Circumcision, Circumcised, Uncircumcised
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class CircumcisionAdmin(SubjectVisitModelAdmin):
+class CircumcisionAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
+
+    replacements = {
+        'first_rep': {
+            'field_attr': 'last_seen_circumcised',
+            'placeholder': 'last_seen_circumcised',
+            'replacement_attr': 'report_datetime',
+            'attr': 'previous_visit',
+        }
+    }
 
     form = CircumcisionForm
     fields = (
         "subject_visit",
-        'circumcised',)
+        'circumcised',
+        'last_seen_circumcised',
+        'circumcised_location',
+        'circumcised_location_other',)
     radio_fields = {'circumcised': admin.VERTICAL}
     instructions = [("Note to Interviewer: This section is to be completed "
                      "by male participants. SKIP for female participants. "),

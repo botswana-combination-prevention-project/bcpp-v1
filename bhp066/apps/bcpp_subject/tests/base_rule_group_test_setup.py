@@ -31,7 +31,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'digawana'
+    community = 'mmathethe'
 
     def setUp(self):
         try:
@@ -49,7 +49,7 @@ class BaseRuleGroupTestSetup(TestCase):
         survey_T1 = Survey.objects.get(survey_slug='bcpp-year-2')
         survey_T2 = Survey.objects.get(survey_slug='bcpp-year-3')
 
-        self.study_site = StudySite.objects.get(site_code='12')
+        self.study_site = StudySite.objects.get(site_code='20')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T0)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T1)
@@ -58,8 +58,6 @@ class BaseRuleGroupTestSetup(TestCase):
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y3)
         HouseholdMemberFactory(household_structure=self.household_structure)
-        #HouseholdMemberFactory(household_structure=self.household_structure)
-        #HouseholdMemberFactory(household_structure=self.household_structure)
 
         male_dob = date.today() - relativedelta(years=25)
         male_age_in_years = 25

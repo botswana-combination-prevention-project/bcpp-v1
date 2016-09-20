@@ -35,10 +35,10 @@ def func_is_baseline(visit_instance):
         return True
     return False
 
+
 def func_declined_at_bhs(visit_instance):
     """Returns True if the participant is  has refused to test at t0 or t1"""
     past_visit = func_previous_visit_instance(visit_instance)
-    #if func_is_baseline(past_visit):
     subject_status_helper = SubjectStatusHelper(past_visit, use_baseline_visit=True)
     if subject_status_helper.hiv_result:
         if subject_status_helper.hiv_result == 'Declined':
@@ -52,12 +52,25 @@ def func_is_annual(visit_instance):
     return False
 
 
+def func_is_defaulter(visit_instance):
+    """Returns True is a participant is a defaulter."""
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    return subject_status_helper.defaulter
+
+
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
     art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
     return art_naive
+
+
+def func_art_naive_at_annual_or_defaulter(visit_instance):
+    if (func_is_annual(visit_instance) and func_art_naive(visit_instance)) or func_is_defaulter(visit_instance):
+        return True
+    else:
+        return False
 
 
 def func_on_art(visit_instance):

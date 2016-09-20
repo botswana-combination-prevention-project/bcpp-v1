@@ -10,11 +10,11 @@ from .subject_consent import SubjectConsent
 
 
 KEPT_APPT = (
-    ('Yes', 'kept appointment'),
-    ('No', 'but attended a visit at the HIV care clinic to which they were referred on another date'),
-    ('No', 'but attended a visit at a different HIV clinic'),
+    ('Yes', 'Yes, kept appointment'),
+    ('No_refered_other_clinic', 'No but attended a visit at the HIV care clinic to which they were referred on another date'),
+    ('No_other_clinic', 'No but attended a visit at a different HIV clinic'),
     ('diff_clininc', 'I went to a different clinic'),
-    ('No', 'but tried to attend an HIV care clinic and left before I saw a healthcare provider'),
+    ('No', 'No but tried to attend an HIV care clinic and left before I saw a healthcare provider'),
     ('No', 'I have not been to any HIV care clinic [skip to #3]')
 )
 
@@ -66,12 +66,11 @@ class HivLinkageToCare (BaseScheduledVisitModel):
         help_text=""
     )
 
-    left_clininc = models.CharField(
-        verbose_name='If you tried to attend an HIV care clinic and left before You saw a healthcare provider specify',
+    left_clininc_datetime = models.DateField(
+        verbose_name='If you tried to attend an HIV care clinic and left before You saw a healthcare provider specify the date?',
         default=None,
         null=True,
         blank=True,
-        max_length=50,
         help_text=""
     )
 
@@ -100,13 +99,14 @@ class HivLinkageToCare (BaseScheduledVisitModel):
         max_length=50,
         choices=RECOMMENDED_THERAPY,
         null=True,
-        help_text="If No [SKIP TO #4]")
+        help_text="If No [SKIP TO #10]")
 
     reason_recommended = models.CharField(
         verbose_name="If yes, do you know why ARVs were recommended?",
         max_length=50,
         choices=REASON_RECOMMENDED,
         null=True,
+        blank=True,
         help_text="")
 
     reason_recommended_other = OtherCharField()
