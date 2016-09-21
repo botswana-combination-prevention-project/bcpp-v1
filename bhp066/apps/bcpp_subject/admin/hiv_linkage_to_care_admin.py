@@ -67,7 +67,7 @@ class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
     )
     radio_fields = {
         "kept_appt": admin.VERTICAL,
-        "evidence_type_clinicdate": admin.VERTICAL,
+        "evidence_type_clinic": admin.VERTICAL,
         "recommended_therapy": admin.VERTICAL,
         "reason_recommended": admin.VERTICAL,
         "startered_therapy": admin.VERTICAL,
