@@ -74,7 +74,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
         help_text=""
     )
 
-    clinic_first_date = models.DateField(
+    clinic_first_datetime = models.DateField(
         verbose_name="What was the date when you first went to the community_name clinic?",
         default=None,
         null=True,
@@ -82,14 +82,14 @@ class HivLinkageToCare (BaseScheduledVisitModel):
         help_text=""
     )
 
-    evidence_type_clinicdate = models.CharField(
+    evidence_type_clinic = models.CharField(
         verbose_name="Type of Evidence:",
         max_length=50,
         choices=TYPE_OF_EVIDENCE,
         null=True,
         help_text="")
 
-    evidence_type_clinicdate_other = OtherCharField()
+    evidence_type_clinic_other = OtherCharField()
 
     recommended_therapy = models.CharField(
         verbose_name="[IF PERSON WAS ART NAIVE OR A DEFAULTER AT LAST INTERVIEW] Since the last time we spoke with "
