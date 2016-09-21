@@ -28,7 +28,10 @@ class CircumcisionAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
         'last_seen_circumcised',
         'circumcised_location',
         'circumcised_location_other',)
-    radio_fields = {'circumcised': admin.VERTICAL}
+    radio_fields = {
+        'circumcised': admin.VERTICAL,
+        'last_seen_circumcised': admin.VERTICAL,
+        'circumcised_location': admin.VERTICAL}
     instructions = [("Note to Interviewer: This section is to be completed "
                      "by male participants. SKIP for female participants. "),
                     _("Read to Participant: Some men are circumcised. "

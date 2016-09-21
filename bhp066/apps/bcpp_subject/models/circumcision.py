@@ -39,6 +39,8 @@ class Circumcision (BaseScheduledVisitModel):
         verbose_name="IF YES, Location?",
         max_length=25,
         choices=COMMUNITY_NA,
+        null=True,
+        blank=True,
         help_text="")
 
     circumcised_location_other = OtherCharField()
