@@ -2485,7 +2485,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             arv_evidence=NO,
         )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima2_does_notrequire_linkage_to_care(self):
         """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
@@ -2511,7 +2511,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         )
 
         # on art so no need for CD4
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
 
     def test_known_neg_does_not_require_linkage_to_care(self):
         """If previous result is NEG, does not require hiv linkage to care.
@@ -2563,9 +2563,17 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             medical_care=NO,
             ever_recommended_arv=NO,
             ever_taken_arv=NO,
-            on_arv=YES,
+            on_arv=NO,
             arv_evidence=YES,  # this is the rule field
         )
+        linkage_to_care_options = {}
+        linkage_to_care_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivlinkagetocare',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+
         self.subject_visit_male = self.annual_subject_visit_y2
         linkage_to_care_options = {}
         linkage_to_care_options.update(
@@ -2583,4 +2591,4 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             on_arv=NO,
             arv_evidence=YES,  # this is the rule field
         )
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)

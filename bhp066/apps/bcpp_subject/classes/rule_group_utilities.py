@@ -67,7 +67,8 @@ def func_art_naive(visit_instance):
 
 
 def func_art_naive_at_annual_or_defaulter(visit_instance):
-    if (func_is_annual(visit_instance) and func_art_naive(visit_instance)) or func_is_defaulter(visit_instance):
+    past_visit = func_previous_visit_instance(visit_instance)
+    if art_naive_at_enrollment(visit_instance) or func_is_defaulter(past_visit):
         return True
     else:
         return False
