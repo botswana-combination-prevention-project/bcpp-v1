@@ -40,6 +40,11 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
             except ValueError:
                 self.search_fields.insert(0, lookup)
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "subject_visit":
+            kwargs["queryset"] = SubjectVisit.objects.filter(id__exact=request.GET.get('subject_visit', 0))
+        return super(SubjectVisitModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
     def get_form_post(self, form, request, obj, **kwargs):
         NAME = 0
         WIDGET = 1
