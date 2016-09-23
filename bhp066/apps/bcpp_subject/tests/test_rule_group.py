@@ -2350,7 +2350,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
 
-
     def test_not_known_neg_runs_hiv_and_cd4_ahs(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
         self.subject_visit_male_T0 = self.baseline_subject_visit

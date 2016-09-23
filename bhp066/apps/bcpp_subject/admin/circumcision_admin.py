@@ -13,7 +13,7 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 class CircumcisionAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
 
     replacements = {
-        'first_rep': {
+        'first_circ_rep': {
             'field_attr': 'last_seen_circumcised',
             'placeholder': 'last_seen_circumcised',
             'replacement_attr': 'report_datetime',
