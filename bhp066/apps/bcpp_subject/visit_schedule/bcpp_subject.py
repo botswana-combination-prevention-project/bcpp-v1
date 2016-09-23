@@ -3,7 +3,7 @@ from collections import OrderedDict
 from django.db.models import get_model
 
 from edc_constants.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
-from edc_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site_visit_schedules,
                                                 EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
                                                 RequisitionPanelTuple)
@@ -95,9 +95,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(330L, u'bcpp_subject', u'stigmaopinion', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(340L, u'bcpp_subject', u'positiveparticipant', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(350L, u'bcpp_subject', u'accesstocare', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(360L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(370L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(380L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(360L, u'bcpp_subject', u'hivlinkagetocare', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(370L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(380L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(390L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(400L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(410L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]},
@@ -162,9 +163,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(300L, u'bcpp_subject', u'hospitaladmission', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(310L, u'bcpp_subject', u'hivhealthcarecosts', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(320L, u'bcpp_subject', u'labourmarketwages', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(330L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(340L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(350L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(330L, u'bcpp_subject', u'hivlinkagetocare', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(340L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(350L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(360L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(370L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(380L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]},
@@ -229,16 +231,17 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(240L, u'bcpp_subject', u'sti', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(250L, u'bcpp_subject', u'tubercolosis', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(260L, u'bcpp_subject', u'tbsymptoms', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(270L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(280L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(290L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(300L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(310L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(370L, u'bcpp_subject', u'hivlinkagetocare', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(280L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(290L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(300L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(310L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(320L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}
          }
     )
 
-if site_mappers.get_mapper(site_mappers.current_community).intervention is False:
+if site_mappers.get_current_mapper().intervention is False:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
@@ -247,7 +250,7 @@ if site_mappers.get_mapper(site_mappers.current_community).intervention is False
         if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T2').get('entries').remove(item)
 
-if site_mappers.get_mapper(site_mappers.current_community).intervention is True:
+if site_mappers.get_current_mapper().intervention is True:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
