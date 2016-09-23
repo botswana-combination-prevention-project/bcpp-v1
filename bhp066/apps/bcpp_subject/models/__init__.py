@@ -79,3 +79,4 @@ from .review import (
     DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview,
     HivTestReviewReview, HivTestedReview)
 from .correct_consent import CorrectConsent
+from .hiv_linkage_to_care import HivLinkageToCare

@@ -35,6 +35,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
+
     community = 'test_community'
 
     @override_settings(
@@ -79,8 +80,6 @@ class BaseRuleGroupTestSetup(TestCase):
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y3)
         HouseholdMemberFactory(household_structure=self.household_structure)
-        #HouseholdMemberFactory(household_structure=self.household_structure)
-        #HouseholdMemberFactory(household_structure=self.household_structure)
 
         male_dob = date.today() - relativedelta(years=25)
         male_age_in_years = 25
