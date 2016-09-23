@@ -48,6 +48,7 @@ REASON_RECOMMENDED = (
 class HivLinkageToCare (BaseScheduledVisitModel):
 
     CONSENT_MODEL = SubjectConsent
+    _query_id = None
 
     kept_appt = models.CharField(
         verbose_name="We last spoke with you on last_visit_date and scheduled an appointment for you "
@@ -161,27 +162,38 @@ class HivLinkageToCare (BaseScheduledVisitModel):
         If no previous visit, then the current visit is returned."""
         from edc.subject.appointment.models import Appointment
         from ..models import SubjectVisit
-        registered_subject = self.subject_visit.appointment.registered_subject
-        timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
-        if len(timepoints) > 0:
-            timepoints.reverse()
-        for point in timepoints:
-            try:
-                previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
-                                                               visit_definition__time_point=point)
-                return SubjectVisit.objects.get(appointment=previous_appointment)
-            except Appointment.DoesNotExist:
-                pass
-            except SubjectVisit.DoesNotExist:
-                pass
-            except AttributeError:
-                pass
+        if self.id:
+            registered_subject = self.subject_visit.appointment.registered_subject
+            timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
+            if len(timepoints) > 0:
+                timepoints.reverse()
+            for point in timepoints:
+                try:
+                    previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
+                                                                   visit_definition__time_point=point)
+                    return SubjectVisit.objects.get(appointment=previous_appointment)
+                except Appointment.DoesNotExist:
+                    pass
+                except SubjectVisit.DoesNotExist:
+                    pass
+                except AttributeError:
+                    pass
         return None
 
     def previous_appt(self):
         from edc.subject.appointment.models import Appointment
-        registered_subject = self.subject_visit.appointment.registered_subject
-        timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
+        from ..models import SubjectVisit
+        timepoints = range(0, 0)
+        try:
+            subject_visit = SubjectVisit.objects.get(id=self.query_id)
+        except SubjectVisit.DoesNotExist:
+            subject_visit = None
+        if self.id:
+            registered_subject = self.subject_visit.appointment.registered_subject
+            timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
+        elif subject_visit:
+            registered_subject = subject_visit.appointment.registered_subject
+            timepoints = range(0, subject_visit.appointment.visit_definition.time_point)
         if len(timepoints) > 0:
             timepoints.reverse()
         for point in timepoints:
@@ -192,8 +204,20 @@ class HivLinkageToCare (BaseScheduledVisitModel):
                 pass
         return None
 
-    def last_community(self):
+    def last_community(self, request):
         return self.subject_visit.household_member.household_structure.household.plot
+
+    @property
+    def query_id(self):
+        return self.query_id
+
+    @query_id.setter
+    def query_id(self, value):
+        self._query_id = value
+
+    @query_id.deleter
+    def query_id(self):
+        del self._query_id
 
     class Meta:
         app_label = 'bcpp_subject'

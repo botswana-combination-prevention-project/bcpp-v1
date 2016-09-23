@@ -1430,15 +1430,6 @@ class TestReferral(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertTrue(subject_referral.citizen)
 
-#         non_citizen_household_member_male = HouseholdMemberFactory(
-#             household_structure=self.household_structure,
-#             first_name='ONEP', initials='OP', gender='M',
-#             age_in_years=30, study_resident=YES, relation='brother',
-#             inability_to_participate=NOT_APPLICABLE)
-# 
-#         self.assertEqual(RegisteredSubject.objects.filter(
-#             registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
-# 
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
 #         non_citizen_household_member_male = HouseholdMember.objects.create(
 #             household_structure=self.household_structure,
@@ -1447,6 +1438,7 @@ class TestReferral(BaseScheduledModelTestCase):
 #             inability_to_participate=NOT_APPLICABLE)
 #
 #         self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
+
 #         non_citizen_enrollment_male = EnrollmentChecklistFactory(
 #             household_member=non_citizen_household_member_male,
 #             initials=non_citizen_household_member_male.initials,
@@ -1457,25 +1449,15 @@ class TestReferral(BaseScheduledModelTestCase):
 #             citizen=NO,
 #             legal_marriage=YES,
 #             marriage_certificate=YES)
-#         self.assertEqual(RegisteredSubject.objects.filter(
-#             registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
-#         self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
-# 
 #
 #         self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
 #
+
 #         non_citizen_subject_consent_male = SubjectConsentFactory(
 #             consent_datetime=datetime.today(),
 #             household_member=non_citizen_household_member_male,
 #             gender='M',
 #             dob=non_citizen_enrollment_male.dob,
-#             first_name='ONEP',
-#             last_name='PH',
-#             citizen=NO,
-#             initials=non_citizen_enrollment_male.initials,
-#             legal_marriage=YES,
-#             confirm_identity='101119811',
-#             identity='101119811',
 #             first_name='ZEST',
 #             last_name='ZP',
 #             citizen=NO,
@@ -1506,10 +1488,6 @@ class TestReferral(BaseScheduledModelTestCase):
 #             panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
 #         HivTestingHistoryFactory(subject_visit=non_citizen_subject_visit_male,
 #                                  verbal_hiv_result=POS, has_record=YES, other_record=YES)
-=======
-=======
-#
->>>>>>> master
 #         self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
 #
 #         non_citizen_appointment_male = Appointment.objects.get(registered_subject=non_citizen_subject_consent_male.registered_subject,
@@ -1521,9 +1499,8 @@ class TestReferral(BaseScheduledModelTestCase):
 #         SubjectLocatorFactory(subject_visit=non_citizen_subject_visit_male)
 #         SubjectRequisitionFactory(subject_visit=non_citizen_subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
 #         HivTestingHistoryFactory(subject_visit=non_citizen_subject_visit_male, verbal_hiv_result=POS, has_record=YES, other_record=YES)
->>>>>>> master
 #         HivResultFactory(subject_visit=non_citizen_subject_visit_male, hiv_result=POS)
 #         subject_referral = SubjectReferralFactory(
 #             subject_visit=non_citizen_subject_visit_male,
 #             report_datetime=report_datetime)
-#         self.assertFalse(subject_referral.citizen)
+
