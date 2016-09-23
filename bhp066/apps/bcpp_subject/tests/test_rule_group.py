@@ -2416,53 +2416,14 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             first_positive=None,
             medical_care=YES,
             ever_recommended_arv=NO,
-            ever_taken_arv=NO,
-            on_arv=NO,
-            arv_evidence=NO,  # this is the rule field
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
         )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
 
-    def test_hiv_pos_nd_art_naive_at_ahs_new_erollee_require_linkage_to_care(self):
-        """New enrollees at T0 (i.e doing BHS procedures) who are HIV-positive and ART naive, then PIMA required.
-        """
-        self.subject_visit_male = self.annual_subject_visit_y2
-        self.hiv_result(POS, self.subject_visit_male)
-
-        linkage_to_care_options = {}
-        linkage_to_care_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivlinkagetocare',
-            appointment=self.subject_visit_male.appointment)
-
-        HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            has_tested=YES,
-            when_hiv_test='1 to 5 months ago',
-            has_record=YES,
-            verbal_hiv_result=POS,
-            other_record=NO
-        )
-
-        HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result=POS,
-        )
-
-        # add HivCarAdherence,
-        HivCareAdherence.objects.create(
-            subject_visit=self.subject_visit_male,
-            first_positive=None,
-            medical_care=NO,
-            ever_recommended_arv=NO,
-            ever_taken_arv=NO,
-            on_arv=NO,
-            arv_evidence=NO,  # this is the rule field
-        )
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
-
-    def test_newly_pos_and_not_art_bhs_require_linkage_to_care(self):
+    def test_newly_pos_and_not_art_bhs_not_require_linkage_to_care(self):
         """Newly HIV Positive not on ART at T0, Should not offer hiv linkage to care.
         """
         self.subject_visit_male_T0 = self.baseline_subject_visit
@@ -2485,9 +2446,9 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             arv_evidence=NO,
         )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
 
-    def test_hiv_car_adherence_and_pima2_does_notrequire_linkage_to_care(self):
+    def test_pos_on_art_notrequire_linkage_to_care(self):
         """If POS and on arv and have doc evidence, Hiv Linkage to care not required, not a defaulter."""
 
         self.subject_visit_male_T0 = self.baseline_subject_visit
@@ -2511,7 +2472,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         )
 
         # on art so no need for CD4
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
 
     def test_known_neg_does_not_require_linkage_to_care(self):
         """If previous result is NEG, does not require hiv linkage to care.
@@ -2540,7 +2501,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         )
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
 
-    def test_known_pos_defaulter_not_require_linkage_to_care(self):
+    def test_known_pos_defaulter_require_linkage_to_care(self):
         """If previous result is POS on art but no evidence.
 
         This is a defaulter
@@ -2562,7 +2523,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             first_positive=None,
             medical_care=NO,
             ever_recommended_arv=NO,
-            ever_taken_arv=NO,
+            ever_taken_arv=YES,
             on_arv=NO,
             arv_evidence=YES,  # this is the rule field
         )
@@ -2573,6 +2534,57 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             appointment=self.subject_visit_male_T0.appointment)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+        linkage_to_care_options = {}
+        linkage_to_care_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivlinkagetocare',
+            appointment=self.subject_visit_male.appointment)
+
+        # add HivCareAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=YES,  # this is the rule field
+        )
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **linkage_to_care_options).count(), 1)
+
+    def test_known_pos_not_require_linkage_to_care(self):
+        """If previous result is POS on art but no evidence.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        # add HivTestReview,
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result=POS,
+        )
+
+        # add HivCareAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
+        linkage_to_care_options = {}
+        linkage_to_care_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivlinkagetocare',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
 
         self.subject_visit_male = self.annual_subject_visit_y2
         linkage_to_care_options = {}
