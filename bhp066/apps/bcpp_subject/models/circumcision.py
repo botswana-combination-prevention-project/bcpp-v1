@@ -45,10 +45,6 @@ class Circumcision (BaseScheduledVisitModel):
 
     circumcised_location_other = OtherCharField()
 
-    def save(self, *args, **kwargs):
-        print self.previous_visit()
-        super(Circumcision, self).save(*args, **kwargs)
-
     history = AuditTrail()
 
     def previous_visit(self):
