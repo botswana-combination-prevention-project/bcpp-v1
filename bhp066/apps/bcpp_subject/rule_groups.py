@@ -10,6 +10,7 @@ from .classes.rule_group_utilities import (
     func_show_microtube,
     func_vl,
     func_rbd,
+    func_art_naive_at_annual_or_defaulter,
     func_no_verbal_hiv_result,
     func_todays_hiv_result_required,
     evaluate_ever_had_sex_for_female,
@@ -237,6 +238,13 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
+
+    hiv_linkage_to_care_art_naive = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_art_naive_at_annual_or_defaulter,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivlinkagetocare'])
 
     class Meta:
         app_label = 'bcpp_subject'
