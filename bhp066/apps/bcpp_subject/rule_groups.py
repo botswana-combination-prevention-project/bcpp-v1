@@ -10,6 +10,7 @@ from .classes.rule_group_utilities import (
     func_show_microtube,
     func_vl,
     func_rbd,
+    func_hiv_neg_bhs,
     func_art_naive_at_annual_or_defaulter,
     func_no_verbal_hiv_result,
     func_todays_hiv_result_required,
@@ -54,6 +55,13 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+
+    hiv_linkage_to_care = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_neg_bhs,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivlinkagetocare'])
 
     require_microtube = RequisitionRule(
         logic=Logic(

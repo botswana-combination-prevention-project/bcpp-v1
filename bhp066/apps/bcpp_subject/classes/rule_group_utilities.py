@@ -225,6 +225,15 @@ def func_hiv_result_neg_baseline(visit_instance):
     return True if subject_status_helper.hiv_result == NEG else False
 
 
+def func_hiv_neg_bhs(visit_instance):
+    if func_is_baseline(visit_instance):
+        past_visit = visit_instance
+    else:
+        past_visit = func_previous_visit_instance(visit_instance)
+    subject_status_helper = SubjectStatusHelper(past_visit)
+    return True if subject_status_helper.hiv_result == NEG else False
+
+
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result == POS
