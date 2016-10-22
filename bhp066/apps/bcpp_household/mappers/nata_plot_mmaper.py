@@ -30,16 +30,16 @@ class NataPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 10, 8),
+            start_date=date(2015, 10, 15),
             full_enrollment_date=date(2015, 11, 30),
             end_date=date(2015, 11, 30),
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 10, 22),
+            full_enrollment_date=date(2016, 11, 28),
+            end_date=date(2016, 11, 29),
+            smc_start_date=date(2016, 11, 22)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
