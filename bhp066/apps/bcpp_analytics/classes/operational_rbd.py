@@ -36,7 +36,7 @@ class OperationalRbd(BaseOperationalReport):
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             panel__name='Research Blood Draw',)
-        self.data_dict['b. Total BHS Subject Requisitions'] = total_bhs_requisitions.count()
+        self.data_dict['b. Total BHS RBD \'s'] = total_bhs_requisitions.count()
 
         total_t1_requisitions = SubjectRequisition.objects.filter(
             subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
@@ -45,7 +45,7 @@ class OperationalRbd(BaseOperationalReport):
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             panel__name='Research Blood Draw',)
-        self.data_dict['c. Total T1 Subject Requisitions'] = total_t1_requisitions.count()
+        self.data_dict['c. Total T1 RBD \'s'] = total_t1_requisitions.count()
 
         total_t2_requisitions = SubjectRequisition.objects.filter(
             subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
@@ -54,7 +54,7 @@ class OperationalRbd(BaseOperationalReport):
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             panel__name='Research Blood Draw',)
-        self.data_dict['d. Total T2 Subject Requisitions'] = total_t2_requisitions.count()
+        self.data_dict['d. Total T2 RBD \'s'] = total_t2_requisitions.count()
 
         clinic_rbd = ClinicRequisition.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                       created__gte=self.date_from,
