@@ -1,28 +1,25 @@
 from datetime import date
 
+from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction, DatabaseError
-from django.utils.translation import ugettext as _
+from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
+from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import TIME_OF_WEEK, TIME_OF_DAY
-from edc_base.encrypted_fields import (
-    EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from edc.core.identifier.exceptions import IdentifierError
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_map.classes import site_mappers
+from edc_identifier.exceptions import IdentifierError
+from edc_map.site_mappers import site_mappers
 from edc_map.exceptions import MapperError
 
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
-from ..classes import PlotIdentifier
+from ..plot_identifier import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED, RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL
 from ..managers import PlotManager
-from ..exceptions import AlreadyReplaced
 
 
 def is_valid_community(self, value):
@@ -31,9 +28,10 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class Plot(SyncModelMixin, BaseUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
+    # TODO: Dispatch
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
@@ -274,9 +272,6 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         update_fields = kwargs.get('update_fields')
         if not self.plot_identifier == site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier:
             self.allow_enrollment(using, update_fields=update_fields)
-        if self.replaced_by and update_fields != ['replaced_by', 'htc']:
-            raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
-                                  'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
@@ -319,14 +314,14 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     @property
     def increase_radius_instance(self):
-        IncreasePlotRadius = models.get_model('bcpp_household', 'IncreasePlotRadius')
+        IncreasePlotRadius = django_apps.get_model('bcpp_household', 'IncreasePlotRadius')
         try:
             return IncreasePlotRadius.objects.get(plot=self)
         except IncreasePlotRadius.DoesNotExist:
             return None
 
     def create_household(self, count, instance=None, using=None):
-        Household = models.get_model('bcpp_household', 'Household')
+        Household = django_apps.get_model('bcpp_household', 'Household')
         instance = instance or self
         using = using or 'default'
         if instance.pk:
@@ -366,8 +361,8 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     def household_valid_to_delete(self, instance, using=None):
         """ Checks whether there is a plot log entry for each log. If it does not exists the
         household can be deleted. """
-        Household = models.get_model('bcpp_household', 'Household')
-        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
+        Household = django_apps.get_model('bcpp_household', 'Household')
+        HouseholdLogEntry = django_apps.get_model('bcpp_household', 'HouseholdLogEntry')
         allowed_to_delete = []
         for hh in Household.objects.using(using).filter(plot=instance):
             if (HouseholdLogEntry.objects.filter(
@@ -390,9 +385,9 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
                 return False
 
     def delete_households_for_non_residential(self, instance, existing_no, using=None):
-        Household = models.get_model('bcpp_household', 'Household')
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        Household = django_apps.get_model('bcpp_household', 'Household')
+        HouseholdStructure = django_apps.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = django_apps.get_model('bcpp_household', 'HouseholdLog')
         household_to_delete = self.household_valid_to_delete(instance, using)
         try:
             if len(household_to_delete) == existing_no and existing_no > 0:
@@ -412,9 +407,9 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             return False
 
     def delete_household(self, instance, existing_no, using=None):
-        Household = models.get_model('bcpp_household', 'Household')
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        Household = django_apps.get_model('bcpp_household', 'Household')
+        HouseholdStructure = django_apps.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = django_apps.get_model('bcpp_household', 'HouseholdLog')
         try:
             delete_no = self.validate_number_to_delete(
                 instance, existing_no, using) if self.validate_number_to_delete(
@@ -464,7 +459,7 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             * bcpp_clinic is a special case to allow for a plot to represent the BCPP Clinic."""
         instance = instance or self
         using = using or 'default'
-        Household = models.get_model('bcpp_household', 'Household')
+        Household = django_apps.get_model('bcpp_household', 'Household')
         # check that tuple has not changed and has "residential_habitable"
         if instance.status:
             if instance.status not in [item[0] for item in list(PLOT_STATUS) + [('bcpp_clinic', 'BCPP Clinic')]]:
@@ -521,8 +516,8 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     def log_form_label(self):
         # TODO: where is this used?
         using = 'default'
-        PlotLog = models.get_model('bcpp_household', 'PlotLog')
-        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
+        PlotLog = django_apps.get_model('bcpp_household', 'PlotLog')
+        PlotLogEntry = django_apps.get_model('bcpp_household', 'PlotLogEntry')
         form_label = []
         try:
             plot_log = PlotLog.objects.using(using).get(plot=self)
@@ -547,8 +542,8 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         # TODO: this does not belong on the plot model!
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
         using = 'default'
-        PlotLog = models.get_model('bcpp_household', 'PlotLog')
-        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
+        PlotLog = django_apps.get_model('bcpp_household', 'PlotLog')
+        PlotLogEntry = django_apps.get_model('bcpp_household', 'PlotLogEntry')
         entry_urls = {}
         try:
             plot_log = PlotLog.objects.using(using).get(plot=self)
@@ -568,7 +563,7 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
             return url
         if not model_pk:  # This is a like a SubjectAbsentee
-            model_class = models.get_model(app_label, model)
+            model_class = django_apps.get_model(app_label, model)
             try:
                 pk = model_class.objects.get(plot=self).pk
             except model_class.DoesNotExist:
@@ -591,7 +586,7 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     @property
     def plot_inaccessible(self):
         """Returns True if the plot is inaccessible as defined by its status and number of attempts."""
-        PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
+        PlotLogEntry = django_apps.get_model('bcpp_household', 'plotlogentry')
         return PlotLogEntry.objects.filter(plot_log__plot__id=self.id, log_status=INACCESSIBLE).count() >= 3
 
     @property
@@ -605,8 +600,8 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
         Plot must be inaccessible and the last reason (of 3) be either "dogs"
         or "locked gate" """
-        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
-        IncreasePlotRadius = models.get_model('bcpp_household', 'IncreasePlotRadius')
+        PlotLogEntry = django_apps.get_model('bcpp_household', 'PlotLogEntry')
+        IncreasePlotRadius = django_apps.get_model('bcpp_household', 'IncreasePlotRadius')
         created = False
         increase_plot_radius = None
         try:
@@ -644,7 +639,7 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     @property
     def plot_log(self):
         """Returns an instance of the plot log."""
-        PlotLog = models.get_model('bcpp_household', 'plotlog')
+        PlotLog = django_apps.get_model('bcpp_household', 'plotlog')
         try:
             instance = PlotLog.objects.get(plot__id=self.id)
         except PlotLog.DoesNotExist:
@@ -653,11 +648,11 @@ class Plot(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     @property
     def plot_log_entry(self):
-        PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
+        PlotLogEntry = django_apps.get_model('bcpp_household', 'plotlogentry')
         try:
             return PlotLogEntry.objects.filter(plot_log__plot__id=self.id).latest('report_datetime')
         except PlotLogEntry.DoesNotExist:
-            print "PlotLogEntry.DoesNotExist"
+            pass
 
     class Meta:
         app_label = 'bcpp_household'

@@ -1,62 +1,67 @@
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
-                                             Logic, RequisitionRule)
+from edc_rule_groups import site_rule_groups
+from edc_rule_groups.crf_rule import CrfRule
+from edc_rule_groups.decorators import register
+from edc_rule_groups.logic import Logic
+from edc_rule_groups.requisition_rule import RequisitionRule
+from edc_rule_groups.rule_group import RuleGroup
 
-from .classes.rule_group_utilities import (
-    func_should_not_show_circumsition,
-    is_gender_male,
-    func_known_pos_in_prev_year,
-    func_require_pima,
-    func_show_microtube,
-    func_vl,
-    func_rbd,
-    func_hiv_neg_bhs,
-    func_art_naive_at_annual_or_defaulter,
-    func_no_verbal_hiv_result,
-    func_todays_hiv_result_required,
+from .rule_group_funcs import (
     evaluate_ever_had_sex_for_female,
-    func_show_hic_enrollment,
+    func_art_naive_at_annual_or_defaulter,
     func_hiv_indeterminate_today,
+    func_hiv_neg_bhs,
     func_hiv_positive_today,
-    func_hiv_untested)
+    func_hiv_untested,
+    func_known_pos_in_prev_year,
+    func_no_verbal_hiv_result,
+    func_rbd,
+    func_require_pima,
+    func_should_not_show_circumsition,
+    func_show_hic_enrollment,
+    func_show_microtube,
+    func_todays_hiv_result_required,
+    func_vl,
+    is_gender_male)
 from .models import (
     ResourceUtilization, HivTestingHistory,
     SexualBehaviour, HivCareAdherence, Circumcision,
     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
+    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit,
+    RegisteredSubject)
 
 
+@register()
 class RegisteredSubjectRuleGroup(RuleGroup):
 
-    gender_circumsion = ScheduledDataRule(
+    gender_circumsion = CrfRule(
         logic=Logic(
             predicate=func_should_not_show_circumsition,
             consequence='not_required',
             alternative='new'),
         target_model=['circumcision', 'circumcised', 'uncircumcised'])
 
-    gender_menopause = ScheduledDataRule(
+    gender_menopause = CrfRule(
         logic=Logic(
             predicate=is_gender_male,
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
-    known_pos_in_y1 = ScheduledDataRule(
+    known_pos_in_y1 = CrfRule(
         logic=Logic(
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
         target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
-    pima_art_naive_enrollment_req_ahs = ScheduledDataRule(
+    pima_art_naive_enrollment_req_ahs = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
 
-    hiv_linkage_to_care = ScheduledDataRule(
+    hiv_linkage_to_care = CrfRule(
         logic=Logic(
             predicate=func_hiv_neg_bhs,
             consequence='not_required',
@@ -92,19 +97,18 @@ class RegisteredSubjectRuleGroup(RuleGroup):
         source_fk = None
         source_model = RegisteredSubject
 
-site_rule_groups.register(RegisteredSubjectRuleGroup)
 
-
+@register()
 class ResourceUtilizationRuleGroup(RuleGroup):
 
-    out_patient = ScheduledDataRule(
+    out_patient = CrfRule(
         logic=Logic(
             predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'Refuse', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['outpatientcare'])
 
-    hospitalized = ScheduledDataRule(
+    hospitalized = CrfRule(
         logic=Logic(
             predicate=('hospitalized', 'equals', 0),
             consequence='not_required',
@@ -116,61 +120,60 @@ class ResourceUtilizationRuleGroup(RuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = ResourceUtilization
 
-site_rule_groups.register(ResourceUtilizationRuleGroup)
 
-
+@register()
 class HivTestingHistoryRuleGroup(RuleGroup):
 
-    has_record = ScheduledDataRule(
+    has_record = CrfRule(
         logic=Logic(
             predicate=('has_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivtestreview'])
 
-    has_tested = ScheduledDataRule(
+    has_tested = CrfRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivtested'])
 
-    hiv_untested = ScheduledDataRule(
+    hiv_untested = CrfRule(
         logic=Logic(
             predicate=func_hiv_untested,
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])
 
-    other_record = ScheduledDataRule(
+    other_record = CrfRule(
         logic=Logic(
             predicate=('other_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
 
-    require_todays_hiv_result = ScheduledDataRule(
+    require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
 
-    verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
+    verbal_hiv_result_hiv_care_baseline = CrfRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
-    verbal_response = ScheduledDataRule(
+    verbal_response = CrfRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    other_response = ScheduledDataRule(
+    other_response = CrfRule(
         logic=Logic(
             predicate=func_no_verbal_hiv_result,
             consequence='not_required',
@@ -184,26 +187,26 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
-site_rule_groups.register(HivTestingHistoryRuleGroup)
 
 
+@register()
 class ReviewPositiveRuleGroup(RuleGroup):
 
-    recorded_hiv_result = ScheduledDataRule(
+    recorded_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
 
-    recorded_hivresult = ScheduledDataRule(
+    recorded_hivresult = CrfRule(
         logic=Logic(
             predicate=('recorded_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    require_todays_hiv_result = ScheduledDataRule(
+    require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence='new',
@@ -214,40 +217,33 @@ class ReviewPositiveRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
-site_rule_groups.register(ReviewPositiveRuleGroup)
 
 
+@register()
 class HivCareAdherenceRuleGroup(RuleGroup):
 
-    medical_care = ScheduledDataRule(
+    medical_care = CrfRule(
         logic=Logic(
             predicate=('medical_care', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
 
-    pima_for_art_naive = ScheduledDataRule(
+    pima_for_art_naive = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
 
-#     pimavl_for_art_naive = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_art_naive,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['pimavl'])
-
-    require_todays_hiv_result = ScheduledDataRule(
+    require_todays_hiv_result = CrfRule(
         logic=Logic(
             predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hiv_linkage_to_care_art_naive = ScheduledDataRule(
+    hiv_linkage_to_care_art_naive = CrfRule(
         logic=Logic(
             predicate=func_art_naive_at_annual_or_defaulter,
             consequence='new',
@@ -258,33 +254,33 @@ class HivCareAdherenceRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
-site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
+@register()
 class SexualBehaviourRuleGroup(RuleGroup):
 
-    partners = ScheduledDataRule(
+    partners = CrfRule(
         logic=Logic(
             predicate=('last_year_partners', 'gte', 1),
             consequence='new',
             alternative='not_required'),
         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
 
-    last_year_partners = ScheduledDataRule(
+    last_year_partners = CrfRule(
         logic=Logic(
             predicate=('last_year_partners', 'gte', 2),
             consequence='new',
             alternative='not_required'),
         target_model=['monthssecondpartner'])
 
-    more_partners = ScheduledDataRule(
+    more_partners = CrfRule(
         logic=Logic(
             predicate=('last_year_partners', 'gte', 3),
             consequence='new',
             alternative='not_required'),
         target_model=['monthsthirdpartner'])
 
-    ever_sex = ScheduledDataRule(
+    ever_sex = CrfRule(
         logic=Logic(
             predicate=evaluate_ever_had_sex_for_female,
             consequence='new',
@@ -295,19 +291,19 @@ class SexualBehaviourRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = SexualBehaviour
-site_rule_groups.register(SexualBehaviourRuleGroup)
 
 
+@register()
 class CircumcisionRuleGroup(RuleGroup):
 
-    circumcised = ScheduledDataRule(
+    circumcised = CrfRule(
         logic=Logic(
             predicate=('circumcised', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['circumcised'])
 
-    uncircumcised = ScheduledDataRule(
+    uncircumcised = CrfRule(
         logic=Logic(
             predicate=('circumcised', 'equals', 'No'),
             consequence='new',
@@ -318,19 +314,19 @@ class CircumcisionRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
-site_rule_groups.register(CircumcisionRuleGroup)
 
 
+@register()
 class ReproductiveRuleGroup(RuleGroup):
 
-    currently_pregnant = ScheduledDataRule(
+    currently_pregnant = CrfRule(
         logic=Logic(
             predicate=(('currently_pregnant', 'equals', 'Yes'), ('menopause', 'equals', 'No', 'and')),
             consequence='new',
             alternative='not_required'),
         target_model=['pregnancy'])
 
-    non_pregnant = ScheduledDataRule(
+    non_pregnant = CrfRule(
         logic=Logic(
             predicate=(('currently_pregnant', 'equals', 'No'), ('menopause', 'equals', 'No', 'and')),
             consequence='new',
@@ -341,27 +337,27 @@ class ReproductiveRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = ReproductiveHealth
-site_rule_groups.register(ReproductiveRuleGroup)
 
 
+@register()
 class MedicalDiagnosesRuleGroup(RuleGroup):
     """"Allows the heartattack, cancer, tb forms to be made available whether or not the participant
     has a record. see redmine 314."""
-    heart_attack_record = ScheduledDataRule(
+    heart_attack_record = CrfRule(
         logic=Logic(
             predicate=('heart_attack_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
-    cancer_record = ScheduledDataRule(
+    cancer_record = CrfRule(
         logic=Logic(
             predicate=('cancer_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
-    tb_record_tubercolosis = ScheduledDataRule(
+    tb_record_tubercolosis = CrfRule(
         logic=Logic(
             predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
@@ -372,7 +368,6 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
-site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 
 class BaseRequisitionRuleGroup(RuleGroup):
@@ -402,21 +397,14 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'], )
 
-    pima_for_art_naive = ScheduledDataRule(
+    pima_for_art_naive = CrfRule(
         logic=Logic(
             predicate=func_require_pima,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
 
-#     pimavl_for_art_naive = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_art_naive,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['pimavl'])
-
-    hic = ScheduledDataRule(
+    hic = CrfRule(
         logic=Logic(
             predicate=func_show_hic_enrollment,
             consequence='new',
@@ -427,6 +415,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         abstract = True
 
 
+@register()
 class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
@@ -448,14 +437,14 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
 
-    serve_sti_form = ScheduledDataRule(
+    serve_sti_form = CrfRule(
         logic=Logic(
             predicate=func_hiv_positive_today,
             consequence='new',
             alternative='not_required'),
         target_model=['sti'])
 
-    elisa_result = ScheduledDataRule(
+    elisa_result = CrfRule(
         logic=Logic(
             predicate=func_hiv_indeterminate_today,
             consequence='new',
@@ -466,40 +455,39 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResult
-site_rule_groups.register(RequisitionRuleGroup1)
 
 
+@register()
 class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
-site_rule_groups.register(RequisitionRuleGroup2)
 
 
+@register()
 class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
-site_rule_groups.register(RequisitionRuleGroup3)
 
 
+@register()
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResultDocumentation
-site_rule_groups.register(RequisitionRuleGroup4)
 
 
+@register()
 class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = ElisaHivResult
-site_rule_groups.register(RequisitionRuleGroup5)

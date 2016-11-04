@@ -1,7 +1,7 @@
+from django.apps import apps as django_apps
 from django.db import models
-from django.db.models import get_model
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords as AuditTrail
 
 from ..managers import RepresentativeEligibilityManager
 
@@ -43,7 +43,7 @@ class RepresentativeEligibility(BaseRepresentativeEligibility):
     natural_key.dependencies = ['bcpp_household.household_structure']
 
     def dispatch_container_lookup(self, using=None):
-        return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
+        return (django_apps.get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     class Meta:
         app_label = 'bcpp_household'

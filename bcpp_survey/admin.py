@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.mixins import ModelAdminBasicMixin
 
-from ..models import Survey
+from .models import Survey
 
 
-class SurveyAdmin (BaseModelAdmin):
+class SurveyAdmin (ModelAdminBasicMixin):
 
     list_display = ('survey_name', 'survey_abbrev', 'chronological_order',
                     'datetime_start', 'datetime_end')

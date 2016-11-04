@@ -1,3 +1,4 @@
+from .appointment import Appointment
 from .subject_consent import SubjectConsent, SubjectConsentExtended
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
@@ -80,3 +81,4 @@ from .review import (
     HivTestReviewReview, HivTestedReview)
 from .correct_consent import CorrectConsent
 from .hiv_linkage_to_care import HivLinkageToCare
+from .registered_subject import RegisteredSubject

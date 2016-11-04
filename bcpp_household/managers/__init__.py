@@ -11,6 +11,4 @@ from .household_survey_manager import HouseholdSurveyManager
 from .household_work_list_manager import HouseholdWorkListManager
 from .plot_log_manager import PlotLogManager, PlotLogEntryManager
 from .plot_manager import PlotManager
-from .replacement_history_manager import ReplacementHistoryManager
 from .representative_eligibility_manager import RepresentativeEligibilityManager
-from .replaceable_manager import ReplaceableManager

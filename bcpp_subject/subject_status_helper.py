@@ -2,18 +2,16 @@ from copy import copy
 
 from datetime import datetime
 
-from django.db.models import get_model
+from django.apps import apps as django_apps
 
 from edc_constants.constants import POS, NEG
 
-from ..constants import BASELINE_CODES
-from ..utils import convert_to_nullboolean
-
-from ..models import (
+from .constants import BASELINE_CODES
+from .models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
     HivTestingHistory, HivResultDocumentation,
     ElisaHivResult)
-from __builtin__ import getattr
+from .utils import convert_to_nullboolean
 
 
 class SubjectStatusHelper(object):
@@ -89,8 +87,10 @@ class SubjectStatusHelper(object):
         self.use_baseline_visit = use_baseline_visit
         if visit_instance:
             self.subject_visit = visit_instance
-        self.models[self.BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
-        self.models[self.ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[self.BASELINE].update({
+            'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[self.ANNUAL].update({
+            'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
 
     def __repr__(self):
         return 'SubjectStatusHelper({0.subject_visit!r})'.format(self)
@@ -114,8 +114,8 @@ class SubjectStatusHelper(object):
     def subject_visit(self, visit_instance):
         """Sets the visit_instance to the given visit_instance
         or the baseline visit instance if using_baseline=True."""
-        Appointment = get_model('appointment', 'Appointment')
-        SubjectVisit = get_model('bcpp_subject', 'SubjectVisit')
+        Appointment = django_apps.get_model('bcpp_subject', 'Appointment')
+        SubjectVisit = django_apps.get_model('bcpp_subject', 'SubjectVisit')
         if self._subject_visit:
             # reset every attribute
             self._subject_visit = None

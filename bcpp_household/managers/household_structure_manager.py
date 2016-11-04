@@ -1,12 +1,12 @@
 from django.db import models
 from django.conf import settings
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
-from bhp066.apps.bcpp_survey.models import Survey
-from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+from bcpp_survey.models import Survey
+from bcpp_household_member.classes import EnumerationHelper
 
-from ..classes import PlotIdentifier
+from ..plot_identifier import PlotIdentifier
 
 
 class HouseholdStructureManager(models.Manager):

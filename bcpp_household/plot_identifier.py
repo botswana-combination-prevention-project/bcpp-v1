@@ -1,9 +1,9 @@
 from django.db import models
 
-from edc.core.identifier.classes import BaseIdentifier
+from edc_identifier.alphanumeric_identifier import AlphanumericIdentifier
 
 
-class PlotIdentifier(BaseIdentifier):
+class PlotIdentifier(AlphanumericIdentifier):
 
     def __init__(self, community, using):
         identifier_format = '{community}{sequence}'

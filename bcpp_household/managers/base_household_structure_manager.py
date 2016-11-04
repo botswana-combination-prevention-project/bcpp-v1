@@ -1,9 +1,9 @@
 from django.db import models
 from django.conf import settings
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
-from ..classes import PlotIdentifier
+from ..plot_identifier import PlotIdentifier
 
 
 class BaseHouseholdStructureManager(models.Manager):

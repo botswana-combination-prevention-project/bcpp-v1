@@ -1,13 +1,12 @@
 from django.db import models
+from django_crypto_fields.fields import EncryptedTextField
+from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_base.encrypted_fields import EncryptedTextField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc_base.model.validators.date import datetime_not_future
+from edc_sync.model_mixins import SyncModelMixin
 
-from bhp066.apps.bcpp_survey.validators import date_in_survey
+from bcpp_survey.validators import date_in_survey
 
 from ..choices import PLOT_LOG_STATUS, INACCESSIBILITY_REASONS
 from ..managers import PlotLogManager, PlotLogEntryManager
@@ -15,16 +14,18 @@ from ..managers import PlotLogManager, PlotLogEntryManager
 from .plot import Plot
 
 
-class PlotLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class PlotLog(SyncModelMixin, BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot (related)."""
+
+    # TODO: Dispatch
     plot = models.OneToOneField(Plot)
 
     history = AuditTrail()
 
     objects = PlotLogManager()
 
-    def __unicode__(self):
-        return unicode(self.plot)
+    def __str__(self):
+        return str(self.plot)
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using,')
@@ -47,13 +48,13 @@ class PlotLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         app_label = 'bcpp_household'
 
 
-class PlotLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class PlotLogEntry(SyncModelMixin, BaseUuidModel):
     """A model completed by the user to track an RA\'s attempts to confirm a Plot."""
     plot_log = models.ForeignKey(PlotLog)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
-        validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey])
+        validators=[datetime_not_future, date_in_survey])
 
     log_status = models.CharField(
         verbose_name='What is the status of this plot?',
@@ -102,8 +103,8 @@ class PlotLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         return self.plot_log.plot.allow_enrollment(
             using, exception_cls, plot_instance=instance.plot_log.plot)
 
-    def __unicode__(self):
-        return unicode(self.plot_log) + '(' + unicode(self.report_datetime) + ')'
+    def __str__(self):
+        return '{} ({})'.format(self.plot_log, self.report_datetime.strftime('%Y-%m-%d'))
 
     class Meta:
         app_label = 'bcpp_household'

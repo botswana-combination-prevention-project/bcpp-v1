@@ -1,11 +1,9 @@
-from edc.subject.appointment.models import Appointment
-from edc_constants.constants import POS, NEG, IND
-from edc_constants.constants import NO
+from edc_constants.constants import POS, NEG, IND, NO
 
-from ..constants import BASELINE_CODES
-from ..models import SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory
-from ..classes import SubjectStatusHelper
-from bhp066.apps.bcpp_subject.models.hiv_result import HivResult
+from .constants import BASELINE_CODES
+from .models import (
+    SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory, HivResult, Appointment, SexualBehaviour)
+from .subject_status_helper import SubjectStatusHelper
 
 
 def func_previous_visit_instance(visit_instance):
@@ -97,7 +95,6 @@ def func_rbd_ahs(visit_instance):
 
 def func_require_pima(visit_instance):
     """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
-    #print "func_hiv_positive_today(visit_instance)", func_hiv_positive_today(visit_instance), func_declined_at_bhs(visit_instance)
     if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
         return True
     # Hiv -ve at enrollment, now changed to Hiv +ve
@@ -324,7 +321,6 @@ def is_gender_male(visit_instance):
 
 def evaluate_ever_had_sex_for_female(visit_instance):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
-    from ..models import SexualBehaviour
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     if visit_instance.appointment.registered_subject.gender.lower() == 'm':
         return False

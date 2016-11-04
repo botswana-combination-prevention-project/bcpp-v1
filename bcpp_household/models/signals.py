@@ -1,9 +1,9 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
-from ..classes import HouseholdIdentifier
+from ..household_identifier import HouseholdIdentifier
 from ..constants import (ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                          REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_NEARLY_ALWAYS_OCCUPIED,
                          UNKNOWN_OCCUPIED)

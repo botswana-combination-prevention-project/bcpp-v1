@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 from ..actions import process_dispatch_notebook_plot_list
-from ..filters import ReplacesFilter, ReplacedByFilter, DispatchedReplacesFilter
 from ..forms import PlotForm
 from ..models import Plot
 
@@ -32,7 +31,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
                     'replaced_by', 'replaces', 'cso_number', 'created', 'modified')
 
     list_filter = ('bhs', 'htc', 'status', 'created', 'modified', 'community', 'access_attempts', 'replaceable',
-                   ReplacedByFilter, ReplacesFilter, DispatchedReplacesFilter, 'hostname_modified',
+                   'hostname_modified',
                    'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')

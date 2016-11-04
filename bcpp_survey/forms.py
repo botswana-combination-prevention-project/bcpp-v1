@@ -1,6 +1,6 @@
 from django import forms
 
-from ..models import Survey
+from .models import Survey
 
 
 class SurveyForm(forms.Form):

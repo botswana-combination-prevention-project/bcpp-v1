@@ -1,7 +1,10 @@
+from django.apps import apps as django_apps
 from django.contrib.admin import SimpleListFilter
-from django.utils.translation import ugettext_lazy as _
 
-from ..constants import CONFIRMED, UNCONFIRMED
+from edc_constants.constants import YES, NO
+
+from .constants import CONFIRMED, UNCONFIRMED
+from .models import Household
 
 
 class ActionFilter(SimpleListFilter):
@@ -17,3 +20,5 @@ class ActionFilter(SimpleListFilter):
             return queryset.filter(plot__action=CONFIRMED)
         if self.value() == UNCONFIRMED:
             return queryset.filter(plot__action=UNCONFIRMED)
+
+

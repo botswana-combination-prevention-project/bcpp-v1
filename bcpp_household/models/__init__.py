@@ -1,4 +1,3 @@
-from .community import Community
 from .notebook_plot_list import NotebookPlotList
 from .gps_device import GpsDevice
 from .household import Household

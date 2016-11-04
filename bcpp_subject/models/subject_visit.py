@@ -1,11 +1,12 @@
 from django.db import models
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
+# from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from simple_history.models import HistoricalRecords as AuditTrail
 from edc_base.model.models import BaseUuidModel
-from edc.subject.visit_tracking.models import BaseVisitTracking
-from edc_base.audit_trail import AuditTrail
-from edc_consent.models import RequiresConsentMixin
+from edc_consent.model_mixins import RequiresConsentMixin
+from edc_metadata.model_mixins import CreatesMetadataModelMixin
+from edc_sync.models
+from edc_visit_tracking.model_mixins import VisitModelMixin
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
@@ -15,8 +16,8 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent import SubjectConsent
 
 
-class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
-                   BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, RequiresConsentMixin,
+                   SyncModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""

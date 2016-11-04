@@ -6,7 +6,7 @@ from django.template.defaultfilters import slugify
 
 from edc_base.model.models import BaseUuidModel
 
-from ..managers import SurveyManager
+from .managers import SurveyManager
 
 
 class Survey (BaseUuidModel):

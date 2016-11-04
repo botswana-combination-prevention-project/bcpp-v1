@@ -2,7 +2,6 @@ from datetime import date
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned, ImproperlyConfigured
 from django.conf import settings
-from django.db.utils import OperationalError
 
 
 class SurveyManager(models.Manager):
@@ -79,7 +78,4 @@ class SurveyManager(models.Manager):
                 else:
                     if survey_slug:
                         survey = self.get(survey_slug=survey_slug)
-            except OperationalError:
-                print 'Call app_configuration first.'
-                raise
         return survey
