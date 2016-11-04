@@ -1,23 +1,20 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
 from django_extensions.db.fields import UUIDField
+from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 from ..choices import HOUSEHOLD_REFUSAL
-from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class BaseHouseholdRefusal(SyncModelMixin, BaseUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -41,8 +38,6 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidMo
         null=True)
 
     def save(self, *args, **kwargs):
-        if self.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
         super(BaseHouseholdRefusal, self).save(*args, **kwargs)
@@ -51,7 +46,7 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidMo
         return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def __unicode__(self):
-        return unicode(self.household_structure) + '(' + unicode(self.report_datetime) + ')'
+        return '{} ({})'.format(self.household_structure, self.report_datetime.strftime('%Y-%m-%d'))
 
     class Meta:
         abstract = True

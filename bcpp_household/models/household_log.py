@@ -1,24 +1,21 @@
 from datetime import date
 
 from django.db import models
+from django_crypto_fields.fields import EncryptedTextField
+from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import date_not_before_study_start, date_not_future
+from edc_base.model.validators import date_not_future
 from edc_base.model.models import BaseUuidModel
-from edc_base.encrypted_fields import EncryptedTextField
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc_sync.model_mixins import SyncModelMixin
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
-from ..exceptions import AlreadyReplaced
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class HouseholdLog(SyncModelMixin, BaseUuidModel):
     """A system model that links the household log to the household."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
@@ -26,8 +23,8 @@ class HouseholdLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     objects = HouseholdLogManager()
 
-    def __unicode__(self):
-        return unicode(self.household_structure)
+    def __str__(self):
+        return str(self.household_structure)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -61,13 +58,13 @@ class HouseholdLog(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdLogEntry(SyncModelMixin, BaseUuidModel):
     """A model completed by the user each time the household is visited."""
     household_log = models.ForeignKey(HouseholdLog)
 
     report_datetime = models.DateField(
         verbose_name="Report date",
-        validators=[date_not_before_study_start, date_not_future])
+        validators=[date_not_future])
 
     household_status = models.CharField(
         verbose_name='Household Status',
@@ -101,19 +98,14 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def natural_key(self):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
-    def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(
-            household_identifier=self.household_log.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
-        super(HouseholdLogEntry, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         household = django_apps.get_model('bcpp_household', 'Household').objects.get(
+#             household_identifier=self.household_log.household_structure.household.household_identifier)
+#         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
-
-    def __unicode__(self):
+    def __str__(self):
         household_log = self.household_log or None
-        return unicode(household_log) + '(' + unicode(self.report_datetime) + ')'
+        return '{} ({})'.format(household_log, self.report_datetime.strftime('%Y-%m-%d'))
 
     class Meta:
         app_label = 'bcpp_household'

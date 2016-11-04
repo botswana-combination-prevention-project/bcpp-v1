@@ -1,4 +1,4 @@
-from edc.core.identifier.models import BaseIdentifierModel
+from edc_identifier.models import BaseIdentifierModel
 from edc_base.model.models.base_uuid_model import BaseUuidModel
 
 

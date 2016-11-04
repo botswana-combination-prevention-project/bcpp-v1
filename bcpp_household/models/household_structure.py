@@ -1,24 +1,23 @@
 from datetime import datetime
 
+from django.apps import apps as django_apps
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from simple_history.models import HistoricalRecords as AuditTrail
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
-from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdStructureManager
 
 from .household import Household
 from .plot import Plot
 
 
-class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class HouseholdStructure(SyncModelMixin, BaseUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration
@@ -94,17 +93,14 @@ class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    def __unicode__(self):
-        return '{} {}'.format(unicode(self.household), self.survey.survey_abbrev)
+    def __str__(self):
+        return '{} {}'.format(self.household, self.survey.survey_abbrev)
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
         if update_fields:
             pass
         else:
-            if self.household.replaced_by:
-                raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
-            # test survey vs created date + survey_slug for the current survey only
             if self.id and Survey.objects.current_survey().survey_slug == self.survey.survey_slug:
                 Survey.objects.current_survey(report_datetime=datetime.today(), survey_slug=self.survey.survey_slug)
         super(HouseholdStructure, self).save(*args, **kwargs)
@@ -129,14 +125,14 @@ class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     @property
     def member_count(self):
         """Returns the number of household members in this household for all surveys."""
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        HouseholdMember = django_apps.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk).count()
 
     @property
     def enrolled_member_count(self):
         """Returns the number of consented (or enrolled) household members
         in this household for all surveys."""
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        HouseholdMember = django_apps.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk,
                                               is_consented=True).count()
 
@@ -174,7 +170,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         Without RepresentativeEligibility, a HouseholdMember cannot be added."""
         exception_cls = exception_cls or ValidationError
         using = using or 'default'
-        RepresentativeEligibility = models.get_model('bcpp_household', 'RepresentativeEligibility')
+        RepresentativeEligibility = django_apps.get_model('bcpp_household', 'RepresentativeEligibility')
         try:
             RepresentativeEligibility.objects.using(using).get(household_structure=self)
         except RepresentativeEligibility.DoesNotExist:

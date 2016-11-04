@@ -1,14 +1,12 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords as AuditTrail
 from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_constants.choices import YES_NO_DONT_KNOW
 
 from ..managers import HouseholdAssessmentManager
-from ..exceptions import AlreadyReplaced
 
 from ..choices import RESIDENT_LAST_SEEN
 
@@ -16,7 +14,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdAssessment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class HouseholdAssessment(SyncModelMixin, BaseUuidModel):
     """A model completed by the user to assess a household that could not
     be enumerated."""
     household_structure = models.OneToOneField(HouseholdStructure)
@@ -39,17 +37,14 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidMod
         editable=True,
     )
 
-    def __unicode__(self):
-        return unicode(self.household_structure)
+    def __str__(self):
+        return str(self.household_structure)
 
     objects = HouseholdAssessmentManager()
 
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        if self.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
-                self._meta.object_name, self.pk))
         if self.household_structure.enumerated:
             raise ValidationError('HouseholdStructure has been enumerated')
         if self.household_structure.failed_enumeration_attempts < 3:

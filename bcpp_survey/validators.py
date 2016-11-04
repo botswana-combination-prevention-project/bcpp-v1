@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from ..models import Survey
+from .models import Survey
 
 
 def date_in_survey(value):

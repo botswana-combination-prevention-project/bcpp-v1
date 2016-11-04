@@ -1,7 +1,7 @@
-from edc.core.identifier.classes import BaseIdentifier
+from edc_identifier.alphanumeric_identifier import AlphanumericIdentifier
 
 
-class HouseholdIdentifier(BaseIdentifier):
+class HouseholdIdentifier(AlphanumericIdentifier):
 
     def __init__(self, plot_identifier):
         identifier_format = '{plot_identifier}{household_sequence}'
@@ -37,9 +37,9 @@ class HouseholdIdentifier(BaseIdentifier):
         sequences_in_use = [
             identifier_history_instance.identifier.split(self.plot_identifier)[1].split('-')[0]
             for identifier_history_instance in identifier_history_instances]
-        if unicode(self._household_sequence) in sequences_in_use:
+        if str(self._household_sequence) in sequences_in_use:
             self._household_sequence = 1
-            while unicode(self._household_sequence) in sequences_in_use:
+            while str(self._household_sequence) in sequences_in_use:
                 self._household_sequence += 1
         return self._household_sequence
 

@@ -1,20 +1,18 @@
+from django.apps import apps as django_apps
 from django.db import models
-from django.conf import settings
+from django_crypto_fields.fields import EncryptedTextField, EncryptedDecimalField
+from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc_base.encrypted_fields import EncryptedTextField, EncryptedDecimalField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
+from edc_sync.model_mixins import SyncModelMixin
 
-from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdManager
 
 from .plot import Plot
 
 
-class Household(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class Household(SyncModelMixin, BaseUuidModel):
     """A system model that represents the household asset. See also HouseholdStructure."""
 
     plot = models.ForeignKey(Plot, null=True)
@@ -161,13 +159,6 @@ class Household(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
-        try:
-            if self.__class__.objects.using(using).get(id=self.id).replaced_by:
-                raise AlreadyReplaced('Household {0} has been replaced '
-                                      'by plot {1}.'.format(self.household_identifier,
-                                                            self.replaced_by))
-        except self.__class__.DoesNotExist:
-            pass
         self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
 
@@ -220,7 +211,7 @@ class Household(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     structure.allow_tags = True
 
     def member_count(self):
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        HouseholdMember = django_apps.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__household__pk=self.pk).count()
 
     def deserialize_prep(self, **kwargs):

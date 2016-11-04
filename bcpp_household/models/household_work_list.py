@@ -1,12 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from simple_history.models import HistoricalRecords as AuditTrail
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
 from ..choices import HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdWorkListManager
@@ -15,7 +14,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdWorkList(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class HouseholdWorkList(SyncModelMixin, BaseUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration
@@ -88,8 +87,8 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel
 
     history = AuditTrail()
 
-    def __unicode__(self):
-        return '{}'.format(unicode(self.household_structure))
+    def __str__(self):
+        return str(self.household_structure)
 
     def save(self, *args, **kwargs):
         super(HouseholdWorkList, self).save(*args, **kwargs)

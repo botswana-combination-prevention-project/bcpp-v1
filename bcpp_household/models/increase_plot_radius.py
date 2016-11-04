@@ -1,15 +1,13 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from simple_history.models import HistoricalRecords as AuditTrail
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.dispatch.models import DispatchItemRegister
 
 from .plot import Plot
 
 
-class IncreasePlotRadius(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class IncreasePlotRadius(SyncModelMixin, BaseUuidModel):
     """A model completed by the user to allow a plot\'s GPS target radius to be changed.
 
     An instance is auto created once the criteria is met. See method plot.increase_plot_radius."""
@@ -26,25 +24,6 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidMode
 
     def natural_key(self):
         return (self.plot.plot_identifier, )
-
-    def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
-        if dispatch_container.objects.filter(
-                container_identifier=self.plot.plot_identifier, is_dispatched=True).exists():
-            return dispatch_container.objects.get(
-                container_identifier=self.plot.plot_identifier, is_dispatched=True)
-        return None
-
-    def include_for_dispatch(self):
-        return True
-
-    @property
-    def producer(self):
-        try:
-            dispatch_item_register = DispatchItemRegister.objects.using('default').get(item_pk=self.plot.pk)
-            return dispatch_item_register.producer
-        except DispatchItemRegister.DoesNotExist:
-            return None
 
     @property
     def action(self):

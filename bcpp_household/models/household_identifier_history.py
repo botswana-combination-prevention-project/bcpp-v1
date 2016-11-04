@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc.core.identifier.models import BaseIdentifierModel
-from edc_sync.models import SyncModelMixin
+from edc_identifier.models import BaseIdentifierModel
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 
