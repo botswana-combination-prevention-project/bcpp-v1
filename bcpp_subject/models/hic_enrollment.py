@@ -1,21 +1,21 @@
 from dateutil.relativedelta import relativedelta
 
+from simple_history.models import HistoricalRecords
+
+from django.apps import apps as django_apps
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
-from edc_consent.models.validators import AgeTodayValidator
-from edc_constants.constants import YES, NO, NEG
+from edc_base.model.validators import datetime_not_future
+from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import YES_NO
+from edc_constants.constants import YES, NO, NEG
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .crf_model_mixin import CrfModelMixin
 from .subject_consent import SubjectConsent
 
 
-class HicEnrollment (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class HicEnrollment (CrfModelMixin):
 
     hic_permission = models.CharField(
         verbose_name='Is it okay for the project to visit you every year for '
@@ -48,7 +48,6 @@ class HicEnrollment (BaseScheduledVisitModel):
         verbose_name="Date of birth",
         validators=[AgeTodayValidator(16, 64)],
         default=None,
-        # editable=False,
         help_text="Format is YYYY-MM-DD. From Subject Consent.",
     )
 
@@ -61,7 +60,6 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     citizen_or_spouse = models.NullBooleanField(
         default=None,
-        # editable=False,
         help_text='From Subject Consent. Is participant a citizen, or married to citizen '
                   'with a valid marriage certificate?',
     )
@@ -77,13 +75,11 @@ class HicEnrollment (BaseScheduledVisitModel):
     consent_datetime = models.DateTimeField(
         verbose_name="Consent date and time",
         validators=[
-            datetime_not_before_study_start,
             datetime_not_future, ],
-        # editable=False,
         help_text="From Subject Consent."
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         if self.hic_permission.lower() == 'yes':
@@ -103,7 +99,7 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     def is_permanent_resident(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        ResidencyMobility = models.get_model('bcpp_subject', 'ResidencyMobility')
+        ResidencyMobility = django_apps.get_model('bcpp_subject', 'ResidencyMobility')
         residency_mobility = ResidencyMobility.objects.filter(subject_visit=self.subject_visit)
         if residency_mobility.exists():
             if residency_mobility[0].permanent_resident == YES:
@@ -116,7 +112,7 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     def is_intended_residency(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        ResidencyMobility = models.get_model('bcpp_subject', 'ResidencyMobility')
+        ResidencyMobility = django_apps.get_model('bcpp_subject', 'ResidencyMobility')
         residency_mobility = ResidencyMobility.objects.filter(subject_visit=self.subject_visit)
         if residency_mobility.exists():
             if residency_mobility[0].intend_residency == NO:
@@ -129,8 +125,8 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     def get_hiv_status_today(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        HivResult = models.get_model('bcpp_subject', 'HivResult')
-        ElisaHivResult = models.get_model('bcpp_subject', 'ElisaHivResult')
+        HivResult = django_apps.get_model('bcpp_subject', 'HivResult')
+        ElisaHivResult = django_apps.get_model('bcpp_subject', 'ElisaHivResult')
         hiv_result = HivResult.objects.filter(subject_visit=self.subject_visit)
         elisa_result = ElisaHivResult.objects.filter(subject_visit=self.subject_visit)
         if hiv_result.exists():
@@ -185,7 +181,7 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     def is_locator_information(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        SubjectLocator = models.get_model('bcpp_subject', 'SubjectLocator')
+        SubjectLocator = django_apps.get_model('bcpp_subject', 'SubjectLocator')
         subject_locator = SubjectLocator.objects.filter(
             registered_subject=self.subject_visit.appointment.registered_subject)
         # At least some information to contact the person should be available
@@ -222,7 +218,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         return relativedelta(self.consent_datetime.date(), self.dob).years
     age.allow_tags = True
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Hic Enrollment"
         verbose_name_plural = "Hic Enrollment"

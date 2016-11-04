@@ -1,10 +1,22 @@
 from django.utils.translation import ugettext as _
 
+from edc_constants.constants import OTHER, YES, NO, DWTA, NOT_APPLICABLE, POS, NEG, IND, UNK, DONT_KNOW
+
+
+AGREE_STRONGLY = (
+    ('Strongly disagree', _('Strongly disagree')),
+    ('Disagree', _('Disagree')),
+    ('Uncertain', _('Uncertain')),
+    ('Agree', _('Agree')),
+    ('Strongly agree', _('Strongly agree')),
+    ('not_answering', _('Don\'t want to answer')),
+)
+
 APPT_LOCATIONS = (
     ('home', 'At home'),
     ('work', 'At work'),
     ('clinic', 'At clinic'),
-    ('OTHER', 'Other location'),
+    (OTHER, 'Other location'),
 )
 
 
@@ -55,7 +67,7 @@ REFERRAL_CODES = (
 VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
     ('other_member', '2. Other household member'),
-    ('OTHER', '9. Other'),
+    (OTHER, '9. Other'),
 ]
 
 VISIT_REASON = [
@@ -70,7 +82,7 @@ VISIT_UNSCHEDULED_REASON = (
     ('Routine oncology', _('Routine oncology clinic visit (i.e. planned chemo, follow-up)')),
     ('Ill oncology', _('Ill oncology clinic visit')),
     ('Patient called', _('Patient called to come for visit')),
-    ('OTHER', _('Other, specify:')),
+    (OTHER, _('Other, specify:')),
 )
 
 
@@ -88,7 +100,7 @@ MAIN_PARTNER_RESIDENCY = (
     ('In this community', _('In this community')),
     ('On farm/cattle post', _('On farm/cattle post')),
     ('Outside this community', _('Outside this community')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -113,7 +125,7 @@ MOBILITY = (
     ('moderate problems', _('I have moderate problems in walking about')),
     ('severe problems', _('I have severe problems in walking about')),
     ('unable to walk', _('I am unable to walk about')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -123,7 +135,7 @@ SELF_CARE = (
     ('moderate problems', _('I have moderate problems washing or dressing myself')),
     ('severe problems', _('I have severe problems washing or dressing myself')),
     ('unable to wash', _('I am unable to wash or dress myself')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -133,7 +145,7 @@ ACTIVITIES = (
     ('moderate problems', _('I have moderate problems doing my usual activities')),
     ('severe problems', _('I have severe problems doing my usual activities')),
     ('unable to', _('I am unable to do my usual activities')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -143,7 +155,7 @@ PAIN = (
     ('moderate pain', _('I have moderate pain or discomfort')),
     ('severe pain', _('I have severe pain or discomfort')),
     ('extreme pain', _('I have extreme pain or discomfort')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -153,7 +165,7 @@ ANXIETY = (
     ('moderately anxious', _('I am moderately anxious or depressed')),
     ('severely anxious', _('I am severely anxious or depressed')),
     ('extremely anxious', _('I am extremely anxious or depressed')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -164,7 +176,7 @@ CARE_FACILITIES = (
     ('Private Doctor', _('Private Doctor')),
     ('Traditional or Faith Healer', _('Traditional or Faith Healer')),
     ('No visit in past 3 months', _('No visit in past 3 months')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -175,7 +187,7 @@ CARE_REASON = (
     ('Chronic disease', _(
         'Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
     ('Other', _('Other')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
     ('None', _('None')),
 )
 
@@ -187,7 +199,7 @@ TRAVEL_HOURS = (
     ('1 to under 2 hours', _('1 to under 2 hours')),
     ('2 to under 3 hours', _('2 to under 3 hours')),
     ('More than 3 hours', _('More than 3 hours')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -207,7 +219,7 @@ NO_MEDICALCARE_REASON = (
                                              'clinical care for my HIV infection but have not been for it yet')),
     ('don\'t know where to go', _('I don\'t know where to go for HIV related medical/clinical care')),
     ('I do not have the money', _('I do not have the money for HIV related medical/clinical care')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -223,7 +235,7 @@ HEALTH_CARE_PLACE = (
     ('Mobile services', _('Mobile services')),
     ('Plantation health center', _('Plantation health center')),
     ('NGO clinic', _('NGO clinic')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -236,7 +248,7 @@ CARE_REGULARITY = (
     ('5 times', _('5 times')),
     ('6-10 times', _('6-10 times')),
     ('More than 10 times', _('More than 10 times')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -246,7 +258,7 @@ DOCTOR_VISITS = (
     ('sometimes', _('Some of the time (sometimes)')),
     ('rarely', _('Almost none of the time (rarely)')),
     ('never', _('None of the time (never)')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -258,7 +270,7 @@ JOB_TYPE = (
     ('agric', _('Self-employed in agriculture')),
     ('self full-time', _('Self-employed making money, full time')),
     ('self part-time', _('Self-employed making money, part time')),
-    ('OTHER', _('Other')),
+    (OTHER, _('Other')),
 )
 
 
@@ -279,8 +291,8 @@ OCCUPATION = (
     ('Professional', _('Professional')),
     ('Fishing', _('Fishing')),
     ('Uniformed services', _('Uniformed services')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 REASON_UNEMPLOYED = (
@@ -291,7 +303,7 @@ REASON_UNEMPLOYED = (
     ('student', _('Student/ Apprentice/ Volunteer')),
     ('housewife', _('Housewife/ Homemaker (not looking for work)')),
     ('retired', _('Retired')),
-    ('OTHER', _('Other')),
+    (OTHER, _('Other')),
     ('not looking', _('Not looking for work')),
 )
 
@@ -302,7 +314,7 @@ EMPLOYMENT_INFO = (
     ('self-employed working on my own', _('Yes, self-employed working on my own')),
     ('self-employed with own employees', _('Yes, self-employed with own employees')),
     ('not working', _('No, not working')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 JOB_DESCRIPTION = (
@@ -324,7 +336,7 @@ JOB_DESCRIPTION = (
     ('teacher', _('Teacher')),
     ('hcw', _('Health care worker')),
     ('Other', _('Other professional')),
-    ('OTHER', _('Other')),
+    (OTHER, _('Other')),
 )
 
 MONTHLY_INCOME = (
@@ -335,14 +347,14 @@ MONTHLY_INCOME = (
     ('1000-4999 pula', _('1000-4999 pula')),
     ('5000-10,000 pula', _('5000-10,000 pula')),
     ('More than 10,000 pula', _('More than 10,000 pula')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 SALARY = (
     ('Fixed salary', _('Fixed salary')),
     ('Paid daily', _('Paid daily')),
     ('Paid hourly', _('Paid hourly')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 HOUSEHOLD_INCOME = (
@@ -355,7 +367,7 @@ HOUSEHOLD_INCOME = (
     ('10,0000-20,000 pula', _('10,0000-20,000 pula')),
     ('More than 20,000 pula', _('More than 20,000 pula')),
     ('I am not sure', _('I am not sure')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 OTHER_OCCUPATION = (
@@ -367,8 +379,8 @@ OTHER_OCCUPATION = (
     ('Retired/old age', _('Retired/old age')),
     ('Pregnant or recently pregnant', _('Pregnant or recently pregnant')),
     ('Sick or injured', _('Sick or injured')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -378,7 +390,7 @@ HIV_DOC_TYPE = (
     ('ART Prescription', 'ART Prescription'),
     ('PMTCT Prescription', 'PMTCT Prescription'),
     ('Record of CD4 count', 'Record of CD4 count'),
-    ('OTHER', 'Other OPD card or ANC card documentation'),
+    (OTHER, 'Other OPD card or ANC card documentation'),
 )
 
 GRANT_TYPE = (
@@ -386,8 +398,8 @@ GRANT_TYPE = (
     ('Old age pension', _('Old age pension')),
     ('Foster care', _('Foster care')),
     ('Disability', _('Disability (disability dependency)')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -397,8 +409,8 @@ FLOORING_TYPE = (
     ('Parquet/lino', _('Parquet/lino')),
     ('Cement', _('Cement')),
     ('Tile flooring', _('Tile flooring')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -411,8 +423,8 @@ WATER_SOURCE = (
     ('Unprotected/shallow well', _('Unprotected/shallow well')),
     ('River /dam/lake/pan', _('River /dam/lake/pan')),
     ('Bowser/tanker', _('Bowser/tanker')),
-    ('OTHER', _('Other, specify (including unknown):')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify (including unknown):')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -423,8 +435,8 @@ ENERGY_SOURCE = (
     ('Electricity (mains)', _('Electricity (mains)')),
     ('Electricity (solar)', _('Electricity (solar)')),
     ('No cooking done', _('No cooking done')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -438,8 +450,8 @@ TOILET_FACILITY = (
     ('Pail bucket latrine', _('Pail bucket latrine')),
     ('Bush', _('Bush')),
     ('River or other body of water', _('River or other body of water')),
-    ('OTHER', _('Other, specify:')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -448,7 +460,7 @@ SMALLER_MEALS = (
     ('Rarely', _('Rarely')),
     ('Sometimes', _('Sometimes')),
     ('Often', _('Often')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (DWTA, _('Don\'t want to answer')),
 )
 
 
@@ -488,15 +500,30 @@ RELATION = (
     ('aunt/uncle', _('aunt/uncle')),
     ('cousin', _('cousin')),
     ('partner', _('partner/boyfriend/girlfriend')),
-    ('OTHER', _('Other, specify')),
+    (OTHER, _('Other, specify')),
 )
 
+WHEREACCESS_CHOICE = (
+    ('Traditional, faith, or religious healer/doctor', _('Traditional, faith, or religious healer/doctor')),
+    ('Pharmacy', _('Pharmacy')),
+    ('Public or government', _('Public or government health facility or clinic')),
+    ('Private health facility', _('Private health facility or clinic')),
+    ('Community health worker', _('Community health worker')),
+    (OTHER, _('Other, specify:')),
+    ('not_answering', _('Don\'t want to answer')),
+)
 
 YES_NO_RECORD_REFUSAL = (
-    ('Yes', _('Yes')),
-    ('No', _('No')),
-    ('Don\'t want to answer', _('Don\'t want to answer')),
+    (YES, _(YES)),
+    (NO, _(NO)),
+    (DWTA, _('Don\'t want to answer')),
     ('record refusal', _('Participant does not want to provide record')),
+)
+
+YES_NO_UNSURE = (
+    (YES, _(YES)),
+    (NO, _(NO)),
+    ('Not Sure', _('Not Sure')),
 )
 
 STI_DX = (
@@ -506,7 +533,7 @@ STI_DX = (
     ('pneumonia', 'Severe pneumonia or meningitis or sepsis'),
     ('PCP', 'PCP (Pneumocystis pneumonia)'),
     ('herpes', 'Herpes infection for more than one month'),
-    ('OTHER', 'Other'),
+    (OTHER, 'Other'),
 )
 
 CHOICES_FROM_BCPPLIST = (
@@ -571,4 +598,184 @@ COUNSELING_SITE = (
     ('MOBILE', 'Mobile Unit'),
     ('TENT', 'Tent'),
     ('CLINIC', 'Clinic'),
+)
+
+PLACE_CIRC = (
+    ('Government clinic or hospital', _('Government clinic or hospital')),
+    ('Traditional location (Bogerwa)', _('Traditional location (Bogerwa)')),
+    ('Outreach site (mobile or temporary center)', _('Outreach site (mobile or temporary center)')),
+    ('Private practitioner', _('Private practitioner')),
+    ('not_sure', _('I am not sure')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+WHYCIRC_CHOICE = (
+    ('Prevent HIV/AIDS', _('Prevent HIV/AIDS')),
+    ('Other medical reason', _('Other medical reason')),
+    ('Personal preference', _('Personal preference')),
+    ('Improved hygiene', _('Improved hygiene')),
+    ('Cultural tradition and/or religion', _('Cultural tradition and/or religion')),
+    ('Acceptance by sexual partner(s)', _('Acceptance by sexual partner(s)')),
+    ('Acceptance by family, friends, and/or community', _('Acceptance by family, friends, and/or community')),
+    ('not_sure', _('I am not sure')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+WHERECIRC_CHOICE = (
+    (YES, _('Yes')),
+    ('No, not sexually active and will not become sexual '
+     'active', _('No, not sexually active and will not become sexual active')),
+    ('No, prior surgical sterilization', _('No, prior surgical sterilization')),
+    ('No, partner(s) surgically sterilized', _('No, partner(s) surgically sterilized')),
+    ('No, post-menopause', _('No, post-menopause (at least 24 consecutive months without a period)')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+TIME_UNIT_CHOICE = (
+    ('Days', _('Days')),
+    ('Months', _('Months')),
+    ('Years', _('Years')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+DXCANCER_CHOICE = (
+    ('Kaposi\'s sarcoma (KS)', 'Kaposi\'s sarcoma (KS)'),
+    ('Cervical cancer', 'Cervical cancer'),
+    ('Breast cancer', 'Breast cancer'),
+    ('Non-Hodgkin\'s lymphoma (NHL)', 'Non-Hodgkin\'s lymphoma (NHL)'),
+    ('Colorectal cancer', 'Colorectal cancer'),
+    ('Prostate cancer', 'Prostate cancer'),
+    ('Cancer of mouth, throat, voice box (larynx)', 'Cancer of mouth, throat, voice box (larynx)'),
+    ('Cancer of oesophagus', 'Cancer of oesophagus'),
+    (OTHER, 'Other, specify:'),
+    (DWTA, 'Don\'t want to answer'),
+)
+
+COMMUNITY_NA = (
+    (NOT_APPLICABLE, _('Not Applicable')),
+    ('Bokaa', _('Bokaa')),
+    ('Digawana', _('Digawana')),
+    ('Gumare', _('Gumare')),
+    ('Gweta', _('Gweta')),
+    ('Lentsweletau', _('Lentsweletau')),
+    ('Lerala', _('Lerala')),
+    ('Letlhakeng', _('Letlhakeng')),
+    ('Mmandunyane', _('Mmandunyane')),
+    ('Mmankgodi', _('Mmankgodi')),
+    ('Mmadinare', _('Mmadinare')),
+    ('Mmathethe', _('Mmathethe')),
+    ('Masunga', _('Masunga')),
+    ('Maunatlala', _('Maunatlala')),
+    ('Mathangwane', _('Mathangwane')),
+    ('Metsimotlhabe', _('Metsimotlhabe')),
+    ('Molapowabojang', _('Molapowabojang')),
+    ('Nata', _('Nata')),
+    ('Nkange', _('Nkange')),
+    ('Oodi', _('Oodi')),
+    ('Otse', _('Otse')),
+    ('Rakops', _('Rakops')),
+    ('Ramokgonami', _('Ramokgonami')),
+    ('Ranaka', _('Ranaka')),
+    ('Sebina', _('Sebina')),
+    ('Sefare', _('Sefare')),
+    ('Sefophe', _('Sefophe')),
+    ('Shakawe', _('Shakawe')),
+    ('Shoshong', _('Shoshong')),
+    ('Tati_Siding', _('Tati_Siding')),
+    ('Tsetsebjwe', _('Tsetsebjwe')),
+    (OTHER, _('Other non study community')),
+)
+
+VERBAL_HIVRESULT_CHOICE = (
+    (POS, _('HIV Positive')),
+    (NEG, _('HIV Negative')),
+    (IND, _('Indeterminate')),
+    (UNK, _('I am not sure')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+
+COMMUNITY_ENGAGEMENT_CHOICE = (
+    ('Very active', _('Very active')),
+    ('Somewhat active', _('Somewhat active')),
+    ('Not active at all', _('Not active at all')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+
+VOTE_ENGAGEMENT_CHOICE = (
+    (YES, _('Yes')),
+    (NO, _('No')),
+    (NOT_APPLICABLE, _('Not applicable (no election, can\'t vote)')),
+    ('not_answering', _('Don\'t want to answer')),
+)
+
+
+SOLVE_ENGAGEMENT_CHOICE = (
+    (YES, _('Yes')),
+    (NO, _('No')),
+    (DONT_KNOW, _('Don\'t know')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+MARITAL_STATUS_CHOICE = (
+    ('Single/never married', _('Single/never married')),
+    ('Married', _('Married (common law/civil or customary/traditional)')),
+    ('Divorced/separated', _('Divorced or formally separated')),
+    ('Widowed', _('Widowed')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+REASON_CIRC_CHOICE = (
+    ('Circumcision never offered to me', _('Circumcision never offered to me')),
+    ('Procedure might be painful', _('Procedure might be painful')),
+    ('Did not know where to go for circumcision', _('Did not know where to go for circumcision')),
+    ('Did not have the time or money for circumcision', _('Did not have the time or money for circumcision')),
+    ('I might not be able to work or be active', _('I might not be able to work or be active')),
+    ('My partner might not approve', _('My partner might not approve')),
+    ('My family/friends might not approve', _('My family/friends might not approve')),
+    ('There might be a medical complication', _('There might be a medical complication')),
+    ('The healing time is very long', _('The healing time is very long')),
+    ('It will be hard to not have sex or masturbate for 6 weeks', _('It will be hard to not have sex or masturbate '
+                                                                    'for 6 weeks')),
+    ('Sex might not feel the same', _('Sex might not feel the same')),
+    ('I may not like the way my penis looks', _('I may not like the way my penis looks')),
+    ('I may not like the way my penis feels', _('I may not like the way my penis feels')),
+    ('I could die from the procedure', _('I could die from the procedure')),
+    (OTHER, _('Other, specify:')),
+    ('not_sure', _('I am not sure')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+FUTURE_REASONS_SMC_CHOICE = (
+    ('More information about benefits', _('More information about benefits')),
+    ('More information about risks', _('More information about risks')),
+    ('If there was no or minimal pain with circumcision', _('If there was no or minimal pain with circumcision')),
+    ('If circumcision could be done close to my home', _('If circumcision could be done close to my home')),
+    ('If the kgosi recommended circumcision for all men', _('If the kgosi recommended circumcision for all men')),
+    ('If I received time off work to recover from circumcision', _('If I received time off work to recover from '
+                                                                   'circumcision')),
+    ('If my sexual partner encouraged me', _('If my sexual partner encouraged me')),
+    ('If one or both of my parents encouraged me', _('If one or both of my parents encouraged me')),
+    ('If my friends encouraged me', _('If my friends encouraged me')),
+    ('not_sure', _('I am not sure')),
+    (DWTA, _('Don\'t want to answer')),
+)
+
+AWARE_FREE_CHOICE = (
+    ('Radio', _('Radio')),
+    ('Television', _('Television')),
+    ('Friend told me', _('Friend told me')),
+    ('Family told me', _('Family told me')),
+    ('Health worker told me', _('Health worker told me')),
+    ('Kgosi told us', _('Kgosi told us')),
+    ('I heard it at the kgotla', _('I heard it at the kgotla')),
+    ('I read a brochure delivered to my home', _('I read a brochure delivered to my home')),
+    ('I read it in the newspaper', _('I read it in the newspaper')),
+    ('Heard it at a community event', _('Heard it at a community event')),
+    ('not_sure', _('I am not sure')),
+    (DWTA, _('Don\'t want to answer')),
 )

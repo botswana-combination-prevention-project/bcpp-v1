@@ -1,17 +1,15 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
-from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
+from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 
-from .base_circumcision import BaseCircumcision
-from .subject_consent import SubjectConsent
+from .circumcision_mixin import CircumcisionMixin
+from .crf_model_mixin import CrfModelMixin
 
 
-class Circumcised (BaseCircumcision):
-
-    CONSENT_MODEL = SubjectConsent
+class Circumcised (CircumcisionMixin, CrfModelMixin):
 
     circ_date = models.DateField(
         verbose_name='When were you circumcised?',
@@ -54,9 +52,9 @@ class Circumcised (BaseCircumcision):
     why_circ_other = OtherCharField(
         null=True)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Circumcised"
         verbose_name_plural = "Circumcised"

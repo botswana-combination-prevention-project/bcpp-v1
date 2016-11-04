@@ -156,30 +156,6 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     history = AuditTrail()
 
-    def previous_visit(self):
-        """ Returns the next earlier subject_visit of the participant.
-        e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
-        If no previous visit, then the current visit is returned."""
-        from edc.subject.appointment.models import Appointment
-        from ..models import SubjectVisit
-        if self.id:
-            registered_subject = self.subject_visit.appointment.registered_subject
-            timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
-            if len(timepoints) > 0:
-                timepoints.reverse()
-            for point in timepoints:
-                try:
-                    previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
-                                                                   visit_definition__time_point=point)
-                    return SubjectVisit.objects.get(appointment=previous_appointment)
-                except Appointment.DoesNotExist:
-                    pass
-                except SubjectVisit.DoesNotExist:
-                    pass
-                except AttributeError:
-                    pass
-        return None
-
     def previous_appt(self):
         from edc.subject.appointment.models import Appointment
         from ..models import SubjectVisit

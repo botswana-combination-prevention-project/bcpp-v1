@@ -1,19 +1,16 @@
+from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from django.db import models
 
-from edc.core.bhp_variables.models import StudySite
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import InitialsField
 
 from ..managers import ViralLoadResultManager
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class ViralLoadResult(BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class ViralLoadResult(CrfModelMixin):
 
     sample_id = models.CharField(
         verbose_name='Aliquot Identifier',
@@ -22,7 +19,8 @@ class ViralLoadResult(BaseScheduledVisitModel):
         help_text="Aliquot identifier",
         editable=False)
 
-    clinic = models.ForeignKey(StudySite)
+    study_site = models.CharField(
+        max_length=10)
 
     clinician_initials = InitialsField(
         verbose_name='Clinician initial',
@@ -84,12 +82,9 @@ class ViralLoadResult(BaseScheduledVisitModel):
 
     objects = ViralLoadResultManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    def natural_key(self):
-        return (self.sample_id, )
-
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Viral Load Result"
         verbose_name_plural = "Viral Load Result"

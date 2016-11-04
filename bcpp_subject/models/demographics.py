@@ -1,20 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import MARITALSTATUS_CHOICE
-from bhp066.apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
+from bcpp_list.models import LiveWith, Religion, EthnicGroups
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import MARITAL_STATUS_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class Demographics (BaseScheduledVisitModel):
+class Demographics (CrfModelMixin):
 
     """A model completed by the user of the basic demographics of the participant."""
-
-    CONSENT_MODEL = SubjectConsent
 
     religion = models.ManyToManyField(
         Religion,
@@ -33,7 +32,7 @@ class Demographics (BaseScheduledVisitModel):
     marital_status = models.CharField(
         verbose_name="What is your current marital status?",
         max_length=55,
-        choices=MARITALSTATUS_CHOICE,
+        choices=MARITAL_STATUS_CHOICE,
         help_text="")
 
     num_wives = models.IntegerField(
@@ -56,9 +55,9 @@ class Demographics (BaseScheduledVisitModel):
         verbose_name="Who do you currently live with ?",
         help_text="[indicate all that apply]")
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Demographics"
         verbose_name_plural = "Demographics"

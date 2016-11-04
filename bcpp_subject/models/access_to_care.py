@@ -1,18 +1,17 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
-from bhp066.apps.bcpp_list.models import MedicalCareAccess
+from bcpp_list.models import MedicalCareAccess
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class AccessToCare (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class AccessToCare (CrfModelMixin):
 
     access_care = models.CharField(
         verbose_name="In the past year, where do you MOST OFTEN get"
@@ -82,9 +81,9 @@ class AccessToCare (BaseScheduledVisitModel):
         null=True,
         help_text="")
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Access to Care"
         verbose_name_plural = "Access to Care"

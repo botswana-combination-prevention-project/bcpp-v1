@@ -1,19 +1,17 @@
 from django.db import models
 
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 from edc_constants.choices import GENDER, POS_NEG_UNKNOWN
-
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
+from edc_constants.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
 
 from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class DetailedSexualHistory (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class DetailedSexualHistory (CrfModelMixin):
 
     rel_type = models.CharField(
         verbose_name="What type of relationship do you have with this person?",
@@ -124,5 +122,7 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         help_text=("Remember: Vaginal sex is when a man puts his penis in the vagina of a woman."
                    " Anal sex is when a man puts his penis in the rectum of a man or a woman."))
 
-    class Meta:
+    history = HistoricalRecords()
+
+    class Meta(CrfModelMixin.Meta):
         abstract = True

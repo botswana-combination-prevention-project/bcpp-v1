@@ -1,25 +1,23 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
+from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE
 
-from bhp066.apps.bcpp.choices import (
-    YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
-    FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
+from ..choices import REASON_CIRC_CHOICE, FUTURE_REASONS_SMC_CHOICE, AWARE_FREE_CHOICE
 
-from .base_circumcision import BaseCircumcision
-from .subject_consent import SubjectConsent
+from .circumcision_mixin import CircumcisionMixin
+from .crf_model_mixin import CrfModelMixin
 
 
-class Uncircumcised (BaseCircumcision):
-
-    CONSENT_MODEL = SubjectConsent
+class Uncircumcised (CircumcisionMixin, CrfModelMixin):
 
     reason_circ = models.CharField(
         verbose_name="What is the main reason that you have not yet been circumcised?",
         max_length=65,
         null=True,
-        choices=REASONCIRC_CHOICE,
+        choices=REASON_CIRC_CHOICE,
         help_text="",
     )
 
@@ -37,7 +35,7 @@ class Uncircumcised (BaseCircumcision):
         verbose_name="Which of the following might increase your willingness to"
                      " be circumcised the most?",
         max_length=75,
-        choices=FUTUREREASONSSMC_CHOICE,
+        choices=FUTURE_REASONS_SMC_CHOICE,
         null=True,
         help_text="",
     )
@@ -57,13 +55,13 @@ class Uncircumcised (BaseCircumcision):
         max_length=85,
         null=True,
         blank=True,
-        choices=AWAREFREE_CHOICE,
+        choices=AWARE_FREE_CHOICE,
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Uncircumcised"
         verbose_name_plural = "Uncircumcised"

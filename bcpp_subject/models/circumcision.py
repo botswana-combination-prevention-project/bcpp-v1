@@ -1,17 +1,16 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
-from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
+from edc_constants.choices import YES_NO_UNSURE, YES_NO
 
-from bhp066.apps.bcpp.choices import YES_NO_UNSURE, YES_NO, COMMUNITY_NA
+from ..choices import COMMUNITY_NA
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
+from .circumcision_mixin import CircumcisionMixin
 
 
-class Circumcision (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class Circumcision (CircumcisionMixin, CrfModelMixin):
 
     circumcised = models.CharField(
         verbose_name="Are you circumcised?",
@@ -45,33 +44,9 @@ class Circumcision (BaseScheduledVisitModel):
 
     circumcised_location_other = OtherCharField()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    def previous_visit(self):
-        """ Returns the next earlier subject_visit of the participant.
-        e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
-        If no previous visit, then the current visit is returned."""
-        from edc.subject.appointment.models import Appointment
-        from ..models import SubjectVisit
-        if self.id:
-            registered_subject = self.subject_visit.appointment.registered_subject
-            timepoints = range(0, self.subject_visit.appointment.visit_definition.time_point)
-            if len(timepoints) > 0:
-                timepoints.reverse()
-            for point in timepoints:
-                try:
-                    previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
-                                                                   visit_definition__time_point=point)
-                    return SubjectVisit.objects.get(appointment=previous_appointment)
-                except Appointment.DoesNotExist:
-                    pass
-                except SubjectVisit.DoesNotExist:
-                    pass
-                except AttributeError:
-                    pass
-        return None
-
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Circumcision"
         verbose_name_plural = "Circumcision"

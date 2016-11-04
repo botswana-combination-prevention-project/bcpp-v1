@@ -1,12 +1,11 @@
 from django.db import models
 
-from bhp066.apps.bcpp.choices import YES_NO_UNSURE
-from bhp066.apps.bcpp_list.models import CircumcisionBenefits
+from edc_constants.choices import YES_NO_UNSURE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
+from bcpp_list.models import CircumcisionBenefits
 
 
-class BaseCircumcision (BaseScheduledVisitModel):
+class CircumcisionMixin:
 
     circumcised = models.CharField(
         verbose_name="Do you believe that male circumcision"

@@ -1,16 +1,15 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA, YES_NO, VERBALHIVRESULT_CHOICE
+from edc_constants.choices import YES_NO_DWTA, YES_NO
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import VERBAL_HIVRESULT_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class ClinicQuestionnaire (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class ClinicQuestionnaire (CrfModelMixin):
 
     know_hiv_status = models.CharField(
         verbose_name="Do you know your current HIV status?",
@@ -25,7 +24,7 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         max_length=30,
         null=True,
         blank=True,
-        choices=VERBALHIVRESULT_CHOICE,
+        choices=VERBAL_HIVRESULT_CHOICE,
         help_text="")
 
     on_arv = models.CharField(
@@ -43,9 +42,9 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         blank=True,
         max_length=3)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Clinic Questionnaire"
         verbose_name_plural = "Clinic Questionnaire"

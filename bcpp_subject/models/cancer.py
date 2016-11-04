@@ -1,20 +1,17 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
-from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import date_not_future
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import DXCANCER_CHOICE
+from ..choices import DXCANCER_CHOICE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class Cancer (BaseScheduledVisitModel):
+class Cancer (CrfModelMixin):
 
     """A model completed by the user to record any diagnosis of cancer in the past 12 months."""
-
-    CONSENT_MODEL = SubjectConsent
 
     date_cancer = models.DateField(
         verbose_name="Date of the diagnosis of cancer:",
@@ -29,9 +26,9 @@ class Cancer (BaseScheduledVisitModel):
 
     reason_other = OtherCharField()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Cancer"
         verbose_name_plural = "Cancer"

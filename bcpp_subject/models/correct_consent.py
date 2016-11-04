@@ -1,17 +1,18 @@
-from datetime import date
 from dateutil.relativedelta import relativedelta
-from django.core.validators import RegexValidator
-from django.db import models
+
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.validators import RegexValidator
+from django.db import models
+from django_crypto_fields.fields import FirstnameField, EncryptedCharField, LastnameField
 
-from edc_sync.models import SyncModelMixin
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
-from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
-from edc_consent.models.validators import AgeTodayValidator
+from edc_base.model.validators import datetime_not_future
+from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
+from edc_sync.model_mixins import SyncModelMixin
 
 from ..managers import CorrectConsentManager
 
@@ -27,7 +28,6 @@ class BaseCorrectConsent(models.Model):
         verbose_name="Correction report date ad time",
         null=True,
         validators=[
-            datetime_not_before_study_start,
             datetime_not_future],
     )
 
@@ -328,10 +328,10 @@ class CorrectConsent(BaseCorrectConsent, SyncModelMixin, BaseUuidModel):
 
     objects = CorrectConsentManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    def __unicode__(self):
-        return unicode(self.subject_consent)
+    def __str__(self):
+        return str(self.subject_consent)
 
     def natural_key(self):
         return self.subject_consent.natural_key()

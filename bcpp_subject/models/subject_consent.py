@@ -4,22 +4,20 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from simple_history.models import HistoricalRecords
+
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.db import models
 
-from edc.core.bhp_common.utils import formatted_age
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc_base.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_consent.models.fields.bw import IdentityFieldsMixin
-from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
-                                       SampleCollectionFieldsMixin, CitizenFieldsMixin)
+from edc_base.utils import formatted_age
+from edc_consent.field_mixins.bw import IdentityFieldsMixin
+from edc_consent.field_mixins import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
+                                      SampleCollectionFieldsMixin, CitizenFieldsMixin)
 from edc_constants.constants import YES, NO
-from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
-from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
+from bcpp_household_member.constants import BHS_ELIGIBLE, BHS
+from bcpp_household_member.models import EnrollmentChecklist
+from bcpp_household_member.exceptions import MemberStatusError
 
 from ..exceptions import ConsentError
 from ..managers import SubjectConsentManager
@@ -145,22 +143,15 @@ class BaseBaseSubjectConsent(BaseHouseholdMemberConsent):
     def formatted_age_at_consent(self):
         return formatted_age(self.dob, self.consent_datetime)
 
-    def get_hiv_status(self):
-        """Returns the hiv testing history as a string.
-
-        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
-                  as well as the results of tests we perform."""
-        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
-
     class Meta:
         abstract = True
 
 
-class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBaseSubjectConsent):
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseBaseSubjectConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        HicEnrollment = models.get_model('bcpp_subject', 'HicEnrollment')
+        HicEnrollment = django_apps.get_model('bcpp_subject', 'HicEnrollment')
         if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
             # consent_datetime does not exist in cleaned_data as it not editable.
@@ -258,13 +249,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBa
                     return False
         return True
 
-    def include_for_dispatch(self):
-        return True
-
-    def dispatch_container_lookup(self, using=None):
-        return (models.get_model('bcpp_household', 'Plot'),
-                'household_member__household_structure__household__plot__plot_identifier')
-
     def save(self, *args, **kwargs):
         if not self.id:
             self.registered_subject = self.household_member.registered_subject
@@ -308,7 +292,7 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
     objects = SubjectConsentManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -316,19 +300,3 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         unique_together = (('subject_identifier', 'survey', 'version'),
                            ('first_name', 'dob', 'initials', 'version', 'survey'))
         ordering = ('-created', )
-
-
-class SubjectConsentExtended(SubjectConsent):
-
-    """ A system model that serves as a proxy model for SubjectConsent."""
-
-    SUBJECT_TYPES = ['subject']
-    GENDER_OF_CONSENT = ['M', 'F']
-    AGE_IS_ADULT = 18
-    MIN_AGE_OF_CONSENT = 16
-    MAX_AGE_OF_CONSENT = 120
-
-    class Meta:
-        proxy = True
-        get_latest_by = 'consent_datetime'
-        app_label = 'bcpp_subject'

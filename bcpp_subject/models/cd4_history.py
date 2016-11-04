@@ -1,20 +1,17 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.validators import datetime_not_future
+from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp.choices import YES_NO
-
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class Cd4History (BaseScheduledVisitModel):
+class Cd4History (CrfModelMixin):
 
     """CS002 - used to collect participant CD4 History"""
-
-    CONSENT_MODEL = SubjectConsent
 
     record_available = models.CharField(
         verbose_name="Is record of last CD4 count available?",
@@ -39,9 +36,9 @@ class Cd4History (BaseScheduledVisitModel):
         blank=True,
         help_text="")
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "CD4 History"
         verbose_name_plural = "CD4 History"

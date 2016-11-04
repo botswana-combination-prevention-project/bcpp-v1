@@ -1,31 +1,23 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from simple_history.models import HistoricalRecords
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future, eligible_if_yes
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc_base.model.validators import datetime_not_future, eligible_if_yes
+from edc_constants.choices import YES_NO, YES_NO_REFUSED
 
-from bhp066.apps.bcpp.choices import YES_NO, YES_NO_REFUSED
 
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class MyManager(models.Manager):
-    def get_by_natural_key(self, pk):
-        return self.get(pk=pk)
-
-
-class CeaEnrollmentChecklist (BaseDispatchSyncUuidModel):
+class CeaEnrollmentChecklist (CrfModelMixin):
 
     """CE003"""
 
-    CONSENT_MODEL = SubjectConsent
-
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
-        validators=[datetime_not_before_study_start, datetime_not_future])
+        validators=[datetime_not_future])
 
     citizen = models.CharField(
         verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
@@ -102,14 +94,9 @@ class CeaEnrollmentChecklist (BaseDispatchSyncUuidModel):
         max_length=25,
         help_text=" if 'NO,' STOP participant cannot be enrolled")
 
-    objects = MyManager()
+    history = HistoricalRecords()
 
-    history = AuditTrail()
-
-    def natural_key(self):
-        return self.pk
-
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "CEA Enrollment Checklist"
         verbose_name_plural = "CEA Enrollment Checklist"

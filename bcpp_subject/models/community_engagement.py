@@ -1,20 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import COMMUNITYENGAGEMENT_CHOICE, VOTEENGAGEMENT_CHOICE, SOLVEENGAGEMENT_CHOICE
-from bhp066.apps.bcpp_list.models import NeighbourhoodProblems
+from bcpp_list.models import NeighbourhoodProblems
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import COMMUNITY_ENGAGEMENT_CHOICE, VOTE_ENGAGEMENT_CHOICE, SOLVE_ENGAGEMENT_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class CommunityEngagement (BaseScheduledVisitModel):
+class CommunityEngagement (CrfModelMixin):
 
     """A model completed by the user on the participant's engagement in the community."""
-
-    CONSENT_MODEL = SubjectConsent
 
     community_engagement = models.CharField(
         verbose_name="How active are you in community activities such as"
@@ -23,14 +22,14 @@ class CommunityEngagement (BaseScheduledVisitModel):
                      " and development of the community that surrounds you??",
         max_length=25,
         null=True,
-        choices=COMMUNITYENGAGEMENT_CHOICE,
+        choices=COMMUNITY_ENGAGEMENT_CHOICE,
         help_text="")
 
     vote_engagement = models.CharField(
         verbose_name="Did you vote in the last local government election?",
         max_length=50,
         null=True,
-        choices=VOTEENGAGEMENT_CHOICE,
+        choices=VOTE_ENGAGEMENT_CHOICE,
         help_text="")
 
     problems_engagement = models.ManyToManyField(
@@ -48,12 +47,12 @@ class CommunityEngagement (BaseScheduledVisitModel):
                      " adults work together in solving it?",
         max_length=25,
         null=True,
-        choices=SOLVEENGAGEMENT_CHOICE,
+        choices=SOLVE_ENGAGEMENT_CHOICE,
         help_text="")
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Community Engagement"
         verbose_name_plural = "Community Engagement"
