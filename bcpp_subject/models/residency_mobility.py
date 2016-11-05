@@ -73,7 +73,10 @@ class ResidencyMobility (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
+
+    def __unicode__(self):
+        return unicode(self.subject_visit)
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
@@ -86,10 +89,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
                 raise exception_cls('An HicEnrollment form exists for this subject. Values for '
                                     '\'permanent_resident\' and \'intend_residency\' cannot be changed.')
 
-    def __unicode__(self):
-        return unicode(self.subject_visit)
-
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Residency & Mobility"
         verbose_name_plural = "Residency & Mobility"

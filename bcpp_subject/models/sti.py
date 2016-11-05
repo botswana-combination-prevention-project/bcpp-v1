@@ -76,9 +76,9 @@ class Sti (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Potentially HIV-related illnesses"
         verbose_name_plural = "Potentially HIV-related illnesses"

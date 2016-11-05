@@ -3,8 +3,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Max
 
-from edc.export.managers import ExportHistoryManager
-from edc.export.models import ExportTrackingFieldsMixin
+from edc_export.managers import ExportHistoryManager
+from edc_export.models import ExportTrackingFieldsMixin
 # from edc_map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_is_future, date_is_future
@@ -14,12 +14,9 @@ from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 from .subject_locator import SubjectLocator
 from .tb_symptoms import TbSymptoms
-
-# site_mappers.autodiscover()
 
 REFERRAL_CLINIC_TYPES = (
     ('ANC', 'ANC'),
@@ -29,10 +26,8 @@ REFERRAL_CLINIC_TYPES = (
 )
 
 
-class SubjectReferral(ExportTrackingFieldsMixin, BaseScheduledVisitModel):
+class SubjectReferral(ExportTrackingFieldsMixin, CrfModelMixin):
     """A model completed by the user to indicate a referral to care."""
-
-    CONSENT_MODEL = SubjectConsent
 
     subject_referred = models.CharField(
         max_length=10,
@@ -315,7 +310,7 @@ class SubjectReferral(ExportTrackingFieldsMixin, BaseScheduledVisitModel):
 
     export_history = ExportHistoryManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return '{0}: {1} {2} {3}'.format(self.subject_visit,
@@ -410,7 +405,7 @@ class SubjectReferral(ExportTrackingFieldsMixin, BaseScheduledVisitModel):
         return """<a href="{url}" />dashboard</a>""".format(url=url)
     dashboard.allow_tags = True
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = 'Subject Referral'
         verbose_name_plural = "Subject Referral"

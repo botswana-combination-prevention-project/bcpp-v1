@@ -65,9 +65,9 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV Testing History"
         verbose_name_plural = "HIV Testing History"

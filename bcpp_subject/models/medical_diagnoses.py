@@ -52,9 +52,9 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         help_text="Please review the available OPD card or other medical records, for all participants",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Medical Diagnoses"
         verbose_name_plural = "Medical Diagnoses"

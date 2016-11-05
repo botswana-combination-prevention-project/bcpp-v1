@@ -45,9 +45,9 @@ class HivMedicalCare (BaseScheduledVisitModel):
                   "they are available.",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV Medical care"
         verbose_name_plural = "HIV Medical care"

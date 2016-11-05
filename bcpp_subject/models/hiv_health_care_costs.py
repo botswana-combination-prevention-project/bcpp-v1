@@ -60,9 +60,9 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV health care costs"
         verbose_name_plural = "HIV health care costs"

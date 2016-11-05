@@ -1,20 +1,16 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
 
-from bhp066.apps.bcpp_list.models import HeartDisease
+from bcpp_list.models import HeartDisease
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HeartAttack (BaseScheduledVisitModel):
+class HeartAttack (CrfModelMixin):
 
     """A model completed by the user to record any heart conditions in the past 12 months."""
-
-    CONSENT_MODEL = SubjectConsent
 
     date_heart_attack = models.DateField(
         verbose_name="Date of the heart disease or stroke diagnosis:",
@@ -30,9 +26,9 @@ class HeartAttack (BaseScheduledVisitModel):
 
     dx_heart_attack_other = OtherCharField()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Heart Attack or Stroke"
         verbose_name_plural = "Heart Attack or Stroke"

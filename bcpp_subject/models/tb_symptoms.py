@@ -1,18 +1,15 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO
+from edc_constants.choices import YES_NO
 
 from ..managers import TbSymptomsManager
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class TbSymptoms (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class TbSymptoms (CrfModelMixin):
 
     cough = models.CharField(
         verbose_name="Does the participant currently have a COUGH that has lasted for more than 2 weeks?",
@@ -58,9 +55,9 @@ class TbSymptoms (BaseScheduledVisitModel):
 
     objects = TbSymptomsManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "TB Symptoms"
         verbose_name_plural = "TB Symptoms"

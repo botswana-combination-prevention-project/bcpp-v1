@@ -130,9 +130,9 @@ class OutpatientCare (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Outpatient care"
         verbose_name_plural = "Outpatient care"

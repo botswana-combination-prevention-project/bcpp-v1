@@ -126,7 +126,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
                    "does not want to answer, leave blank"),
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return "%s" % (self.subject_visit)
@@ -134,7 +134,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
     def get_absolute_url(self):
         return reverse('admin:bcpp_subject_labourmarketwages_change', args=(self.id,))
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Labour Market & Lost Wages"
         verbose_name_plural = "Labour Market & Lost Wages"

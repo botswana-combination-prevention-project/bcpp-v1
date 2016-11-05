@@ -69,9 +69,9 @@ class Education (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Education"
         verbose_name_plural = "Education"

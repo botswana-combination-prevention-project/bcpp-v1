@@ -96,11 +96,9 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     export_history = ExportHistoryManager()
 
-    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
-
-    history = AuditTrail()
-
     objects = SubjectLocatorManager()
+
+    history = HistoricalRecords()
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
@@ -199,6 +197,6 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     def __unicode__(self):
         return unicode(self.subject_visit)
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         verbose_name = 'Subject Locator'
         app_label = 'bcpp_subject'

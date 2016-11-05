@@ -26,9 +26,9 @@ class Participation (BaseScheduledVisitModel):
         choices=PARTIAL_PARTICIPATION_TYPE,
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Participation"
         verbose_name_plural = "Participation"

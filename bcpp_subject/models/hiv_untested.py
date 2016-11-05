@@ -24,9 +24,9 @@ class HivUntested (HivTestingSupplemental):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV Untested"
         verbose_name_plural = "HIV Untested"

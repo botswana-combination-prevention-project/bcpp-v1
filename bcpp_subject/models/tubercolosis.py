@@ -1,21 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
 
-from bhp066.apps.bcpp.choices import DXTB_CHOICE
+from ..choices import DX_TB_CHOICE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class Tubercolosis (BaseScheduledVisitModel):
+class Tubercolosis (CrfModelMixin):
 
     """A model completed by the user to record any diagnosis of
     Tuberculosis in the past 12 months."""
-
-    CONSENT_MODEL = SubjectConsent
 
     date_tb = models.DateField(
         verbose_name="Date of the diagnosis of tuberculosis:",
@@ -26,16 +24,16 @@ class Tubercolosis (BaseScheduledVisitModel):
     dx_tb = models.CharField(
         verbose_name="[Interviewer:]What is the tuberculosis diagnosis as recorded?",
         max_length=50,
-        choices=DXTB_CHOICE,
+        choices=DX_TB_CHOICE,
         help_text="",
     )
     dx_tb_other = OtherCharField(
         null=True,
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Tubercolosis"
         verbose_name_plural = "Tubercolosis"

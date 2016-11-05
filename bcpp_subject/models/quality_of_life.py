@@ -58,9 +58,9 @@ class QualityOfLife (BaseScheduledVisitModel):
                    " If participant does not want to answer, leave blank"),
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Quality of Life"
         verbose_name_plural = "Quality of Life"

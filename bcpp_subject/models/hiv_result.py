@@ -57,7 +57,7 @@ class HivResult (BaseScheduledVisitModel):
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
@@ -83,7 +83,7 @@ class HivResult (BaseScheduledVisitModel):
     def get_result_datetime(self):
         return self.report_datetime
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = "bcpp_subject"
         verbose_name = "Today\'s HIV Result"
         verbose_name_plural = "Today\'s HIV Result"

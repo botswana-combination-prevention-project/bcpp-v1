@@ -171,9 +171,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
         max_length=3,
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV care & Adherence"
         verbose_name_plural = "HIV care & Adherence"

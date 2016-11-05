@@ -88,12 +88,12 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         help_text="if the respondent has reached that point by the time of the current interview.",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def validate_not_hiv_infected(self, enrollment_checklist, household_member, exception_cls=None):
         pass
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Reproductive Health"
         verbose_name_plural = "Reproductive Health"

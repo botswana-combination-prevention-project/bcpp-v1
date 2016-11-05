@@ -136,7 +136,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
 
     objects = PimaVlManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     quota = QuotaManager()
 
@@ -163,7 +163,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "POC VL"
         verbose_name_plural = "POC VL"

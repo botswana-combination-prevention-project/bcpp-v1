@@ -1,13 +1,13 @@
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
 from .detailed_sexual_history import DetailedSexualHistory
 
 
 class ThirdPartner (DetailedSexualHistory):
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(DetailedSexualHistory.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "CS003: Third Partner"
         verbose_name_plural = "CS003: Third Partner"

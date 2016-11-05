@@ -21,9 +21,9 @@ class NonPregnancy (BasePregnancy):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Non Pregnancy"
         verbose_name_plural = "Non Pregnancy"

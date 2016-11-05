@@ -1,19 +1,16 @@
 from django.db import models
 
-# from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from simple_history.models import HistoricalRecords as AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.models import BaseUuidModel
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_metadata.model_mixins import CreatesMetadataModelMixin
-from edc_sync.models
+from edc_sync.model_mixins import SyncModelMixin
 from edc_visit_tracking.model_mixins import VisitModelMixin
 
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bcpp_household_member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
-
-from .subject_off_study_mixin import SubjectOffStudyMixin
-from .subject_consent import SubjectConsent
 
 
 class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, RequiresConsentMixin,
@@ -21,8 +18,6 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
-
-    CONSENT_MODEL = SubjectConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -34,7 +29,7 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         choices=VISIT_UNSCHEDULED_REASON,
     )
 
-    history = AuditTrail(True)
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.household_member.registered_subject.subject_identifier
@@ -42,15 +37,7 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         self.reason = 'consent'
         super(SubjectVisit, self).save(*args, **kwargs)
 
-#     def __unicode__(self):
-#         return '{} {} ({}) {}'.format(self.appointment.registered_subject.subject_identifier,
-#                                       self.appointment.registered_subject.first_name,
-#                                       self.appointment.registered_subject.gender,
-#                                       self.appointment.visit_definition.code)
-
-    def dispatch_container_lookup(self):
-        return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-
     class Meta:
         app_label = "bcpp_subject"
         verbose_name = "Subject Visit"
+        consent_model = 'bcpp_subject.subjectconsent'

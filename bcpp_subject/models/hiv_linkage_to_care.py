@@ -154,7 +154,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
 
     evidence_not_refered_other = OtherCharField()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def previous_appt(self):
         from edc.subject.appointment.models import Appointment
@@ -195,7 +195,7 @@ class HivLinkageToCare (BaseScheduledVisitModel):
     def query_id(self):
         del self._query_id
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Hiv Linkage To Care"
         verbose_name_plural = "Hiv Linkage To Care"

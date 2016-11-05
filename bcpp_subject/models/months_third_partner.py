@@ -17,13 +17,13 @@ class MonthsThirdPartner (BaseSexualPartner):
         blank=True,
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.third_partner_arm = self.get_partner_arm()
         super(MonthsThirdPartner, self).save(*args, **kwargs)
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Third Partner - 12 Months"
         verbose_name_plural = "Third Partner - 12 Months"

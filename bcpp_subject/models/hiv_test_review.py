@@ -30,7 +30,7 @@ class HivTestReview (BaseScheduledVisitModel):
                   " from the written record should be recorded.",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def get_test_code(self):
         return 'HIV'
@@ -38,7 +38,7 @@ class HivTestReview (BaseScheduledVisitModel):
     def get_result_datetime(self):
         return datetime(self.hiv_test_date.year, self.hiv_test_date.month, self.hiv_test_date.day)
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "HIV Test Review"
         verbose_name_plural = "HIV Test Review"

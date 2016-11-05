@@ -57,9 +57,9 @@ class RbdDemographics (BaseScheduledVisitModel):
         help_text="[indicate all that apply]",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "RBD Demographics"
         verbose_name_plural = "RBD Demographics"

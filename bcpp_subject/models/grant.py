@@ -48,9 +48,9 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, SyncModelMixin, Bas
     )
     other_grant = OtherCharField()
 
-    history = AuditTrail()
-
     objects = GrantManager()
+
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.report_datetime = self.labour_market_wages.report_datetime
@@ -90,7 +90,7 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, SyncModelMixin, Bas
                 'labour_market_wages__subject_visit__household_member_'
                 '_household_structure__household__plot__plot_identifier')
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Grant"
         verbose_name_plural = "Grants"

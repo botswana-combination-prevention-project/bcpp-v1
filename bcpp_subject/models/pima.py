@@ -57,9 +57,9 @@ class Pima (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "PIMA CD4 count"
         verbose_name_plural = "PIMA CD4 count"

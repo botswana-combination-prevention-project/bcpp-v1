@@ -779,3 +779,19 @@ AWARE_FREE_CHOICE = (
     ('not_sure', _('I am not sure')),
     (DWTA, _('Don\'t want to answer')),
 )
+
+DX_TB_CHOICE = (
+    ('Pulmonary tuberculosis', 'Pulmonary tuberculosis'),
+    ('Extrapulmonary (outside the lungs) tuberculosis', 'Extrapulmonary (outside the lungs) tuberculosis'),
+    ('Other', 'Other, specify:'),
+    ('not_answering', 'Don\'t want to answer'),
+)
+
+ALCOHOL_CHOICE = (
+    ('Never', _('Never')),
+    ('Less then once a week', _('Less then once a week')),
+    ('Once a week', _('Once a week')),
+    ('2 to 3 times a week', _('2 to 3 times a week')),
+    ('more than 3 times a week', _('more than 3 times a week')),
+    ('not_answering', _('Don\'t want to answer')),
+)

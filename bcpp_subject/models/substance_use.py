@@ -1,16 +1,15 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_CHOICE
+from edc_constants.choices import YES_NO_DWTA
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import ALCOHOL_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class SubstanceUse (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class SubstanceUse(CrfModelMixin):
 
     alcohol = models.CharField(
         verbose_name="In the past month, how often did you consume alcohol?",
@@ -26,9 +25,9 @@ class SubstanceUse (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Substance Use"
         verbose_name_plural = "Substance Use"
