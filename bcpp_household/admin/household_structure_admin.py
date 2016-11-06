@@ -1,24 +1,21 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_household_admin
 from ..actions import export_as_kml_hs
 from ..forms import HouseholdStructureForm
 from ..models import HouseholdStructure, Plot
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
+@admin.register(HouseholdStructure, site=bcpp_household_admin)
+class HouseholdStructureAdmin(ModelAdminMixin):
 
-    def __init__(self, *args, **kwargs):
-        self.actions.append(export_as_kml_hs)
-        super(HouseholdStructureAdmin, self).__init__(*args, **kwargs)
+    actions = [export_as_kml_hs]
 
     form = HouseholdStructureForm
     date_hierarchy = 'modified'
     instructions = []
-    # fields = (
-    #    'survey',
-    #    'note')
     list_display = (
         'plot',
         'survey',
@@ -66,5 +63,3 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
                 except ValueError:
                     self.readonly_fields.append('plot')
         return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(HouseholdStructure, HouseholdStructureAdmin)

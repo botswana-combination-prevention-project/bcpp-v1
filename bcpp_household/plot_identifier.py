@@ -1,5 +1,3 @@
-from django.db import models
-
 from edc_identifier.alphanumeric_identifier import AlphanumericIdentifier
 
 
@@ -30,12 +28,3 @@ class PlotIdentifier(AlphanumericIdentifier):
         """ Users may override to pass non-default keyword arguments to get_identifier
         before the identifier is created."""
         return {'community': self.get_community()}
-
-    @classmethod
-    def get_notebook_plot_lists(self):
-        """ Returns a list of plots allocated to research assistant machine """
-        NotebookPlotList = models.get_model('bcpp_household', 'notebookplotlist')
-#         try:
-        return [notebook.plot_identifier for notebook in NotebookPlotList.objects.all()]
-#         except OperationalError as e:
-#             print e.__dict__

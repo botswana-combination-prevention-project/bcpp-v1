@@ -1,12 +1,11 @@
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from edc_map.site_mappers import site_mappers
 
 from ..models import Plot, PlotLog
 
 
-class PlotForm(BaseModelForm):
+class PlotForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -126,3 +125,4 @@ class PlotForm(BaseModelForm):
 
     class Meta:
         model = Plot
+        fields = '__all__'

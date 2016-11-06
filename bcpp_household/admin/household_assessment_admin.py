@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_household_admin
 from ..forms import HouseholdAssessmentForm
 from ..models import HouseholdAssessment
 
-from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdAssessmentAdmin(BaseHouseholdStructureModelAdmin):
+@admin.register(HouseholdAssessment, site=bcpp_household_admin)
+class HouseholdAssessmentAdmin(ModelAdminMixin):
 
     form = HouseholdAssessmentForm
 
@@ -22,5 +24,3 @@ class HouseholdAssessmentAdmin(BaseHouseholdStructureModelAdmin):
     }
 
     list_filter = ('household_structure__household__community',)
-
-admin.site.register(HouseholdAssessment, HouseholdAssessmentAdmin)

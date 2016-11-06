@@ -1,12 +1,14 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
-from ..models import HouseholdLogEntry, HouseholdLog
+from ..admin_site import bcpp_household_admin
 from ..forms import HouseholdLogForm, HouseholdLogEntryForm
+from ..models import HouseholdLogEntry, HouseholdLog
+
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdLogEntryAdmin(BaseModelAdmin):
+@admin.register(HouseholdLogEntry, site=bcpp_household_admin)
+class HouseholdLogEntryAdmin(ModelAdminMixin):
     form = HouseholdLogEntryForm
     date_hierarchy = 'modified'
     list_per_page = 15
@@ -32,8 +34,6 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
                     self.readonly_fields.append('household_log')
         return super(HouseholdLogEntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(HouseholdLogEntry, HouseholdLogEntryAdmin)
-
 
 class HouseholdLogEntryInline(admin.TabularInline):
     model = HouseholdLogEntry
@@ -41,7 +41,8 @@ class HouseholdLogEntryInline(admin.TabularInline):
     max_num = 5
 
 
-class HouseholdLogAdmin(BaseModelAdmin):
+@admin.register(HouseholdLog, site=bcpp_household_admin)
+class HouseholdLogAdmin(ModelAdminMixin):
     form = HouseholdLogForm
     instructions = []
     inlines = [HouseholdLogEntryInline, ]
@@ -51,4 +52,3 @@ class HouseholdLogAdmin(BaseModelAdmin):
     readonly_fields = ('household_structure', )
     search_fields = ('household_structure__household__household_identifier', 'household_structure__pk')
     list_filter = ('household_structure__survey', 'hostname_created', 'created')
-admin.site.register(HouseholdLog, HouseholdLogAdmin)

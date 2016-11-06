@@ -1,5 +1,6 @@
 from dateutil.parser import parse
 from django.apps import AppConfig as DjangoApponfig
+from django.conf import settings
 from django.utils import timezone
 
 from edc_device.apps import AppConfig as EdcDeviceAppConfigParent
@@ -13,6 +14,7 @@ from edc_timepoint.timepoint import Timepoint
 class AppConfig(DjangoApponfig):
     name = 'bcpp'
     verbose_name = 'Botswana Combination Prevention Project'
+    use_current_community_filter = True
 
 
 class EdcDeviceAppConfig(EdcDeviceAppConfigParent):
@@ -31,6 +33,7 @@ class EdcMapAppConfig(EdcMapAppConfigParent):
     landmark_model = ('bcpp_map', 'landmark')
     verify_point_on_save = False
     zoom_levels = ['14', '15', '16', '17', '18']
+    current_mapper_name = settings.CURRENT_MAPPER_NAME
 
 
 class EdcIdentifierAppConfig(EdcIdentifierAppConfigParent):

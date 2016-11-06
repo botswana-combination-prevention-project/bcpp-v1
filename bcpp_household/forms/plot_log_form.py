@@ -1,21 +1,20 @@
 from datetime import datetime
 
 from django import forms
-from django.forms.util import ErrorList
-
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..constants import INACCESSIBLE, CONFIRMED, ACCESSIBLE
 from ..models import PlotLog, PlotLogEntry
+from django.forms.utils import ErrorList
 
 
-class PlotLogForm(BaseModelForm):
+class PlotLogForm(forms.ModelForm):
 
     class Meta:
         model = PlotLog
+        fields = '__all__'
 
 
-class PlotLogEntryForm(BaseModelForm):
+class PlotLogEntryForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(PlotLogEntryForm, self).clean()
@@ -52,3 +51,4 @@ class PlotLogEntryForm(BaseModelForm):
 
     class Meta:
         model = PlotLogEntry
+        fields = '__all__'

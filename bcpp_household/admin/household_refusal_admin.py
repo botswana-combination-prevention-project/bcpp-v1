@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_household_admin
 from ..forms import HouseholdRefusalForm
 from ..models import HouseholdRefusal
 
-from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdRefusalAdmin(BaseHouseholdStructureModelAdmin):
+@admin.register(HouseholdRefusal, site=bcpp_household_admin)
+class HouseholdRefusalAdmin(ModelAdminMixin):
 
     form = HouseholdRefusalForm
     date_hierarchy = 'modified'
@@ -26,5 +28,3 @@ class HouseholdRefusalAdmin(BaseHouseholdStructureModelAdmin):
     list_filter = ('report_datetime', 'created', 'household_structure__household__community')
 
     search_fields = ('household_structure__household__household_identifier', 'community', 'id', 'plot__id')
-
-admin.site.register(HouseholdRefusal, HouseholdRefusalAdmin)

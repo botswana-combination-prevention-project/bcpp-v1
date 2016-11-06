@@ -1,13 +1,12 @@
+from django import forms
 from django.db.models import Max
 from django.forms import ValidationError
-
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..constants import ELIGIBLE_REPRESENTATIVE_ABSENT
 from ..models import RepresentativeEligibility, HouseholdLogEntry
 
 
-class RepresentativeEligibilityForm(BaseModelForm):
+class RepresentativeEligibilityForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(RepresentativeEligibilityForm, self).clean()
@@ -33,3 +32,4 @@ class RepresentativeEligibilityForm(BaseModelForm):
 
     class Meta:
         model = RepresentativeEligibility
+        fields = '__all__'

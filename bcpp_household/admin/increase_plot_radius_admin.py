@@ -1,14 +1,16 @@
 from django.contrib import admin
 
 from ..actions import update_increaseplotradius_action
+from ..admin_site import bcpp_household_admin
 from ..filters import ActionFilter
 from ..forms import IncreasePlotRadiusForm
 from ..models import IncreasePlotRadius
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class IncreasePlotRadiusAdmin(BaseHouseholdModelAdmin):
+@admin.register(IncreasePlotRadius, site=bcpp_household_admin)
+class IncreasePlotRadiusAdmin(ModelAdminMixin):
 
     form = IncreasePlotRadiusForm
 
@@ -17,5 +19,3 @@ class IncreasePlotRadiusAdmin(BaseHouseholdModelAdmin):
     list_filter = (ActionFilter, )
     search_fields = ('plot__plot_identifier', 'plot__hostname_modified')
     actions = [update_increaseplotradius_action]
-
-admin.site.register(IncreasePlotRadius, IncreasePlotRadiusAdmin)

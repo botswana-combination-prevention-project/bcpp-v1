@@ -2,18 +2,17 @@ import datetime
 
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
-
 from ..models import HouseholdLog, HouseholdLogEntry
 
 
-class HouseholdLogForm(BaseModelForm):
+class HouseholdLogForm(forms.ModelForm):
 
     class Meta:
         model = HouseholdLog
+        fields = '__all__'
 
 
-class HouseholdLogEntryForm(BaseModelForm):
+class HouseholdLogEntryForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(HouseholdLogEntryForm, self).clean()
@@ -27,3 +26,4 @@ class HouseholdLogEntryForm(BaseModelForm):
 
     class Meta:
         model = HouseholdLogEntry
+        fields = '__all__'

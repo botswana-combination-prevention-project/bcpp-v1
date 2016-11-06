@@ -1,18 +1,19 @@
 from datetime import date
 
-from django.db import models
+from django.apps import apps as django_apps
 
-from edc_constants.constants import DONE, IN_PROGRESS
+from edc_constants.constants import DONE
+from edc_appointment.constants import IN_PROGRESS_APPT
 
-from bhp066.apps.bcpp_household_member.models import MemberAppointment, HouseholdMember
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_household_member.models import MemberAppointment, HouseholdMember
+from bcpp_survey.models import Survey
 
 from ..models import HouseholdStructure, HouseholdWorkList, HouseholdLogEntry
 
 
 def update_household_work_list(label=None, household_structure=None):
-    HicEnrollment = models.get_model('bcpp_subject', 'HicEnrollment')
-    SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
+    HicEnrollment = django_apps.get_model('bcpp_subject', 'HicEnrollment')
+    SubjectConsent = django_apps.get_model('bcpp_subject', 'SubjectConsent')
     current_survey = Survey.objects.current_survey()
     survey_datetime_start = current_survey.datetime_start
     created = 0
@@ -29,7 +30,7 @@ def update_household_work_list(label=None, household_structure=None):
                 label=label).count()
             member_appointment = MemberAppointment.objects.filter(
                 household_member__household_structure=household_structure, label=label).exclude(
-                    appt_status__in=[DONE, IN_PROGRESS]).order_by('appt_date')[0]
+                    appt_status__in=[DONE, IN_PROGRESS_APPT]).order_by('appt_date')[0]
             appt_date = member_appointment.appt_date
             status = 'scheduled'
         except IndexError:

@@ -1,13 +1,15 @@
 from django.contrib import admin
 
-from ..actions import process_dispatch_notebook_plot_list
+from ..actions import process_dispatch_available_plots
+from ..admin_site import bcpp_household_admin
 from ..forms import PlotForm
 from ..models import Plot
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class PlotAdmin(BaseHouseholdModelAdmin):
+@admin.register(Plot, site=bcpp_household_admin)
+class PlotAdmin(ModelAdminMixin):
 
     form = PlotForm
     date_hierarchy = 'modified'
@@ -42,6 +44,4 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
     }
-    actions = [process_dispatch_notebook_plot_list]
-
-admin.site.register(Plot, PlotAdmin)
+    actions = [process_dispatch_available_plots]

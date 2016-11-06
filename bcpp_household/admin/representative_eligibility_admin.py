@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_household_admin
 from ..forms import RepresentativeEligibilityForm
 from ..models import RepresentativeEligibility
 
-from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class RepresentativeEligibilityAdmin(BaseHouseholdStructureModelAdmin):
+@admin.register(RepresentativeEligibility, site=bcpp_household_admin)
+class RepresentativeEligibilityAdmin(ModelAdminMixin):
 
     form = RepresentativeEligibilityForm
     fields = (
@@ -22,5 +24,3 @@ class RepresentativeEligibilityAdmin(BaseHouseholdStructureModelAdmin):
         "verbal_script": admin.VERTICAL,
     }
     list_filter = ('report_datetime', 'household_structure__household__community')
-
-admin.site.register(RepresentativeEligibility, RepresentativeEligibilityAdmin)

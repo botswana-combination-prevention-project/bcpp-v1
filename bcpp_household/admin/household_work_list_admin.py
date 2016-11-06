@@ -1,13 +1,15 @@
 from django.contrib import admin
 
 from ..actions import update_household_work_list_action, show_plot_on_map
+from ..admin_site import bcpp_household_admin
 from ..forms import HouseholdWorkListForm
 from ..models import HouseholdWorkList
 
-from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdWorkListAdmin(BaseHouseholdStructureModelAdmin):
+@admin.register(HouseholdWorkList, site=bcpp_household_admin)
+class HouseholdWorkListAdmin(ModelAdminMixin):
 
     form = HouseholdWorkListForm
     date_hierarchy = 'visit_date'
@@ -66,5 +68,3 @@ class HouseholdWorkListAdmin(BaseHouseholdStructureModelAdmin):
         'survey': admin.VERTICAL,
     }
     readonly_fields = ('household_structure', 'survey', )
-
-admin.site.register(HouseholdWorkList, HouseholdWorkListAdmin)

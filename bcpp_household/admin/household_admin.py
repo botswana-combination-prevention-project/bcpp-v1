@@ -1,31 +1,26 @@
 from django.contrib import admin
 
-# from ..actions import update_replaceables
-from ..filters import ReplacedByFilter
 from ..forms import HouseholdForm
+
+from ..admin_site import bcpp_household_admin
 from ..models import Household
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from .modeladmin_mixins import ModelAdminMixin
 
 
-class HouseholdAdmin(BaseHouseholdModelAdmin):
+@admin.register(Household, site=bcpp_household_admin)
+class HouseholdAdmin(ModelAdminMixin):
 
     form = HouseholdForm
-    date_hierarchy = 'modified'
     list_per_page = 30
     list_max_show_all = 1000
 
     instructions = []
 
-    list_display = ('household_identifier', 'structure', 'plot', 'community',
-                    'replaceable', 'replaced_by', 'created', 'modified')
+    list_display = ('household_identifier', 'structure', 'plot', 'community', 'created', 'modified')
 
-    list_filter = ('created', 'modified', 'community', 'replaceable', ReplacedByFilter, 'hostname_modified')
+    list_filter = ('created', 'modified', 'community', 'hostname_modified')
 
-    search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
+    search_fields = ('household_identifier', 'community', 'id', 'plot__id')
 
     readonly_fields = ('plot', 'household_identifier', )
-
-    # actions = [update_replaceables, ]
-
-admin.site.register(Household, HouseholdAdmin)

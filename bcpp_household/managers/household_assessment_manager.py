@@ -1,6 +1,10 @@
-from .base_household_structure_manager import BaseHouseholdStructureManager
+from django.db import models
+
+from bcpp.manager_mixins import CurrentCommunityManagerMixin
+
+from .manager_mixins import HouseholdStructureManagerMixin
 
 
-class HouseholdAssessmentManager(BaseHouseholdStructureManager):
+class HouseholdAssessmentManager(CurrentCommunityManagerMixin, HouseholdStructureManagerMixin, models.Manager):
 
     pass

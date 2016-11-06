@@ -3,11 +3,11 @@ from django.contrib import admin
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import get_model
 from django.http import HttpResponseRedirect
 
 from .utils.update_increaseplotradius import update_increaseplotradius
 from .utils.update_household_work_list import update_household_work_list
+from bcpp.models import AvailablePlot
 
 
 def show_plot_on_map(modeladmin, request, queryset, **kwargs):
@@ -19,23 +19,6 @@ def update_household_work_list_action(modeladmin, request, queryset, **kwargs):
     for qs in queryset:
         update_household_work_list(label=qs.label, household_structure=qs.household_structure)
 update_household_work_list_action.short_description = "Update Work List Item(s)"
-
-
-# def update_replaceables_action(modeladmin, request, queryset, **kwargs):
-#     try:
-#         already_running(update_replaceables)
-#         result = update_replaceables.delay()
-#         messages.add_message(request, messages.INFO, (
-#             '{0.status}: Updating replaceable plots and households. ({0.id})').format(result))
-#     except CeleryTaskAlreadyRunning as celery_task_already_running:
-#         messages.add_message(request, messages.WARNING, str(celery_task_already_running))
-#     except CeleryNotRunning as not_running:
-#         messages.add_message(request, messages.WARNING, str(not_running))
-#     except Exception as e:
-#         messages.add_message(request, messages.ERROR, (
-#             'Unable to run task. Celery got {}.'.format(str(e))))
-# update_replaceables_action.short_description = (
-#     'Update replaceable plots and households. (also updates model Replaceables)')
 
 
 def update_increaseplotradius_action(modeladmin, request, queryset, **kwargs):
@@ -50,22 +33,19 @@ def process_dispatch(modeladmin, request, queryset, **kwargs):
     content_type = ContentType.objects.get_for_model(queryset.model)
     return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=not_allocated".format(
         content_type.pk, ",".join(selected)))
-
 process_dispatch.short_description = "Dispatch plots to netbook."
 
 
-def process_dispatch_notebook_plot_list(modeladmin, request, queryset, **kwargs):
-    """This action will use GET method to display a list of plots to be dispatched to notebook_plot_list,
+def process_dispatch_available_plots(modeladmin, request, queryset, **kwargs):
+    """This action will use GET method to display a list of plots to be dispatched to available plots,
        using dispatch.html template.
     """
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
-    NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
-    content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
+    content_type2 = ContentType.objects.get_for_model(AvailablePlot)
     content_type = ContentType.objects.get_for_model(queryset.model)
-    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(
+    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&available_plots=allocated&ct1={2}".format(
         content_type.pk, ",".join(selected), content_type2.pk))
-
-process_dispatch_notebook_plot_list.short_description = "Dispatch plots to netbook plot list model."
+process_dispatch_available_plots.short_description = "Dispatch available plots to client."
 
 
 def export_as_kml(modeladmin, request, queryset, **kwargs):

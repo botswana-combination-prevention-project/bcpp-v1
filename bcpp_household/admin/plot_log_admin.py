@@ -2,13 +2,15 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
+from ..admin_site import bcpp_household_admin
 from ..models import PlotLogEntry, PlotLog
 from ..forms import PlotLogForm, PlotLogEntryForm
 
+from .modeladmin_mixins import ModelAdminMixin
 
-class PlotLogEntryAdmin(BaseModelAdmin):
+
+@admin.register(PlotLogEntry, site=bcpp_household_admin)
+class PlotLogEntryAdmin(ModelAdminMixin):
     form = PlotLogEntryForm
     date_hierarchy = 'modified'
     fields = ('plot_log', 'report_datetime', 'log_status', 'reason', 'reason_other', 'comment')
@@ -78,8 +80,6 @@ class PlotLogEntryAdmin(BaseModelAdmin):
             url = next_url_name
         return url
 
-admin.site.register(PlotLogEntry, PlotLogEntryAdmin)
-
 
 class PlotLogEntryInline(admin.TabularInline):
     model = PlotLogEntry
@@ -87,7 +87,8 @@ class PlotLogEntryInline(admin.TabularInline):
     max_num = 5
 
 
-class PlotLogAdmin(BaseModelAdmin):
+@admin.register(PlotLog, site=bcpp_household_admin)
+class PlotLogAdmin(ModelAdminMixin):
     form = PlotLogForm
     instructions = []
     inlines = [PlotLogEntryInline, ]
@@ -97,4 +98,3 @@ class PlotLogAdmin(BaseModelAdmin):
     readonly_fields = ('plot', )
     search_fields = ('plot__plot_identifier', 'plot__pk')
     list_filter = ('hostname_created', 'modified', 'user_modified')
-admin.site.register(PlotLog, PlotLogAdmin)

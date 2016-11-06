@@ -1,13 +1,12 @@
 from datetime import datetime
+
 from django import forms
 from django.conf import settings
-
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import HouseholdStructure
 
 
-class HouseholdStructureForm(BaseModelForm):
+class HouseholdStructureForm(forms.ModelForm):
 
     def clean(self):
 
@@ -32,3 +31,4 @@ class HouseholdStructureForm(BaseModelForm):
 
     class Meta:
         model = HouseholdStructure
+        fields = '__all__'

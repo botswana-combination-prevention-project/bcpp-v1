@@ -1,40 +1,26 @@
 from datetime import timedelta
 
-from django.conf import settings
+from django.apps import apps as django_apps
 from django.db import models
 
-from edc_map.site_mappers import site_mappers
+from bcpp.manager_mixins import CurrentCommunityManagerMixin
 
-from ..plot_identifier import PlotIdentifier
-
-from .base_household_structure_manager import BaseHouseholdStructureManager
+from .manager_mixins import HouseholdStructureManagerMixin
 
 
-class HouseholdLogManager(BaseHouseholdStructureManager):
-    pass
+class HouseholdLogManager(CurrentCommunityManagerMixin, HouseholdStructureManagerMixin, models.Manager):
+
+    lookup = 'household_structure__household__plot'
 
 
-class HouseholdLogEntryManager(models.Manager):
+class HouseholdLogEntryManager(CurrentCommunityManagerMixin, models.Manager):
+
+    lookup = 'household_log__household_structure__household__plot'
 
     def get_by_natural_key(self, report_datetime, household_identifier, survey_name):
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        HouseholdLog = django_apps.get_model('bcpp_household', 'HouseholdLog')
         household_log = HouseholdLog.objects.get_by_natural_key(household_identifier, survey_name)
         margin = timedelta(microseconds=999)
         return self.get(report_datetime__range=(
             report_datetime - margin, report_datetime + margin),
             household_log=household_log)
-
-    def get_queryset(self):
-        if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.get_mapper(site_mappers.current_community).map_area
-            if PlotIdentifier.get_notebook_plot_lists():
-                plot_identifier_list = PlotIdentifier.get_notebook_plot_lists()
-                return super(HouseholdLogEntryManager, self).get_queryset().filter(
-                    household_log__household_structure__household__plot__community=community,
-                    household_log__household_structure__household__plot__plot_identifier__in=plot_identifier_list
-                )
-            else:
-                return super(HouseholdLogEntryManager, self).get_queryset().filter(
-                    household_log__household_structure__household__plot__community=community
-                )
-        return super(HouseholdLogEntryManager, self).get_queryset()

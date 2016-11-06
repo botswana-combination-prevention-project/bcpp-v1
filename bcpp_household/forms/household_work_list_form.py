@@ -1,9 +1,9 @@
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from django import forms
 
 from ..models import HouseholdWorkList
 
 
-class HouseholdWorkListForm(BaseModelForm):
+class HouseholdWorkListForm(forms.ModelForm):
 
     def clean(self):
 
@@ -12,3 +12,4 @@ class HouseholdWorkListForm(BaseModelForm):
 
     class Meta:
         model = HouseholdWorkList
+        fields = '__all__'
