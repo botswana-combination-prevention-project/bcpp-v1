@@ -9,7 +9,7 @@ from edc.core.bhp_common.utils import convert_from_camel
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 

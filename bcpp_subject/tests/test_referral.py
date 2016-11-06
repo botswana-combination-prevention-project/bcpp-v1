@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc.notification.models import Notification, NotificationPlan
 from edc.export.models import ExportPlan
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory

@@ -1,11 +1,11 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import date_not_future, date_not_before_study_start
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_future
+
+from ..choices import WHY_NOPARTICIPATE_CHOICE
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -15,7 +15,7 @@ class SubjectRefusal (BaseMemberStatusModel):
     potentially eligible household member refusing participating in BHS."""
     refusal_date = models.DateField(
         verbose_name="Date subject refused participation",
-        validators=[date_not_before_study_start, date_not_future],
+        validators=[date_not_future],
         help_text="Date format is YYYY-MM-DD")
 
     reason = models.CharField(
@@ -23,7 +23,7 @@ class SubjectRefusal (BaseMemberStatusModel):
                      " improve the study if you could tell us the main reason"
                      " you do not want to participate in this study?",
         max_length=50,
-        choices=WHYNOPARTICIPATE_CHOICE,
+        choices=WHY_NOPARTICIPATE_CHOICE,
         help_text="")
 
     reason_other = OtherCharField()
@@ -44,16 +44,12 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text='IMPORTANT: Do not include any names or other personally identifying '
                   'information in this comment')
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def get_registration_datetime(self):
         return self.report_datetime
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(
-            household_identifier=self.household_member.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         try:

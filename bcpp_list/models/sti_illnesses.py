@@ -1,8 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class StiIllnesses (BaseListModel):
-    pass
+class StiIllnesses (ListModelMixin):
 
     class Meta:
         app_label = "bcpp_list"

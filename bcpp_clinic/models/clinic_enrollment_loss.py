@@ -3,9 +3,9 @@ from datetime import datetime
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 

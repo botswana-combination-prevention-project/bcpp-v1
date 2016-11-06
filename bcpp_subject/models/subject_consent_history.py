@@ -2,7 +2,7 @@ from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember

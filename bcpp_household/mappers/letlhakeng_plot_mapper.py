@@ -1,7 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple

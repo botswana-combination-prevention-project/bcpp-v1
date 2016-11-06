@@ -1,14 +1,14 @@
-from django.db import models
-from django.db.models import get_model
+from django.apps import apps as django_apps
 from django.conf import settings
+from django.db import models
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 
 class HouseholdInfoManager(models.Manager):
 
     def get_by_natural_key(self, household_identifier, survey_name):
-        HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdStructure = django_apps.get_model('bcpp_household', 'HouseholdStructure')
         household_structure = HouseholdStructure.objects.get_by_natural_key(household_identifier, survey_name)
         return self.get(household_structure=household_structure)
 

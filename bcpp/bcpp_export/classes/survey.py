@@ -1,4 +1,4 @@
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from bhp066.apps.bcpp_household.models import Plot
 from bhp066.apps.bcpp_survey.models import Survey as SurveyModel

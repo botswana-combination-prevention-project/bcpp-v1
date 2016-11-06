@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django_revision import site_revision
 from django.core.exceptions import ImproperlyConfigured
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 
 class Command(BaseCommand):

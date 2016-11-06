@@ -1,5 +1,4 @@
 from .base_member_status_model import BaseMemberStatusModel
-from .contact_log import ContactLog
 from .enrollment_checklist import EnrollmentChecklist
 from .enrollment_loss import EnrollmentLoss
 from .household_head_eligibility import HouseholdHeadEligibility

@@ -1,8 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class NeighbourhoodProblems (BaseListModel):
-    pass
+class NeighbourhoodProblems (ListModelMixin):
 
     class Meta:
         app_label = "bcpp_list"

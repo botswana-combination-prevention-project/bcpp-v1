@@ -1,24 +1,19 @@
 from django.db import models
+from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc_base.encrypted_fields import EncryptedCharField, EncryptedTextField
 from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import date_not_before_study_start, date_not_future
-
-from bhp066.apps.bcpp_household.models import Plot
-
-from .base_member_status_model import BaseMemberStatusModel
+from edc_base.model.models import BaseUuidModel
+from edc_base.model.validators import date_not_future
+from edc_sync.model_mixins import SyncModelMixin
 
 from ..choices import NEXT_APPOINTMENT_SOURCE
 
 
-class BaseSubjectEntry(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class BaseSubjectEntry(SyncModelMixin, BaseUuidModel):
     """For absentee and undecided log models."""
     report_datetime = models.DateField(
         verbose_name="Report date",
-        validators=[date_not_before_study_start, date_not_future])
+        validators=[date_not_future])
 
     reason_other = OtherCharField()
 
@@ -45,24 +40,6 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel)
         null=True,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
-
-    @property
-    def in_replaced_household(self):
-        """Returns True if the household for this entry is "replaced"""""
-        return self.inline_parent.household_member.household_structure.household.replaced_by
-
-    def dispatch_container_lookup(self):
-        field = None
-        for fld in self._meta.fields:
-            if fld.rel:
-                if issubclass(fld.rel.to, BaseMemberStatusModel):
-                    field = fld
-                    break
-        if not field:
-            raise TypeError('Method \'dispatch_container_lookup\' cannot find the "inline\'s" '
-                            'related field for class {0}'.format(self.__class__))
-        return (Plot, ('{0}__household_member__household_structure__household__'
-                       'plot__plot_identifier').format(field.name))
 
     class Meta:
         abstract = True

@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 site_mappers.autodiscover()
 

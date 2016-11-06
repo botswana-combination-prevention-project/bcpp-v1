@@ -1,14 +1,13 @@
 from datetime import datetime
 
 from django.db import models
-from django_extensions.db.fields import UUIDField
 
 from edc_base.model.fields import OtherCharField
 from edc_base.model.models import BaseUuidModel
 
-from bhp066.apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
+from ..choices import WHY_NOPARTICIPATE_CHOICE
 from ..managers import SubjectRefusalHistoryManager
 
 from .household_member import HouseholdMember
@@ -17,7 +16,7 @@ from .household_member import HouseholdMember
 class SubjectRefusalHistory(BaseUuidModel):
     """A system model that tracks the history of deleted refusal instances."""
 
-    transaction = UUIDField()
+    transaction = models.UUIDField()
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -36,7 +35,7 @@ class SubjectRefusalHistory(BaseUuidModel):
                       " improve the study if you could tell us the main reason"
                       " you do not want to participate in this study?"),
         max_length=50,
-        choices=WHYNOPARTICIPATE_CHOICE,
+        choices=WHY_NOPARTICIPATE_CHOICE,
         help_text="",
     )
     reason_other = OtherCharField()

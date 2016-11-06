@@ -1,18 +1,13 @@
-from edc_base.audit_trail import AuditTrail
-
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from simple_history.models import HistoricalRecords
 
 from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectUndecided (BaseMemberStatusModel):
     """A system model that links "undecided" information to a household member."""
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        if self.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(
-                self.subject_undecided.household_member.household_structure.household.household_identifier))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         try:

@@ -1,14 +1,14 @@
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.db.models import Max
 
-from edc_export.managers import ExportHistoryManager
-from edc_export.models import ExportTrackingFieldsMixin
-# from edc_map.classes import site_mappers
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
+from edc_export.managers import ExportHistoryManager
+from edc_export.model_mixins import ExportTrackingFieldsMixin
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..classes import SubjectReferralHelper

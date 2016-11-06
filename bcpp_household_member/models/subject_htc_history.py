@@ -6,7 +6,7 @@ from django_extensions.db.fields import UUIDField
 from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 

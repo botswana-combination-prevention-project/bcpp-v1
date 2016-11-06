@@ -2,22 +2,19 @@ import re
 
 from django.db import models
 
-from edc.core.bhp_variables.models import StudySite
-from edc.core.identifier.exceptions import IdentifierError
-from edc_map.classes import site_mappers
-from edc_sync.models import SyncModelMixin
+from edc_map.site_mappers import site_mappers
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.registration.models import RegisteredSubject
-from edc_consent.models import BaseConsent
 from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_survey.models import Survey
-from bhp066.apps.bcpp.choices import COMMUNITIES
+from bcpp.models import RegisteredSubject
+from bcpp_household_member.models import HouseholdMember
+from bcpp_survey.models import Survey
+from ..choices import COMMUNITIES
+from edc_identifier.exceptions import IdentifierError
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, SyncModelMixin, BaseUuidModel):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, ConsentMi, SyncModelMixin, BaseUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 
@@ -27,9 +24,9 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, SyncModelMix
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
 
-    study_site = models.ForeignKey(
-        StudySite,
+    study_site = models.CharField(
         verbose_name='Site',
+        max_length=15,
         null=True,
         help_text="This refers to the site or 'clinic area' where the subject is being consented.",
         editable=False,
@@ -53,7 +50,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, SyncModelMix
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def get_site_code(self):
@@ -125,14 +122,3 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, SyncModelMix
 
     class Meta:
         abstract = True
-
-# change subclassing. Clinic Does not use BaseDispatchSyncUuidModel, BaseSyncUuidModel
-#
-#
-# class BaseSyncHouseholdMemberConsent(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
-#
-#     def dispatch_container_lookup(self, using=None):
-#         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-#
-#     class Meta:
-#         abstract = True

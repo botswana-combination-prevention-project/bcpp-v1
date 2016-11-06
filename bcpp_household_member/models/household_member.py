@@ -3,43 +3,40 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from simple_history.models import HistoricalRecords
+
+from django.apps import apps as django_apps
 from django.conf import settings
-
-from django.core.urlresolvers import reverse
-from django.core.exceptions import ValidationError
 from django.core.exceptions import ImproperlyConfigured
-from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.core.validators import (
+    MinLengthValidator, MaxLengthValidator, MinValueValidator, MaxValueValidator, RegexValidator)
 from django.db import models
+from django_crypto_fields.fields import FirstnameField
+from django_crypto_fields.mask_encrypted import mask_encrypted
 
+from edc_base.model.fields import OtherCharField
+from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD, YES, NO
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc.map.classes.controller import site_mappers
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import FirstnameField, mask_encrypted
-from edc_base.model.fields import OtherCharField
+from edc_map.site_mappers import site_mappers
+from edc_sync.model_mixins import SyncModelMixin
 
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-from bhp066.apps.bcpp_household.models import Plot
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
-from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
+from bcpp.models import RegisteredSubject
+from bcpp_household.models import HouseholdStructure
+from bcpp_household.models import Plot
+from bcpp_survey.models import Survey
 
-from bhp066.apps.bcpp_survey.models import Survey
-
-from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS, DETAILS_CHANGE_REASON
+from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS, DETAILS_CHANGE_REASON, INABILITY_TO_PARTICIPATE_REASON
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DECEASED
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DECEASED, HEAD_OF_HOUSEHOLD
 from ..managers import HouseholdMemberManager
-from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
-class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class HouseholdMember(SyncModelMixin, BaseUuidModel):
     """A model completed by the user to represent an enumerated household member."""
+
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
@@ -266,7 +263,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     objects = HouseholdMemberManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         try:
@@ -309,9 +306,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         clear_enrollment_fields = []
         self.allow_enrollment(using)
         self.check_eligible_representative_filled(self.household_structure, using=using)
-        if self.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(
-                self.household_structure.household.household_identifier))
         if self.member_status == DECEASED:
             self.set_death_flags
         else:
@@ -475,7 +469,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     @property
     def enrollment_checklist(self):
         """Returns the enrollment checklist instance or None."""
-        EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+        EnrollmentChecklist = django_apps.get_model('bcpp_household_member', 'EnrollmentChecklist')
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
         except EnrollmentChecklist.DoesNotExist:
@@ -485,7 +479,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     @property
     def subject_htc(self):
         """Returns the SubjectHtc instance or None."""
-        SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
+        SubjectHtc = django_apps.get_model('bcpp_household_member', 'SubjectHtc')
         try:
             subject_htc = SubjectHtc.objects.get(household_member=self)
         except SubjectHtc.DoesNotExist:
@@ -581,7 +575,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         """Deletes the death form if it exists when survival status
         changes from Dead to Alive """
         if self.survival_status == ALIVE:
-            SubjectDeath = models.get_model('bcpp_household_member', 'SubjectDeath')
+            SubjectDeath = django_apps.get_model('bcpp_household_member', 'SubjectDeath')
             try:
                 SubjectDeath.objects.get(registered_subject=self.registered_subject).delete()
             except SubjectDeath.DoesNotExist:
@@ -646,7 +640,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
             return url
         elif not model_pk:
-            model_class = models.get_model(app_label, model)
+            model_class = django_apps.get_model(app_label, model)
             try:
                 instance = model_class.objects.get(household_member=self)
                 model_pk = instance.id
@@ -679,7 +673,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     def subject_absentee_instance(self):
         """Returns the subject absentee instance for this member
         and creates a subject_absentee_instance if it does not exist."""
-        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
+        SubjectAbsentee = django_apps.get_model('bcpp_household_member', 'subjectabsentee')
         try:
             subject_absentee = SubjectAbsentee.objects.get(household_member__pk=self.pk)
         except SubjectAbsentee.DoesNotExist:
@@ -690,7 +684,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
     def subject_undecided_instance(self):
         """Returns the subject undecided instance for this member
         and creates a subject_undecided_instance if it does not exist."""
-        SubjectUndecided = models.get_model('bcpp_household_member', 'subjectundecided')
+        SubjectUndecided = django_apps.get_model('bcpp_household_member', 'subjectundecided')
         try:
             subject_undecided = SubjectUndecided.objects.get(household_member__pk=self.pk)
         except SubjectUndecided.DoesNotExist:
@@ -708,8 +702,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         urls = {}
         app_label = 'bcpp_household_member'
         model = 'subjectabsenteeentry'
-        SubjectAbsentee = models.get_model(app_label, 'subjectabsentee')
-        SubjectAbsenteeEntry = models.get_model(app_label, model)
+        SubjectAbsentee = django_apps.get_model(app_label, 'subjectabsentee')
+        SubjectAbsenteeEntry = django_apps.get_model(app_label, model)
         try:
             subject_absentee = SubjectAbsentee.objects.get(household_member=self)
             for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(
@@ -735,8 +729,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         urls = {}
         app_label = 'bcpp_household_member'
         model = 'subjectundecidedentry'
-        SubjectUndecided = models.get_model(app_label, 'subjectundecided')
-        SubjectUndecidedEntry = models.get_model(app_label, model)
+        SubjectUndecided = django_apps.get_model(app_label, 'subjectundecided')
+        SubjectUndecidedEntry = django_apps.get_model(app_label, model)
         try:
             subject_undecided = SubjectUndecided.objects.get(household_member=self)
             for subject_undecided_entry in SubjectUndecidedEntry.objects.filter(
@@ -752,14 +746,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         return urls
 
     def absentee_form_label(self):
-        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
-        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
+        SubjectAbsentee = django_apps.get_model('bcpp_household_member', 'subjectabsentee')
+        SubjectAbsenteeEntry = django_apps.get_model('bcpp_household_member', 'subjectabsenteeentry')
         return self.form_label_helper(SubjectAbsentee, SubjectAbsenteeEntry)
     absentee_form_label.allow_tags = True
 
     def undecided_form_label(self):
-        SubjectUndecided = models.get_model('bcpp_household_member', 'subjectundecided')
-        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'subjectundecidedentry')
+        SubjectUndecided = django_apps.get_model('bcpp_household_member', 'subjectundecided')
+        SubjectUndecidedEntry = django_apps.get_model('bcpp_household_member', 'subjectundecidedentry')
         return self.form_label_helper(SubjectUndecided, SubjectUndecidedEntry)
     undecided_form_label.allow_tags = True
 
@@ -797,7 +791,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         return self._get_form_url('subjectmoved')
 
     def get_form_label(self, model_name):
-        model = models.get_model('bcpp_household_member', model_name)
+        model = django_apps.get_model('bcpp_household_member', model_name)
         if model.objects.filter(household_member=self):
             return model.objects.get(household_member=self)
         else:
@@ -839,21 +833,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             subject_identifier = self.id
         return subject_identifier
 
-    def get_hiv_history(self):
-        """Updates and returns hiv history using the site_lab_tracker global.
-        """
-        hiv_history = ''
-        if self.registered_subject:
-            if self.registered_subject.subject_identifier:
-                hiv_history = site_lab_tracker.get_history_as_string(
-                    'HIV', self.registered_subject.subject_identifier,
-                    self.registered_subject.subject_type)
-        return hiv_history
-
     @property
     def consents(self):
         """ Returns the subject_consent instance or None."""
-        SubjectConsent = models.get_model('bcpp_subject', 'subjectconsent')
+        SubjectConsent = django_apps.get_model('bcpp_subject', 'subjectconsent')
         return SubjectConsent.objects.filter(
             household_member__internal_identifier=self.internal_identifier)
 

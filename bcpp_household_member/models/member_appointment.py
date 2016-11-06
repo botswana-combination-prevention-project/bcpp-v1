@@ -1,21 +1,21 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_constants.choices import TIME_OF_DAY, TIME_OF_WEEK
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.subject.appointment.choices import APPT_STATUS
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp_survey.models import Survey
+from edc_appointment.choices import APPT_STATUS
+from edc_base.model.models import BaseUuidModel
+from edc_constants.choices import TIME_OF_DAY, TIME_OF_WEEK
+from edc_sync.model_mixins import SyncModelMixin
+
+from bcpp_survey.models import Survey
 
 from ..managers import MemberAppointmentManager
 
 from .household_member import HouseholdMember
 
 
-class MemberAppointment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class MemberAppointment(SyncModelMixin, BaseUuidModel):
 
     """A model created by the system and updated by the user for annual survey appointments."""
 
@@ -58,11 +58,11 @@ class MemberAppointment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel
 
     is_confirmed = models.BooleanField(default=False)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = MemberAppointmentManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}'.format(self.appt_date.strftime('%Y-%m-%d'))
 
     def natural_key(self):
@@ -71,9 +71,6 @@ class MemberAppointment(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel
 
     def get_report_datetime(self):
         return self.created
-
-    def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'plot'), 'household_member__household_structure__household__plot')
 
     def call_list(self):
         url = reverse('admin:bcpp_subject_calllist_changelist')

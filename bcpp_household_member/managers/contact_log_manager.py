@@ -1,6 +1,8 @@
 import dateutil.parser
 
 from datetime import timedelta
+
+from django.apps import apps as django_apps
 from django.db import models
 
 
@@ -13,7 +15,7 @@ class ContactLogItemManager(models.Manager):
     def get_by_natural_key(self, contact_datetime, pk):
         contact_datetime = dateutil.parser.parse(contact_datetime)
         margin = timedelta(microseconds=999)
-        ContactLog = models.get_model('bcpp_household_member', 'ContactLog')
+        ContactLog = django_apps.get_model('bcpp_household_member', 'ContactLog')
         contact_log = ContactLog.objects.get_by_natural_key(pk)
         return self.get(report_datetime__range=(contact_datetime - margin, contact_datetime + margin),
                         contact_log=contact_log)

@@ -1,8 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class TransportMode (BaseListModel):
-    pass
+class TransportMode (ListModelMixin):
 
     class Meta:
         app_label = "bcpp_list"

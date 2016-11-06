@@ -6,7 +6,7 @@ from edc_lab.lab_clinic_reference.classes import ClinicReferenceFlag, ClinicGrad
 from lis.specimen.lab_result_item.models import BaseResultItem
 
 from .result import Result
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 

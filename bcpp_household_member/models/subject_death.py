@@ -1,12 +1,11 @@
 from django.db import models
 
-from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
-from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import date_not_before_study_start, date_not_future
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
+# from edc_death_report.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_future
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -18,7 +17,6 @@ class SubjectDeath(BaseMemberStatusModel):
     death_date = models.DateField(
         verbose_name="Date of Death:",
         validators=[
-            date_not_before_study_start,
             date_not_future],
         help_text="",
     )
@@ -26,18 +24,17 @@ class SubjectDeath(BaseMemberStatusModel):
     site_aware_date = models.DateField(
         verbose_name="Date site aware of Death:",
         validators=[
-            date_not_before_study_start,
             date_not_future],
         help_text="",
     )
 
-    death_cause_info = models.ForeignKey(
-        DeathCauseInfo,
-        verbose_name=("What is the primary source of cause of death information? "
-                      "(if multiple source of information, list one with the smallest "
-                      "number closest to the top of the list) "),
-        help_text="",
-    )
+#     death_cause_info = models.ForeignKey(
+#         DeathCauseInfo,
+#         verbose_name=("What is the primary source of cause of death information? "
+#                       "(if multiple source of information, list one with the smallest "
+#                       "number closest to the top of the list) "),
+#         help_text="",
+#     )
 
     death_cause_info_other = OtherCharField(
         verbose_name="if other specify...",
@@ -55,11 +52,11 @@ class SubjectDeath(BaseMemberStatusModel):
         " major cause)"
     )
 
-    death_cause_category = models.ForeignKey(
-        DeathCauseCategory,
-        verbose_name="Based on the above description, what category best defines the major cause of death? ",
-        help_text="",
-    )
+#     death_cause_category = models.ForeignKey(
+#         DeathCauseCategory,
+#         verbose_name="Based on the above description, what category best defines the major cause of death? ",
+#         help_text="",
+#     )
 
     death_cause_other = OtherCharField(
         verbose_name="if other specify...",
@@ -73,11 +70,11 @@ class SubjectDeath(BaseMemberStatusModel):
         default=0,
     )
 
-    primary_medical_care_giver = models.ForeignKey(
-        DeathMedicalResponsibility,
-        verbose_name="Who was responsible for primary medical care during the month prior to death?",
-        help_text="",
-    )
+#     primary_medical_care_giver = models.ForeignKey(
+#         DeathMedicalResponsibility,
+#         verbose_name="Who was responsible for primary medical care during the month prior to death?",
+#         help_text="",
+#     )
 
     relationship_death_study = models.CharField(
         verbose_name="What is the relationship of the death to study participation?",
@@ -86,18 +83,15 @@ class SubjectDeath(BaseMemberStatusModel):
         help_text="",
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        if self.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(
-                self.subject_undecided.household_member.household_structure.household.household_identifier))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         super(SubjectDeath, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return unicode(self.registered_subject)
+    def __str__(self):
+        return str(self.registered_subject)
 
     class Meta:
         app_label = "bcpp_household_member"

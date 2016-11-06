@@ -1,7 +1,8 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class SubjectMovedReason(BaseListModel):
+class SubjectMovedReason(ListModelMixin):
+
     class Meta:
         app_label = 'bcpp_list'
         verbose_name = "Subject Moved Reason"

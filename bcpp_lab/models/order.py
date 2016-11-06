@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
 
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 

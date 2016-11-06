@@ -1,31 +1,27 @@
 from django.db import models
 
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.subject.registration.models import RegisteredSubject
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.model.models.base_uuid_model import BaseUuidModel
+from edc_base.model.validators import datetime_not_future
+from edc_sync.model_mixins import SyncModelMixin
 
-from bhp066.apps.bcpp_household.models import Plot
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_household.models import Plot
+from bcpp_survey.models import Survey
 
 from ..managers import BaseMemberStatusManager
 
 from .household_member import HouseholdMember
 
 
-class BaseMemberStatusModel(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class BaseMemberStatusModel(SyncModelMixin, BaseUuidModel):
 
     """ Base for membership form models that need a foreignkey to
     the registered subject and household_member model"""
-
-    registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
     household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
         validators=[
-            datetime_not_before_study_start,
             datetime_not_future, ],
         auto_now=False)
 
@@ -33,7 +29,7 @@ class BaseMemberStatusModel(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     objects = BaseMemberStatusManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} {1}'.format(
             self.household_member.member_status.lower(),
             self.get_report_datetime().strftime('%Y-%m-%d'))

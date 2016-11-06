@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'edc_timepoint.apps.AppConfig',
     'bcpp_map.apps.AppConfig',
     'bcpp_household.apps.AppConfig',
+    'bcpp_household_member.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
     'bcpp.apps.EdcDeviceAppConfig',
     'bcpp.apps.EdcMapAppConfig',

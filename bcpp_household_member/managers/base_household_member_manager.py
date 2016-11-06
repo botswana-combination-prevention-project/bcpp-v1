@@ -1,16 +1,17 @@
+from django.apps import apps as django_apps
 from django.conf import settings
 from django.db import models
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
-from bhp066.apps.bcpp_household.classes import PlotIdentifier
+from bcpp_household.plot_identifier import PlotIdentifier
 
 
 class BaseHouseholdMemberManager(models.Manager):
     """Manager base class for managers on models with key to HouseholdMember."""
 
     def get_by_natural_key(self, household_identifier, survey_name, subject_identifier_as_pk):
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        HouseholdMember = django_apps.get_model('bcpp_household_member', 'HouseholdMember')
         household_member = HouseholdMember.objects.get_by_natural_key(
             household_identifier, survey_name, subject_identifier_as_pk)
         return self.get(household_member=household_member)

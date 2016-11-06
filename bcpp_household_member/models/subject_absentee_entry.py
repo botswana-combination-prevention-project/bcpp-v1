@@ -1,8 +1,6 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from simple_history.models import HistoricalRecords
 
 from ..choices import ABSENTEE_REASON
 from ..managers import SubjectAbsenteeEntryManager
@@ -21,17 +19,11 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
         max_length=100,
         choices=ABSENTEE_REASON)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = SubjectAbsenteeEntryManager()
 
-    def save(self, *args, **kwargs):
-        if self.subject_absentee.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
-                self._meta.object_name, self.pk))
-        super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
-
-    def __unicode__(self):
+    def __str__(self):
         return '{} {}'.format(self.report_datetime.strftime('%Y-%m-%d'), self.reason[0:20])
 
     @property

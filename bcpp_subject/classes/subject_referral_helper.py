@@ -5,7 +5,7 @@ from django.db.models import get_model
 
 from edc.data_manager.models import TimePointStatus
 from edc.entry_meta_data.models import ScheduledEntryMetaData
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc_constants.constants import NOT_REQUIRED, KEYED, CLOSED, POS, NEG
 
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist

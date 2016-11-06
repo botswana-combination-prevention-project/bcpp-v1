@@ -3,7 +3,7 @@ from optparse import make_option
 from django.db.models import get_model
 from django.core.management.base import BaseCommand, CommandError
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from ...constants import CONFIRMED
 

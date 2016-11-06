@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator, RegexValidator
 
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import EncryptedTextField

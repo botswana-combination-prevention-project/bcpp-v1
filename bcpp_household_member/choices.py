@@ -1,5 +1,7 @@
 from django.utils.translation import ugettext as _
 
+from edc_constants.constants import OTHER, NOT_APPLICABLE, POS, NEG, IND, DWTA
+
 from .constants import (ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE,
                         NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL, DECEASED,
                         HEAD_OF_HOUSEHOLD)
@@ -107,4 +109,43 @@ UNDECIDED_REASON = (
 DETAILS_CHANGE_REASON = (
     ('married', 'Married'),
     ('parent_married', 'Parent Married'),
+)
+
+INABILITY_TO_PARTICIPATE_REASON = (
+    (NOT_APPLICABLE, _('ABLE to participate')),
+    ('Mental Incapacity', _('Mental Incapacity')),
+    ('Deaf/Mute', _('Deaf/Mute')),
+    ('Too sick', _('Too sick')),
+    ('Incarcerated', _('Incarcerated')),
+    (OTHER, _('Other, specify.')),
+)
+
+HIV_RESULT = (
+    (POS, 'HIV Positive (Reactive)'),
+    (NEG, 'HIV Negative (Non-reactive)'),
+    (IND, 'Indeterminate'),
+    ('Declined', 'Participant declined testing'),
+    ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'),
+)
+
+WHY_NOPARTICIPATE_CHOICE = (
+    ('I don\'t have time', _('I don\'t have time')),
+    ('I don\'t want to answer the questions', _('I don\'t want to answer the questions')),
+    ('I don\'t want to have the blood drawn', _('I don\'t want to have the blood drawn')),
+    ('I am afraid my information will not be private', _('I am afraid my information will not be private')),
+    ('Fear of needles', _('Fear of needles')),
+    ('Illiterate does not want a witness', _('Illiterate does not want a witness')),
+    ('I already know I am HIV-positive', _('I already know I am HIV-positive')),
+    ('I am afraid of testing', _('I am afraid of testing')),
+    ('I don\'t want to take part', _('I don\'t want to take part')),
+    ('I haven\'t had a chance to think about it', _('I haven\'t had a chance to think about it')),
+    ('Have a newly born baby, not permitted', _('Have a newly born baby, not permitted')),
+    ('I am not ready to test', _('I am not ready to test')),
+    ('Already on HAART', _('Already on HAART')),
+    ('I want to test where i always test', _('I want to test where i always test')),
+    ('I already know my partner\'s status, no need to test', _('I already know my partner\'s status, no need to test')),
+    ('The appointment was not honoured', _('The appointment was not honoured')),
+    ('not_sure', _('I am not sure')),
+    (OTHER, _('Other, specify:')),
+    (DWTA, _('Don\'t want to answer')),
 )

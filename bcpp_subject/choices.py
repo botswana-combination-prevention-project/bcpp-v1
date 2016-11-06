@@ -654,8 +654,7 @@ DXCANCER_CHOICE = (
     (DWTA, 'Don\'t want to answer'),
 )
 
-COMMUNITY_NA = (
-    (NOT_APPLICABLE, _('Not Applicable')),
+COMMUNITIES = (
     ('Bokaa', _('Bokaa')),
     ('Digawana', _('Digawana')),
     ('Gumare', _('Gumare')),
@@ -680,7 +679,7 @@ COMMUNITY_NA = (
     ('Ramokgonami', _('Ramokgonami')),
     ('Ranaka', _('Ranaka')),
     ('Sebina', _('Sebina')),
-    ('Sefare', _('Sefare')),
+    ('Sefhare', _('Sefhare')),
     ('Sefophe', _('Sefophe')),
     ('Shakawe', _('Shakawe')),
     ('Shoshong', _('Shoshong')),
@@ -688,6 +687,8 @@ COMMUNITY_NA = (
     ('Tsetsebjwe', _('Tsetsebjwe')),
     (OTHER, _('Other non study community')),
 )
+
+COMMUNITY_NA = tuple([(NOT_APPLICABLE, _('Not Applicable'))] + list(COMMUNITIES))
 
 VERBAL_HIVRESULT_CHOICE = (
     (POS, _('HIV Positive')),

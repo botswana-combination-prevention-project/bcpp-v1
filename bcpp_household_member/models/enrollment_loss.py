@@ -1,12 +1,10 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_base.model.validators import dob_not_future
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from edc_sync.model_mixins import SyncModelMixin
+from edc_base.model.models import BaseUuidModel
+from edc_base.model.validators import dob_not_future
 
 from ..constants import NOT_ELIGIBLE
 from ..exceptions import MemberStatusError
@@ -15,7 +13,7 @@ from ..managers import EnrollmentLossManager
 from .household_member import HouseholdMember
 
 
-class EnrollmentLoss(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class EnrollmentLoss(SyncModelMixin, BaseUuidModel):
     """A system model auto created that captures the reason for a present BHS eligible member
     who passes BHS eligibility but is not participating in the BHS."""
     household_member = models.OneToOneField(HouseholdMember)
@@ -30,13 +28,9 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     objects = EnrollmentLossManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(
-            household_identifier=self.household_member.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         if self.household_member.member_status != NOT_ELIGIBLE:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(
                 NOT_ELIGIBLE, self.household_member.member_status))
@@ -49,7 +43,7 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
             pass
         super(EnrollmentLoss, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.household_member)
 
     def natural_key(self):
@@ -58,16 +52,6 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
                                  'with pk=\'{0}\''.format(self.pk))
         return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household.household_member']
-
-    def dispatch_container_lookup(self, using=None):
-        return (models.get_model('bcpp_household', 'Plot'),
-                'household_member__household_structure__household__plot__plot_identifier')
-
-    def deserialize_prep(self, **kwargs):
-        # EnrollmentLoss being deleted by an IncommingTransaction, we go ahead and delete it.
-        # Its no longer needed at all because member status changed.
-        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
-            self.delete()
 
     class Meta:
         app_label = 'bcpp_household_member'

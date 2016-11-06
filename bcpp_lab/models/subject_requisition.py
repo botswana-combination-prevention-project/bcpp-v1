@@ -2,11 +2,11 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from lab_requisition.models import RequisitionModelMixin
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc_base.audit_trail import AuditTrail
 from edc_constants.constants import YES, NO
 

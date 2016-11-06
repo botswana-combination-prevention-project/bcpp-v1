@@ -24,7 +24,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.test import TestCase
  
-from edc_map.classes import site_mappers, Mapper
+from edc_map.site_mappers import site_mappers, Mapper
 from edc_map.exceptions import MapperError
 
 

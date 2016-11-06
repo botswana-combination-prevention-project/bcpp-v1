@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc_consent.models import ObjectConsentManager
 
 from bhp066.apps.bcpp_household.classes import PlotIdentifier

@@ -7,7 +7,7 @@ from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
 from edc_consent.models import RequiresConsentMixin
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember

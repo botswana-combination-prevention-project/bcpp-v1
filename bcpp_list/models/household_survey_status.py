@@ -1,7 +1,8 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class HouseholdSurveyStatus(BaseListModel):
+class HouseholdSurveyStatus(ListModelMixin):
+
     class Meta:
         app_label = 'bcpp_list'
         verbose_name = "Household Survey Status"

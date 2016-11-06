@@ -1,7 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class SurveyGroup(BaseListModel):
+class SurveyGroup(ListModelMixin):
 
     class Meta:
         app_label = 'bcpp_list'

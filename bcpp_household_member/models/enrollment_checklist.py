@@ -1,25 +1,23 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from simple_history.models import HistoricalRecords
+
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
+from edc_base.model.models import BaseUuidModel
+from edc_base.model.validators import dob_not_future, datetime_not_future
+from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_base.model.validators import dob_not_future
-from edc_consent.models.validators import AgeTodayValidator
+from edc_sync.model_mixins import SyncModelMixin
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
-
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .household_member import HouseholdMember
 
@@ -36,9 +34,7 @@ class BaseEnrollmentChecklist(models.Model):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
-        validators=[
-            datetime_not_before_study_start,
-            datetime_not_future],
+        validators=[datetime_not_future],
         help_text=''
     )
 
@@ -171,7 +167,7 @@ class BaseEnrollmentChecklist(models.Model):
         abstract = True
 
 
-class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class EnrollmentChecklist(BaseEnrollmentChecklist, SyncModelMixin, BaseUuidModel):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
 
@@ -179,7 +175,7 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Sy
 
     objects = EnrollmentChecklistManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return str((self.household_member, self.report_datetime))
@@ -191,17 +187,8 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Sy
         return self.household_member.natural_key() + self.report_datetime
     natural_key.dependencies = ['bcpp_household.household_member']
 
-    def dispatch_container_lookup(self, using=None):
-        return (models.get_model('bcpp_household', 'Plot'),
-                'household_member__household_structure__household__plot__plot_identifier')
-
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
-        Household = models.get_model('bcpp_household', 'Household')
-        household = Household.objects.using(using).get(
-            household_identifier=self.household_member.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} has its container replaced.'.format(household.household_identifier))
         if not self.pk:
             if self.household_member.member_status != BHS_SCREEN:
                 raise MemberStatusError(('Expected member status to be {0}. Got {1}').format(
@@ -248,7 +235,7 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Sy
     def passes_enrollment_criteria(self, using):
         """Creates or updates (or deletes) the enrollment loss based on the
         reason for not passing the enrollment checklist."""
-        from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
+        SubjectConsent = django_apps.get_model('bcpp_subject', 'subjectconsent')
         loss_reason = []
         age_in_years = relativedelta(date.today(), self.dob).years
         if not (SubjectConsent.objects.filter(household_member=self.household_member)):

@@ -1,11 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import get_model
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp_household.models import BaseRepresentativeEligibility
-from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bcpp_household.models import BaseRepresentativeEligibility
+from bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdHeadEligibilityManager
 
@@ -24,9 +23,9 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
 
     objects = HouseholdHeadEligibilityManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.household_member)
 
     def natural_key(self):
@@ -36,10 +35,6 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
                                  "with pk='\{0}\'".format(self.pk))
         return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household.household_member']
-
-    def dispatch_container_lookup(self, using=None):
-        return (get_model('bcpp_household', 'Plot'),
-                'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         self.matches_household_member_values(self.household_member)

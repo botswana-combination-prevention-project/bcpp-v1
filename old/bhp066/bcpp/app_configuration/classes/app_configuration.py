@@ -14,7 +14,7 @@ from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc_device import Device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 from edc_consent.models import ConsentType
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple

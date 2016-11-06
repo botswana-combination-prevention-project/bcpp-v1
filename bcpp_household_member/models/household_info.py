@@ -1,19 +1,17 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import get_model
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
+from simple_history.models import HistoricalRecords
+
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc.subject.registration.models import RegisteredSubject
-from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.model.validators import datetime_not_future
 
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-from bhp066.apps.bcpp_list.models import ElectricalAppliances, TransportMode
-from bhp066.apps.bcpp_subject.choices import (
+from bcpp.models import RegisteredSubject
+from bcpp_household.models import HouseholdStructure
+from bcpp_list.models import ElectricalAppliances, TransportMode
+from bcpp_subject.choices import (
     FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS)
 
 from ..managers import HouseholdInfoManager
@@ -21,7 +19,7 @@ from ..managers import HouseholdInfoManager
 from .household_member import HouseholdMember
 
 
-class HouseholdInfo(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class HouseholdInfo(SyncModelMixin, BaseUuidModel):
     """A model completed by the user that captures household economic status
     from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)
@@ -36,7 +34,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
-        validators=[datetime_not_before_study_start, datetime_not_future])
+        validators=[datetime_not_future])
 
     flooring_type = models.CharField(
         verbose_name="What is the main type of flooring for this household?",
@@ -142,7 +140,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     objects = HouseholdInfoManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def natural_key(self):
         if not self.household_structure:
@@ -154,14 +152,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
         'bcpp_household.household_member',
         'registration.registered_subject']
 
-    def dispatch_container_lookup(self, using=None):
-        return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
-
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(
-            household_identifier=self.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.registered_subject = self.household_member.registered_subject
         self.verified_household_head(self.household_member)
         try:

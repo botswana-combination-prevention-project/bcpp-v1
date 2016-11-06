@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from lis.specimen.lab_result.models import BaseResult
 
 from .order_item import OrderItem
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 

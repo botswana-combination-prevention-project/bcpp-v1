@@ -9,7 +9,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from bhp066.apps.bcpp_clinic.tests.factories import (
     ClinicEligibilityFactory, ClinicLocatorFactory, QuestionnaireFactory)

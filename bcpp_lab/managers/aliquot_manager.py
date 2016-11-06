@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from lis.specimen.lab_aliquot.managers import AliquotManager as BaseAliquotManager
 

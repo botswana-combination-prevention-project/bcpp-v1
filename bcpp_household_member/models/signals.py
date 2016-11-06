@@ -5,7 +5,9 @@ from django.dispatch import receiver
 
 from edc_constants.constants import ALIVE
 
-from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bcpp_household.models import HouseholdStructure
+
+from ..constants import NOT_ELIGIBLE, HEAD_OF_HOUSEHOLD
 
 from .base_member_status_model import BaseMemberStatusModel
 from .enrollment_checklist import EnrollmentChecklist
@@ -20,9 +22,6 @@ from .subject_refusal_history import SubjectRefusalHistory
 from .subject_htc_history import SubjectHtcHistory
 from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
-
-from ..constants import NOT_ELIGIBLE
-from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
 @receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")

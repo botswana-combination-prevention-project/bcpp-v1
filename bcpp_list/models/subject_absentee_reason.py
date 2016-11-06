@@ -1,7 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class SubjectAbsenteeReason(BaseListModel):
+class SubjectAbsenteeReason(ListModelMixin):
 
     class Meta:
         app_label = 'bcpp_list'

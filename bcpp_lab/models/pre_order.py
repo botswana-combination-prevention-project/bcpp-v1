@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_constants.constants import NEW, PENDING

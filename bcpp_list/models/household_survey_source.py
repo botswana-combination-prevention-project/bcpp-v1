@@ -1,8 +1,7 @@
-from edc_base.model.models import BaseListModel
+from edc_base.model.models import ListModelMixin
 
 
-class HouseholdSurveySource (BaseListModel):
-    pass
+class HouseholdSurveySource (ListModelMixin):
 
     class Meta:
         app_label = "bcpp_list"

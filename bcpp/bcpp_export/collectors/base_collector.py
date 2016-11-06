@@ -2,7 +2,7 @@ from datetime import datetime
 
 from edc.export.classes import ExportDictAsCsv
 from edc.export.helpers import ExportObjectHelper
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from ..plans import export_plan as default_export_plan
 from ..mixins import ConsoleMixin

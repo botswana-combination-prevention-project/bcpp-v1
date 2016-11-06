@@ -1,10 +1,9 @@
 from django.db import models
+from django_crypto_fields.fields import EncryptedTextField
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import EncryptedTextField
+from simple_history.models import HistoricalRecords
+
 from edc_constants.choices import YES_NO_UNKNOWN
-
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -56,13 +55,9 @@ class SubjectMoved(BaseMemberStatusModel):
         help_text=('')
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(
-            household_identifier=self.household_member.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.survey = self.household_member.survey
         super(SubjectMoved, self).save(*args, **kwargs)
 

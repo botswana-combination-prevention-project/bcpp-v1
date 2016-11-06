@@ -1,5 +1,5 @@
 from edc.dashboard.search.classes import BaseSearcher
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 from ..forms import GpsSearchForm
 from ..models import Plot

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 
 from edc.device.sync.views import export_outgoing_to_file
-from edc_map.classes import site_mappers
+from edc_map.site_mappers import site_mappers
 
 
 @login_required

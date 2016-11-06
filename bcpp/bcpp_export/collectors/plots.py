@@ -10,7 +10,7 @@ class Plots(BaseCollector):
     """Exports helper.plot instances to CSV.
 
     For example::
-        from edc_map.classes import site_mappers
+        from edc_map.site_mappers import site_mappers
 
         from bhp066.apps.bcpp_export.collectors import Plots
 

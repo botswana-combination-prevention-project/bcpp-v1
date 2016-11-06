@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import FirstnameField

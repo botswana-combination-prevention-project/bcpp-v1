@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 from .aliquot import Aliquot

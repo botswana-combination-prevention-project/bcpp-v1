@@ -1,8 +1,6 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from simple_history.models import HistoricalRecords
 
 from ..choices import UNDECIDED_REASON
 from ..managers import SubjectUndecidedEntryManager
@@ -21,15 +19,9 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
         max_length=100,
         choices=UNDECIDED_REASON)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = SubjectUndecidedEntryManager()
-
-    def save(self, *args, **kwargs):
-        if self.subject_undecided.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
-                self._meta.object_name, self.pk))
-        super(SubjectUndecidedEntry, self).save(*args, **kwargs)
 
     @property
     def inline_parent(self):

@@ -1,15 +1,14 @@
+from django.apps import apps as django_apps
 from django.db import models
 
-from edc.core.bhp_string.classes import StringHelper
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
+from edc_base.utils import get_safe_random_string, safe_allowed_chars
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
-from edc_device import device
-
-from bhp066.apps.bcpp.choices import HIV_RESULT
-from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
+from ..choices import HIV_RESULT
 from ..exceptions import MemberStatusError
 
 from .base_member_status_model import BaseMemberStatusModel
@@ -18,6 +17,8 @@ from .base_member_status_model import BaseMemberStatusModel
 HIV_RESULT = list(HIV_RESULT)
 HIV_RESULT.append((NOT_APPLICABLE, 'Not applicable'))
 HIV_RESULT = tuple(HIV_RESULT)
+
+app_config = django_apps.get_app_config('edc_device')
 
 
 class SubjectHtc(BaseMemberStatusModel):
@@ -62,12 +63,9 @@ class SubjectHtc(BaseMemberStatusModel):
 
     comment = models.TextField(max_length=250, null=True, blank=True)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
-        if self.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
-                self._meta.object_name, self.pk))
         if self.household_member.member_status not in [HTC, HTC_ELIGIBLE, REFUSED_HTC]:
             raise MemberStatusError('Expected member status to be on of {0}. '
                                     'Got {1}'.format([HTC, HTC_ELIGIBLE, REFUSED_HTC],
@@ -84,11 +82,9 @@ class SubjectHtc(BaseMemberStatusModel):
         super(SubjectHtc, self).save(*args, **kwargs)
 
     def prepare_tracking_identifier(self):
-        device_id = device.device_id
-        string = StringHelper()
         length = 5
         template = 'HTC{device_id}{random_string}'
-        opts = {'device_id': device_id, 'random_string': string.get_safe_random_string(length=length)}
+        opts = {'device_id': app_config.device_id, 'random_string': get_safe_random_string(length=length)}
         tracking_identifier = template.format(**opts)
         # look for a duplicate
         if self.__class__.objects.filter(tracking_identifier=tracking_identifier):
@@ -96,7 +92,7 @@ class SubjectHtc(BaseMemberStatusModel):
             while self.__class__.objects.filter(tracking_identifier=tracking_identifier):
                 tracking_identifier = template.format(**opts)
                 n += 1
-                if n == len(string.safe_allowed_chars) ** length:
+                if n == len(safe_allowed_chars) ** length:
                     raise TypeError('Unable prepare a unique htc tracking identifier, '
                                     'all are taken. Increase the length of the random string')
         return tracking_identifier

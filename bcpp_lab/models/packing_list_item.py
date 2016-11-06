@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_lab.lab_packing.models import BasePackingListItem
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 
 from .aliquot import Aliquot

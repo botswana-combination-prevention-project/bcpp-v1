@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager

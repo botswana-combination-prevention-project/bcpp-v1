@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import get_model
 
-from edc_sync.models import SyncModelMixin
+from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_constants.constants import CLOSED, OPEN, ALIVE
 from ..classes import CallHelper

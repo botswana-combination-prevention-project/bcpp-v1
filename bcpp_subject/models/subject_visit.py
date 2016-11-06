@@ -13,7 +13,7 @@ from bcpp_household_member.models import HouseholdMember
 from ..choices import VISIT_UNSCHEDULED_REASON
 
 
-class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, RequiresConsentMixin,
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
                    SyncModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
