@@ -1,20 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import date_not_future
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+from edc_base.model.validators import date_not_future
+from edc_constants.choices import POS_NEG_UNKNOWN
+from edc_constants.constants import POS
 
 from ..choices import HIV_DOC_TYPE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivResultDocumentation (BaseScheduledVisitModel):
+class HivResultDocumentation (CrfModelMixin):
 
     """"""
-    CONSENT_MODEL = SubjectConsent
 
     # base on question from hiv test history
     result_date = models.DateField(
@@ -27,8 +26,8 @@ class HivResultDocumentation (BaseScheduledVisitModel):
     result_recorded = models.CharField(
         verbose_name='What is the recorded HIV status indicated by this additional document?',
         max_length=30,
-        choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
-        default='POS',
+        choices=POS_NEG_UNKNOWN,  # this is always POSITIVE!!
+        default=POS,
         help_text=('value should always be POS as the rule group only shows this form '
                    'if verbal_hiv_result is POS and have indirect documentation.'),
         editable=False,

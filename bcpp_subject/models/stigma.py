@@ -1,18 +1,14 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-
-from bhp066.apps.bcpp.choices import AGREE_STRONGLY
-
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from simple_history.models import HistoricalRecords
 
 
-class Stigma (BaseScheduledVisitModel):
+from ..choices import AGREE_STRONGLY
 
-    """CS002"""
+from .crf_model_mixin import CrfModelMixin
 
-    CONSENT_MODEL = SubjectConsent
+
+class Stigma (CrfModelMixin):
 
     anticipate_stigma = models.CharField(
         verbose_name="Would you be, or have you ever been,"

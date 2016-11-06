@@ -1,12 +1,14 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import COMMUNITY_NA
+from ..choices import COMMUNITY_NA
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .appointment import Appointment
+from .crf_model_mixin import CrfModelMixin
+from .subject_visit import SubjectVisit
 
 
 KEPT_APPT = (
@@ -45,9 +47,8 @@ REASON_RECOMMENDED = (
 )
 
 
-class HivLinkageToCare (BaseScheduledVisitModel):
+class HivLinkageToCare (CrfModelMixin):
 
-    CONSENT_MODEL = SubjectConsent
     _query_id = None
 
     kept_appt = models.CharField(
@@ -157,8 +158,6 @@ class HivLinkageToCare (BaseScheduledVisitModel):
     history = HistoricalRecords()
 
     def previous_appt(self):
-        from edc.subject.appointment.models import Appointment
-        from ..models import SubjectVisit
         timepoints = range(0, 0)
         try:
             subject_visit = SubjectVisit.objects.get(id=self.query_id)

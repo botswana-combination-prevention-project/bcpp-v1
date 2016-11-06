@@ -1,38 +1,25 @@
+from django.apps import apps as django_apps
 from django.db import models
 from django.core.exceptions import ValidationError
+from django_crypto_fields.fields import EncryptedCharField
 
-from edc.data_manager.models import TimePointStatusMixin
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc.entry_meta_data.managers import EntryMetaDataManager
-from edc.export.managers import ExportHistoryManager
-from edc.export.models import ExportTrackingFieldsMixin
-from edc.subject.locator.models import BaseLocator
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
+from edc_export.managers import ExportHistoryManager
+from edc_export.model_mixins import ExportTrackingFieldsMixin
+
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
-from edc_base.encrypted_fields import EncryptedCharField
-from edc_consent.models import RequiresConsentMixin
 from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
-
-from bhp066.apps.bcpp_household.models import Plot
-
+from edc_locator.models import LocatorMixin
 
 from ..managers import SubjectLocatorManager
 
-from .subject_off_study_mixin import SubjectOffStudyMixin
-from .subject_visit import SubjectVisit
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, RequiresConsentMixin,
-                     TimePointStatusMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class SubjectLocator(ExportTrackingFieldsMixin, LocatorMixin, CrfModelMixin):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
-
-    CONSENT_MODEL = SubjectConsent
-
-    subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
@@ -100,9 +87,6 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     history = HistoricalRecords()
 
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
-
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
@@ -125,18 +109,6 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
                 except HicEnrollment.DoesNotExist:
                     pass
 
-    def natural_key(self):
-        return self.subject_visit.natural_key()
-
-    def get_visit(self):
-        return self.subject_visit
-
-    def get_subject_identifier(self):
-        try:
-            return self.get_visit().get_subject_identifier()
-        except AttributeError:
-            return self.registered_subject.subject_identifier
-
     @property
     def ready_to_export_transaction(self):
         """Evaluates to True only if the subject has a referral instance with a referral code
@@ -144,7 +116,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
         ...see_also:: SubjectReferral."""
         try:
-            SubjectReferral = models.get_model('bcpp_subject', 'subjectreferral')
+            SubjectReferral = django_apps.get_model('bcpp_subject', 'subjectreferral')
             subject_referral = SubjectReferral.objects.get(subject_visit=self.subject_visit)
             if subject_referral.referral_code:
                 return True
@@ -194,8 +166,8 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
                             info=info, physical_address=self.physical_address)
         return info
 
-    def __unicode__(self):
-        return unicode(self.subject_visit)
+    def __str__(self):
+        return str(self.subject_visit)
 
     class Meta(CrfModelMixin.Meta):
         verbose_name = 'Subject Locator'

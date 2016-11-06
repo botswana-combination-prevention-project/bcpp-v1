@@ -1,19 +1,16 @@
 from django.db.models.signals import post_save
 
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
 
 from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
-from edc.data_manager.models import TimePointStatus
-from edc_constants.constants import CLOSED, COMPLETE, PENDING
+from edc_constants.constants import COMPLETE, PENDING
 
-from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
-from bhp066.apps.bcpp_subject.constants import BASELINE_CODES
+from bcpp_household_member.exceptions import MemberStatusError
+from bcpp_subject.constants import BASELINE_CODES
 
 from ..constants import POC_VIRAL_LOAD
-from ..classes import SubjectReferralHelper
-from ..models import (SubjectReferral, SubjectVisit, CallLogEntry,
-                      PimaVl, SubjectConsent)
+from ..models import SubjectReferral, PimaVl, SubjectConsent
+from ..subject_referral_helper import SubjectReferralHelper
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -128,44 +125,11 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
                 raise
 
 
-@receiver(post_save, weak=False, dispatch_uid='time_point_status_on_post_save')
-def time_point_status_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Attempt to save the subject referral to refer participants that
-    do not complete data collection (partial participation)."""
-    if not raw:
-        if isinstance(instance, (TimePointStatus, )):
-            if instance.status == CLOSED:
-                try:
-                    subject_visit = SubjectVisit.objects.get(appointment=instance.appointment)
-                    SubjectReferral.objects.using(using).get(
-                        subject_visit=subject_visit)
-                except SubjectReferral.DoesNotExist:
-                    # create a new instance and flag as partial
-                    try:
-                        SubjectReferral.objects.using(using).create(
-                            subject_visit=subject_visit,
-                            subject_referred='No',
-                            comment='(Partial participation. Auto generated when time point closed.)'
-                        )
-                    except ValidationError:
-                        # TODO: TimePointStatus form should catch this error instead
-                        # of hiding it like this
-                        pass
-
-
-@receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
-def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome')."""
-    if not raw:
-        if isinstance(instance, CallLogEntry):
-            instance.update_call_list()
-
-
 @receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
 def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, PimaVl):
-            from bhp066.apps.bcpp_lab.models import PreOrder
+            from bcpp_lab.models import PreOrder
             try:
                 pre_order = PreOrder.objects.get(
                     subject_visit=instance.subject_visit,

@@ -1,15 +1,12 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
 from .base_sexual_partner import BaseSexualPartner
-from .subject_consent import SubjectConsent
 
 
 class MonthsThirdPartner (BaseSexualPartner):
     """A model completed by the user on the participant's recent sexual behaviour."""
-
-    CONSENT_MODEL = SubjectConsent
 
     third_partner_arm = models.CharField(
         max_length=20,
@@ -23,7 +20,7 @@ class MonthsThirdPartner (BaseSexualPartner):
         self.third_partner_arm = self.get_partner_arm()
         super(MonthsThirdPartner, self).save(*args, **kwargs)
 
-    class Meta(CrfModelMixin.Meta):
+    class Meta(BaseSexualPartner.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Third Partner - 12 Months"
         verbose_name_plural = "Third Partner - 12 Months"

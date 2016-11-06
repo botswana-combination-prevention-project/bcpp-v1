@@ -1,17 +1,15 @@
 from django.db import models
+
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.validators import date_not_future
 
-from edc_base.audit_trail import AuditTrail
+from ..choices import LOWEST_CD4_CHOICE
 
-from bhp066.apps.bcpp.choices import LOWESTCD4_CHOICE
-
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivMedicalCare (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class HivMedicalCare (CrfModelMixin):
 
     first_hiv_care_pos = models.DateField(
         verbose_name="When did you first receive HIV-related medical care "
@@ -40,7 +38,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
     lowest_cd4 = models.CharField(
         verbose_name="What was your lowest CD4 (masole) count that was ever measured?",
         max_length=25,
-        choices=LOWESTCD4_CHOICE,
+        choices=LOWEST_CD4_CHOICE,
         help_text="Assist the participant by helping review their outpatient cards if "
                   "they are available.",
     )

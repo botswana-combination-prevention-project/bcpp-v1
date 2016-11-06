@@ -1,19 +1,16 @@
 from django.db import models
-from edc_base.audit_trail import AuditTrail
 
-from bhp066.apps.bcpp.choices import YES_NO, EDUCATION_CHOICE
+from simple_history.models import HistoricalRecords
+from edc_constants.choices import YES_NO
 
-from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
+from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION, EDUCATION_CHOICE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class Education (BaseScheduledVisitModel):
+class Education (CrfModelMixin):
 
     """A model completed by the user on the particiapnt's level of education and work."""
-
-    CONSENT_MODEL = SubjectConsent
 
     education = models.CharField(
         verbose_name="What is your highest level of education attainment?",

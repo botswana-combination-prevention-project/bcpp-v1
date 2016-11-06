@@ -1,19 +1,17 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA
-from bhp066.apps.bcpp_list.models import Diagnoses
+from edc_constants.choices import YES_NO_DWTA
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from bcpp_list.models import Diagnoses
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class MedicalDiagnoses (BaseScheduledVisitModel):
+class MedicalDiagnoses (CrfModelMixin):
 
     """A model completed by the user to record any major illnesses in the past 12 months."""
-
-    CONSENT_MODEL = SubjectConsent
 
     diagnoses = models.ManyToManyField(
         Diagnoses,

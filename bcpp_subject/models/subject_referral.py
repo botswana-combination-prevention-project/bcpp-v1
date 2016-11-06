@@ -11,8 +11,8 @@ from edc_export.managers import ExportHistoryManager
 from edc_export.model_mixins import ExportTrackingFieldsMixin
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
-from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
+from ..subject_referral_helper import SubjectReferralHelper
 
 from .crf_model_mixin import CrfModelMixin
 from .subject_locator import SubjectLocator

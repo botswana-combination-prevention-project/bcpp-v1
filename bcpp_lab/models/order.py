@@ -5,7 +5,8 @@ from django.core.urlresolvers import reverse
 
 from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 
 from ..managers import OrderManager
 

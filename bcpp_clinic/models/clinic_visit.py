@@ -1,6 +1,7 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_constants.constants import NEW
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_clinic_api.models import Panel

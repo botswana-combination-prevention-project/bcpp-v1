@@ -1,19 +1,18 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_SEX
+from edc_constants.choices import YES_NO_DWTA
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import ALCOHOL_SEX
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class SexualBehaviour (BaseScheduledVisitModel):
+class SexualBehaviour (CrfModelMixin):
 
     """A model completed by the user on the participant's sexual behaviour."""
-
-    CONSENT_MODEL = SubjectConsent
 
     ever_sex = models.CharField(
         verbose_name="In your lifetime, have you ever had sex with anyone"

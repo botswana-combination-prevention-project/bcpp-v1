@@ -1,4 +1,4 @@
-from edc.core.identifier.classes import SubjectIdentifier
+from edc_identifier.subject.classes import SubjectIdentifier
 
 
 class ConsentedSubjectIdentifier(SubjectIdentifier):

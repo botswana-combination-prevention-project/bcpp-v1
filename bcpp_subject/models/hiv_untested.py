@@ -1,11 +1,11 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import WHYNOHIVTESTING_CHOICE
+from ..choices import WHY_NO_HIV_TESTING_CHOICE
 
 from .hiv_testing_supplemental import HivTestingSupplemental
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
 class HivUntested (HivTestingSupplemental):
@@ -13,14 +13,12 @@ class HivUntested (HivTestingSupplemental):
     """CS002- for those who have NOT tested for HIV. Its
     branch off from Q18 - HIV testing History"""
 
-    CONSENT_MODEL = SubjectConsent
-
     why_no_hiv_test = models.CharField(
         verbose_name="If you were not tested for HIV in the 12 months prior"
                      " to today, what is the main reason why not?",
         max_length=55,
         null=True,
-        choices=WHYNOHIVTESTING_CHOICE,
+        choices=WHY_NO_HIV_TESTING_CHOICE,
         help_text="",
     )
 

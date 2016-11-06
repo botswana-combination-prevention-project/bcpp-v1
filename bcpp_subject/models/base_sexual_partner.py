@@ -1,20 +1,21 @@
 from django.db import models
 
 from edc_constants.constants import NOT_APPLICABLE, OTHER
+from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA
 from edc_map.site_mappers import site_mappers
 
-from bhp066.apps.bcpp.choices import (
-    YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
+from ..choices import (
+    SEXDAYS_CHOICE,
     LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
-    FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE,
-    FIRSTCONDOMFREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
-from bhp066.apps.bcpp_list.models import PartnerResidency
-from bhp066.apps.bcpp_subject.constants import ECC, CPC
+    FIRST_PARTNER_HIV_CHOICE, FIRST_DISCLOSE_CHOICE,
+    FIRST_CONDOM_FREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
+from bcpp_list.models import PartnerResidency
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
+from ..constants import ECC, CPC
+from bcpp_subject.models.crf_model_mixin import CrfModelMixin
 
 
-class BaseSexualPartner (BaseScheduledVisitModel):
+class BaseSexualPartner (CrfModelMixin):
 
     first_partner_live = models.ManyToManyField(
         PartnerResidency,
@@ -105,7 +106,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
     first_partner_hiv = models.CharField(
         verbose_name="What is this partner's HIV status?",
         max_length=25,
-        choices=FIRSTPARTNERHIV_CHOICE,
+        choices=FIRST_PARTNER_HIV_CHOICE,
         null=True,
         help_text="")
 
@@ -126,7 +127,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
     first_disclose = models.CharField(
         verbose_name="Have you told this partner your HIV status?",
         max_length=30,
-        choices=FIRSTDISCLOSE_CHOICE,
+        choices=FIRST_DISCLOSE_CHOICE,
         null=True,
         help_text="")
 
@@ -134,7 +135,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         verbose_name="When you have [had] sex with this partner, how often "
                      "do you or your partner use a condom?",
         max_length=25,
-        choices=FIRSTCONDOMFREQ_CHOICE,
+        choices=FIRST_CONDOM_FREQ_CHOICE,
         null=True,
         help_text="")
 
@@ -182,5 +183,5 @@ class BaseSexualPartner (BaseScheduledVisitModel):
             partner_arm = ''
         return partner_arm
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         abstract = True

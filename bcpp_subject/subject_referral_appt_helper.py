@@ -1,14 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from datetime import timedelta
-from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 
 from django.core.exceptions import ValidationError
 
-from edc.map.classes.controller import site_mappers
+from edc_map.site_mappers import site_mappers
 
-from ..choices import REFERRAL_CODES
-from ..utils import next_clinic_date
+from .choices import REFERRAL_CODES
+from .utils import next_clinic_date
 
 
 class SubjectReferralApptHelper(object):
@@ -37,8 +35,8 @@ class SubjectReferralApptHelper(object):
         self._intervention_communities = intervention_communities
         self._referral_code = None
         self.hiv_care_adherence_next_appointment = hiv_care_adherence_next_appointment
-        self.community_code = community_code or site_mappers.get_current_mapper().map_code
-        self.community_name = community_code or site_mappers.get_current_mapper().map_area
+        self.community_code = community_code or site_mappers.current_mapper.map_code
+        self.community_name = community_code or site_mappers.current_mapper.map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:

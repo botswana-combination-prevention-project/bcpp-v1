@@ -1,21 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_constants.choices import YES_NO_NA
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+from edc_constants.choices import YES_NO_NA, YES_NO_DWTA
+
+from ..choices import WHEN_HIV_TEST_CHOICE, VERBAL_HIV_RESULT_CHOICE
 
 from ..choices import YES_NO_RECORD_REFUSAL
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivTestingHistory (BaseScheduledVisitModel):
+class HivTestingHistory (CrfModelMixin):
 
     """A model completed by the user of the particiapn's history of testing for HIV."""
-
-    CONSENT_MODEL = SubjectConsent
 
     has_tested = models.CharField(
         verbose_name="Have you ever been tested for HIV before?",
@@ -30,7 +28,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=WHENHIVTEST_CHOICE,
+        choices=WHEN_HIV_TEST_CHOICE,
         help_text="(verbal response)",
     )
 
@@ -50,7 +48,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         max_length=30,
         null=True,
         blank=True,
-        choices=VERBALHIVRESULT_CHOICE,
+        choices=VERBAL_HIV_RESULT_CHOICE,
         help_text="(verbal response)",
     )
 

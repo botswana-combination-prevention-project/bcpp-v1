@@ -9,7 +9,8 @@ from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
 from edc_map.site_mappers import site_mappers
 from edc.subject.registration.models import RegisteredSubject
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.encrypted_fields import FirstnameField
 from edc_base.encrypted_fields import IdentityField
 from edc_base.encrypted_fields import IdentityTypeField

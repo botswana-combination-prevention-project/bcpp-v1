@@ -1,18 +1,17 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import MARITALSTATUS_CHOICE
-from bhp066.apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
+from bcpp_list.models import LiveWith, Religion, EthnicGroups
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from ..choices import MARITAL_STATUS_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class RbdDemographics (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class RbdDemographics (CrfModelMixin):
 
     religion = models.ManyToManyField(
         Religion,
@@ -31,7 +30,7 @@ class RbdDemographics (BaseScheduledVisitModel):
     marital_status = models.CharField(
         verbose_name="What is your current marital status?",
         max_length=55,
-        choices=MARITALSTATUS_CHOICE,
+        choices=MARITAL_STATUS_CHOICE,
         help_text="",
     )
 

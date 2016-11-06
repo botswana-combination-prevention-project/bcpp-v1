@@ -1,11 +1,13 @@
 from django.db import models
 
-from bhp066.apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, PREGARV_CHOICE
+from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
+from ..choices import PREG_ARV_CHOICE
+
+from .crf_model_mixin import CrfModelMixin
 
 
-class BasePregnancy (BaseScheduledVisitModel):
+class BasePregnancy (CrfModelMixin):
 
     last_birth = models.DateField(
         verbose_name="When did you last (most recently) give birth?",
@@ -32,10 +34,10 @@ class BasePregnancy (BaseScheduledVisitModel):
     preg_arv = models.CharField(
         verbose_name="Were you given antiretroviral medications to protect the baby?",
         max_length=95,
-        choices=PREGARV_CHOICE,
+        choices=PREG_ARV_CHOICE,
         null=True,
         blank=True,
         help_text="")
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         abstract = True

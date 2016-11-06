@@ -1,17 +1,16 @@
 
 from datetime import timedelta
-
+from django.apps import apps as django_apps
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
-from django.db.models import get_model
 
 
 class ConsentHistoryManager(models.Manager):
 
     def get_by_natural_key(self, consent_datetime, survey_name, subject_identifier_as_pk):
         margin = timedelta(minutes=5)
-        RegisteredSubject = get_model('registration', 'RegisteredSubject')
-        Survey = get_model('bcpp_survey', 'Survey')
+        RegisteredSubject = django_apps.get_model('registration', 'RegisteredSubject')
+        Survey = django_apps.get_model('bcpp_survey', 'Survey')
         survey = Survey.objects.get_by_natural_key(survey_name)
         registered_subject = RegisteredSubject.objects.get_by_natural_key(subject_identifier_as_pk)
         return self.get(consent_datetime__range=(

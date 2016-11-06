@@ -1,21 +1,18 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
-from edc_constants.choices import YES_NO_NA, NOT_APPLICABLE
+from edc_constants.choices import YES_NO_NA, NOT_APPLICABLE, YES_NO, YES_NO_UNSURE
 
-from bhp066.apps.bcpp.choices import YES_NO, YES_NO_UNSURE
-from bhp066.apps.bcpp_list.models import FamilyPlanning
+from bcpp_list.models import FamilyPlanning
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class ReproductiveHealth (BaseScheduledVisitModel):
+class ReproductiveHealth (CrfModelMixin):
 
     """A model completed by the user on the participant's reproductive health."""
-
-    CONSENT_MODEL = SubjectConsent
 
     number_children = models.IntegerField(
         verbose_name="How many children have you given birth to? Please include any"

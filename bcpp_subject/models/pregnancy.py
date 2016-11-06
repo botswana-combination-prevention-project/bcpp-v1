@@ -1,26 +1,23 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 from edc_base.model.validators import date_not_future
 
-from bhp066.apps.bcpp.choices import ANCREG_CHOICE
+from ..choices import ANC_REG_CHOICE
 
 from .base_pregnancy import BasePregnancy
-from .subject_consent import SubjectConsent
 
 
 class Pregnancy (BasePregnancy):
 
     """A model completed by the user for pregnant participants."""
 
-    CONSENT_MODEL = SubjectConsent
-
     anc_reg = models.CharField(
         verbose_name="Have you registered for antenatal care?",
         max_length=55,
         null=True,
         blank=True,
-        choices=ANCREG_CHOICE,
+        choices=ANC_REG_CHOICE,
         help_text="",
     )
 
@@ -32,7 +29,7 @@ class Pregnancy (BasePregnancy):
 
     history = HistoricalRecords()
 
-    class Meta(CrfModelMixin.Meta):
+    class Meta(BasePregnancy.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Pregnancy"
         verbose_name_plural = "Pregnancy"

@@ -1,12 +1,12 @@
 from django.conf import settings
 
 from edc_map.site_mappers import site_mappers
-from edc_consent.models import ObjectConsentManager
+from edc_consent.managers import ConsentManager
 
-from bhp066.apps.bcpp_household.classes import PlotIdentifier
+from bcpp_household.plot_identifier import PlotIdentifier
 
 
-class SubjectConsentManager(ObjectConsentManager):
+class SubjectConsentManager(ConsentManager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:

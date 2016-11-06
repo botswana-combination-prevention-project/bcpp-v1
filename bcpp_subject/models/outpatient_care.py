@@ -1,22 +1,19 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 from edc_base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED
+from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import CARE_FACILITIES, CARE_REASON, TRAVEL_HOURS
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class OutpatientCare (BaseScheduledVisitModel):
+class OutpatientCare (CrfModelMixin):
 
     """A model completed by the user to capture information about any
     outpatient care obtained by the participant."""
-
-    CONSENT_MODEL = SubjectConsent
 
     govt_health_care = models.CharField(
         verbose_name="In the last 3 months, did you seek care at a Government Primary"

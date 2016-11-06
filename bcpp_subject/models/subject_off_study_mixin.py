@@ -1,4 +1,4 @@
-from edc.subject.off_study.mixins import OffStudyMixin
+from edc_offstudy.model_mixins import OffStudyMixin
 
 from .subject_off_study import SubjectOffStudy
 

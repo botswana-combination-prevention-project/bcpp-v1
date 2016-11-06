@@ -1,6 +1,5 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from bhp066.apps.bcpp_subject.exceptions import CLinicReferalDateError
 
 from .split_weekdays import split_weekdays
 

@@ -1,20 +1,17 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED
+from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import CARE_REASON, TRAVEL_HOURS
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HospitalAdmission (BaseScheduledVisitModel):
+class HospitalAdmission (CrfModelMixin):
 
     """A model completed by the user to capture information about hospital admissions"""
-
-    CONSENT_MODEL = SubjectConsent
 
     admission_nights = models.IntegerField(
         verbose_name="How many total nights did you spend in the hospital in the past 3 months? ",

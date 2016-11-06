@@ -10,5 +10,5 @@ class ConsentError(Exception):
     pass
 
 
-class CLinicReferalDateError(Exception):
+class ClinicReferalDateError(Exception):
     pass

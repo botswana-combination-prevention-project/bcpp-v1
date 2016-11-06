@@ -1,18 +1,15 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_UNSURE
+from edc_constants.choices import YES_NO_UNSURE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivTestingSupplemental (BaseScheduledVisitModel):
+class HivTestingSupplemental (CrfModelMixin):
 
     """CS002 - BaseClass"""
-
-    CONSENT_MODEL = SubjectConsent
 
     hiv_pills = models.CharField(
         verbose_name="Have you ever heard about treatment for"

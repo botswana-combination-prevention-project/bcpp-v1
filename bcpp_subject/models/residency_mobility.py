@@ -2,26 +2,25 @@ from django.db import models
 
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE
+from ..choices import LENGTH_RESIDENCE_CHOICE, NIGHTS_AWAY_CHOICE, CATTLEPOST_LANDS_CHOICE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .crf_model_mixin import CrfModelMixin
 from .hic_enrollment import HicEnrollment
-from .subject_consent import SubjectConsent
 
 
-class ResidencyMobility (BaseScheduledVisitModel):
+class ResidencyMobility (CrfModelMixin):
 
     """A model completed by the user on the residency status of the participant."""
-
-    CONSENT_MODEL = SubjectConsent
 
     length_residence = models.CharField(
         verbose_name='How long have you lived in this community?',
         max_length=25,
-        choices=LENGTHRESIDENCE_CHOICE,
+        choices=LENGTH_RESIDENCE_CHOICE,
         help_text="",
     )
 
@@ -51,7 +50,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
             " from this community, including visits to cattle post and lands?"
             "[If you don't know exactly, give your best guess]"),
         max_length=35,
-        choices=NIGHTSAWAY_CHOICE,
+        choices=NIGHTS_AWAY_CHOICE,
         help_text="",
     )
 
@@ -60,7 +59,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
             "In the past 12 months, during the times you were away from this community, "
             "where were you primarily staying?"),
         max_length=25,
-        choices=CATTLEPOSTLANDS_CHOICE,
+        choices=CATTLEPOST_LANDS_CHOICE,
         default=NOT_APPLICABLE,
         help_text="",
     )
@@ -74,9 +73,6 @@ class ResidencyMobility (BaseScheduledVisitModel):
     )
 
     history = HistoricalRecords()
-
-    def __unicode__(self):
-        return unicode(self.subject_visit)
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()

@@ -1,8 +1,5 @@
 from .access_to_care import AccessToCare
 from .appointment import Appointment
-from .base_household_member_consent import BaseHouseholdMemberConsent
-from .call_list import CallList
-from .call_log import CallLog, CallLogEntry
 from .cancer import Cancer
 from .cd4_history import Cd4History
 from .cea_enrollment_checklist import CeaEnrollmentChecklist
@@ -47,7 +44,7 @@ from .sti import Sti
 from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion
 from .subject_consent import SubjectConsent
-from .subject_consent_history import SubjectConsentHistory
+from .subject_consent_mixin import SubjectConsentMixin
 from .subject_locator import SubjectLocator
 from .subject_off_study import SubjectOffStudy
 from .subject_off_study_mixin import SubjectOffStudyMixin
@@ -59,23 +56,8 @@ from .tubercolosis import Tubercolosis
 from .uncircumcised import Uncircumcised
 from .signals import (
     subject_consent_on_post_save, update_or_create_registered_subject_on_post_save,
-    update_subject_referral_on_post_save, time_point_status_on_post_save, call_log_entry_on_post_save,
-    update_pocvl_preorder_status_post_save)
+    update_subject_referral_on_post_save, update_pocvl_preorder_status_post_save)
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
-from .review import (
-    MedicalDiagnosesReview, HeartAttackReview, CancerReview, TubercolosisReview, StiReview, SubstanceUseReview,
-    StigmaReview, HivCareAdherenceReview, HivMedicalCareReview, CircumcisionReview, CircumcisedReview,
-    UncircumcisedReview, ReproductiveHealthReview, HivUntestedReview, SexualBehaviourReview, MonthsRecentPartnerReview,
-    MonthsSecondPartnerReview, MonthsThirdPartnerReview, SubjectOffStudyReview, SubjectVisitReview,
-    HicEnrollmentReview, SubjectConsentHistoryReview, SubjectConsentReview, PimaReview, Cd4HistoryReview,
-    ClinicQuestionnaireReview, TbSymptomsReview, SubjectReferralReview, ParticipationReview, RbdDemographicsReview,
-    SubjectLocatorReview, QualityOfLifeReview, ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview,
-    HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview, CeaEnrollmentChecklistReview,
-    ResidencyMobilityReview, StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview,
-    HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview,
-    DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview,
-    HivTestReviewReview, HivTestedReview)
 from .correct_consent import CorrectConsent
 from .hiv_linkage_to_care import HivLinkageToCare
-from .registered_subject import RegisteredSubject

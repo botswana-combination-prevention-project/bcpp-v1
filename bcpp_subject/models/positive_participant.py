@@ -1,18 +1,15 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import AGREE_STRONGLY
+from ..choices import AGREE_STRONGLY
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class PositiveParticipant (BaseScheduledVisitModel):
+class PositiveParticipant (CrfModelMixin):
 
     """A model completed by the user to help understand some challenges of being HIV positive."""
-
-    CONSENT_MODEL = SubjectConsent
 
     internalize_stigma = models.CharField(
         verbose_name="I think less of myself.",

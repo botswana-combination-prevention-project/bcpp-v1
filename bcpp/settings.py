@@ -40,13 +40,14 @@ INSTALLED_APPS = [
     'django_crypto_fields.apps.AppConfig',
     'django_revision.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
-    'edc_timepoint.apps.AppConfig',
     'bcpp_map.apps.AppConfig',
     'bcpp_household.apps.AppConfig',
     'bcpp_household_member.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
     'bcpp.apps.EdcDeviceAppConfig',
     'bcpp.apps.EdcMapAppConfig',
+    'bcpp.apps.EdcIdentifierAppConfig',
+    'bcpp.apps.EdcTimepointAppConfig',
     'bcpp.apps.AppConfig',
 ]
 

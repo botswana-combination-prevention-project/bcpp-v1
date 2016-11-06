@@ -1,17 +1,14 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 from edc_constants.choices import YES_NO
 
-from bhp066.apps.bcpp.choices import PARTIAL_PARTICIPATION_TYPE
+from ..choices import PARTIAL_PARTICIPATION_TYPE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class Participation (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class Participation (CrfModelMixin):
 
     full = models.CharField(
         verbose_name='Has the participant agreed to fully participate in BHS',

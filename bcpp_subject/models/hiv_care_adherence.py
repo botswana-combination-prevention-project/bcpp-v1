@@ -1,21 +1,20 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
+from edc_constants.choices import YES_NO_DWTA, YES_NO
 
-from bhp066.apps.bcpp.choices import (
-    YES_NO_DWTA, YES_NO, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
-    ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
+from ..choices import (
+    WHY_NO_ARV_CHOICE, ADHERENCE_4DAY_CHOICE,
+    ADHERENCE_4WK_CHOICE, NO_MEDICAL_CARE, WHY_ARV_STOP_CHOICE)
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivCareAdherence (BaseScheduledVisitModel):
+class HivCareAdherence (CrfModelMixin):
     """A model completed by the user on the participant's access to and adherence to HIV care."""
-
-    CONSENT_MODEL = SubjectConsent
 
     # filled by is hiv care adherence data already in the system
     first_positive = models.DateField(
@@ -82,7 +81,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         max_length=75,
         null=True,
         blank=True,
-        choices=WHYNOARV_CHOICE,
+        choices=WHY_NO_ARV_CHOICE,
         help_text="",
     )
     why_no_arv_other = OtherCharField()
@@ -135,7 +134,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     arv_stop = models.CharField(
         verbose_name="What was the main reason why you stopped taking ARVs?",
         max_length=80,
-        choices=WHYARVSTOP_CHOICE,
+        choices=WHY_ARV_STOP_CHOICE,
         null=True,
         blank=True,
         help_text="",
@@ -147,7 +146,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         verbose_name="During the past 4 days, on how many days have you missed taking all your"
                      " doses of antiretroviral therapy (ART)?",
         max_length=25,
-        choices=ADHERENCE4DAY_CHOICE,
+        choices=ADHERENCE_4DAY_CHOICE,
         null=True,
         blank=True,
         help_text="",
@@ -159,7 +158,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=ADHERENCE4WK_CHOICE,
+        choices=ADHERENCE_4WK_CHOICE,
         help_text="",
     )
 

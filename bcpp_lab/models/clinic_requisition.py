@@ -10,7 +10,8 @@ from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from lab_requisition.models import RequisitionModelMixin
 from edc_map.site_mappers import site_mappers
 from edc.subject.entry.models import LabEntry, Entry
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 
 from bhp066.apps.bcpp_clinic.models import ClinicVisit
 from bhp066.apps.bcpp.choices import COMMUNITIES

@@ -1,13 +1,14 @@
-from edc_base.audit_trail import AuditTrail
-from edc.subject.off_study.models import BaseOffStudy
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from simple_history.models import HistoricalRecords
+
+from edc_base.model.models.base_uuid_model import BaseUuidModel
+from edc_offstudy.model_mixins import OffStudyMixin
 
 
-class SubjectOffStudy(BaseOffStudy, BaseDispatchSyncUuidModel):
+class SubjectOffStudy(OffStudyMixin, BaseUuidModel):
 
     """A model completed by the user that completed when the subject is taken off-study."""
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     class Meta:
         app_label = "bcpp_subject"

@@ -1,19 +1,16 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
 from ..choices import MOBILITY, SELF_CARE, ACTIVITIES, PAIN, ANXIETY
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class QualityOfLife (BaseScheduledVisitModel):
+class QualityOfLife (CrfModelMixin):
 
     """A model completed by the user to capture information about QOL"""
-
-    CONSENT_MODEL = SubjectConsent
 
     mobility = models.CharField(
         verbose_name="Mobility",

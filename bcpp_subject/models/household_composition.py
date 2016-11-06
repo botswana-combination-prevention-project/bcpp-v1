@@ -1,24 +1,18 @@
 from django.db import models
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import EncryptedCharField, EncryptedDecimalField
-from edc_base.model.fields import OtherCharField
-from edc_constants.choices import GENDER
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO
+from django_crypto_fields.fields import EncryptedCharField, EncryptedDecimalField
+
+from edc_base.model.fields import OtherCharField
+from edc_constants.choices import GENDER, YES_NO
 
 from ..choices import RELATION
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HouseholdComposition (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class HouseholdComposition (CrfModelMixin):
 
     physical_add = EncryptedCharField(
         verbose_name="Description of physical address: ",
@@ -56,7 +50,7 @@ class HouseholdComposition (BaseScheduledVisitModel):
         verbose_name_plural = "Household Composition"
 
 
-class Respondent (BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class Respondent (CrfModelMixin):
 
     household_composition = models.ForeignKey(HouseholdComposition)
 
@@ -92,7 +86,7 @@ class Respondent (BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
 
     history = HistoricalRecords()
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Respondent Details"
         verbose_name_plural = "Respondent Details"

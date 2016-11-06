@@ -1,30 +1,23 @@
 from datetime import datetime
+
 from django.db import models
-
 from django.core.urlresolvers import reverse
-
 from django.core.validators import MinValueValidator, RegexValidator
 
-from edc.data_manager.models import TimePointStatusMixin
-from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import EncryptedTextField
+from simple_history.models import HistoricalRecords
+
+from django_crypto_fields.fields import EncryptedTextField
 from edc_base.model.fields import OtherCharField
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_consent.models import RequiresConsentMixin
+from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import YES_NO, PIMA
+from edc_protocol.validators import datetime_not_before_study_start
 from edc_quota.client.models import QuotaMixin, QuotaManager
 
-from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
-from bhp066.apps.bcpp_household.models import Plot
+from ..choices import EASY_OF_USE, QUANTIFIER
 
 from ..managers import PimaVlManager
 
-from .subject_visit import SubjectVisit
-from .subject_off_study_mixin import SubjectOffStudyMixin
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 PIMA_SETTING_VL = (
     ('mobile setting', 'Mobile Setting'),
@@ -32,12 +25,7 @@ PIMA_SETTING_VL = (
 )
 
 
-class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
-              BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
-
-    CONSENT_MODEL = SubjectConsent
-
-    subject_visit = models.ForeignKey(SubjectVisit, null=True)
+class PimaVl (QuotaMixin, CrfModelMixin):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date",
@@ -144,24 +132,6 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         url = reverse('admin:bcpp_lab_preorder_changelist')
         return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
     pre_order.allow_tags = True
-
-    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
-        return True
-
-    def natural_key(self):
-        return self.subject_visit.natural_key()
-
-    def get_visit(self):
-        return self.subject_visit
-
-    def get_subject_identifier(self):
-        return self.get_visit().get_subject_identifier()
-
-    def get_report_datetime(self):
-        return self.created
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

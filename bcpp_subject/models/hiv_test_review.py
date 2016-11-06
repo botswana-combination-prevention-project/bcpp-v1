@@ -1,20 +1,17 @@
-from datetime import datetime
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.validators import date_not_future
 
-from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+from edc_constants.choices import POS_NEG_IND_UNKNOWN
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivTestReview (BaseScheduledVisitModel):
+class HivTestReview (CrfModelMixin):
 
     """Complete this form if HivTestingHistory.has_record."""
-
-    CONSENT_MODEL = SubjectConsent
 
     hiv_test_date = models.DateField(
         verbose_name="What was the recorded date of the last HIV test?",
@@ -25,18 +22,12 @@ class HivTestReview (BaseScheduledVisitModel):
     recorded_hiv_result = models.CharField(
         verbose_name="What was the recorded HIV test result?",
         max_length=30,
-        choices=RECORDEDHIVRESULT_CHOICE,
+        choices=POS_NEG_IND_UNKNOWN,
         help_text="If the participant and written record differ, the result"
                   " from the written record should be recorded.",
     )
 
     history = HistoricalRecords()
-
-    def get_test_code(self):
-        return 'HIV'
-
-    def get_result_datetime(self):
-        return datetime(self.hiv_test_date.year, self.hiv_test_date.month, self.hiv_test_date.day)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'

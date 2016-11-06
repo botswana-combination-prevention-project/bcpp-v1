@@ -3,24 +3,23 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_base.model.fields import OtherCharField
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp_household.models import Plot
+from edc_base.model.fields import OtherCharField
+from edc_protocol.validators import datetime_not_before_study_start
+from edc_base.model.validators import datetime_not_future
+
+from bcpp_household.models import Plot
 
 
 from ..choices import GRANT_TYPE
 from ..managers import GrantManager
 
+from .crf_model_mixin import CrfModelMixin
 from .labour_market_wages import LabourMarketWages
-from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class Grant(CrfModelMixin):
 
     """Inline for labour_market_wages."""
 
@@ -56,8 +55,8 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, SyncModelMixin, Bas
         self.report_datetime = self.labour_market_wages.report_datetime
         super(Grant, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return unicode(self.labour_market_wages.subject_visit)
+    def __str__(self):
+        return str(self.labour_market_wages.subject_visit)
 
     def get_visit(self):
         return self.labour_market_wages.subject_visit

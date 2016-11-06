@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.models import BaseUuidModel
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_constants.constants import NEW, PENDING
 
 from bhp066.apps.bcpp_subject.constants import POC_VIRAL_LOAD

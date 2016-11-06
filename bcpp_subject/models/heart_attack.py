@@ -1,5 +1,7 @@
 from django.db import models
 
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
 

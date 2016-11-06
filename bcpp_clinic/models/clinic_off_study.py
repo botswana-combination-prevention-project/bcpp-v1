@@ -1,4 +1,5 @@
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc.subject.off_study.models import BaseOffStudy
 
 

@@ -1,21 +1,20 @@
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from bhp066.apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
+from ..choices import HIV_RESULT, WHY_NO_HIV_TESTING_CHOICE
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivResult (BaseScheduledVisitModel):
-
-    CONSENT_MODEL = SubjectConsent
+class HivResult (CrfModelMixin):
 
     hiv_result = models.CharField(
         verbose_name="Today\'s HIV test result",
@@ -53,7 +52,7 @@ class HivResult (BaseScheduledVisitModel):
         max_length=65,
         null=True,
         blank=True,
-        choices=WHYNOHIVTESTING_CHOICE,
+        choices=WHY_NO_HIV_TESTING_CHOICE,
         help_text="Note: Only asked of individuals declining HIV testing during this visit.",
     )
 
@@ -73,7 +72,7 @@ class HivResult (BaseScheduledVisitModel):
 
     def microtube_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        SubjectRequisition = models.get_model('bcpp_lab', 'SubjectRequisition')
+        SubjectRequisition = django_apps.get_model('bcpp_lab', 'SubjectRequisition')
         if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='Microtube').exists():
             raise exception_cls('Today\'s Hiv Result cannot be saved before a Microtube Requisition.')
 

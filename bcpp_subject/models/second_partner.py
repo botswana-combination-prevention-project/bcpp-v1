@@ -1,4 +1,5 @@
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 
 from .detailed_sexual_history import DetailedSexualHistory
 

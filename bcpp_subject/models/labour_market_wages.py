@@ -1,23 +1,20 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.fields import OtherCharField
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED
+from edc_base.model.fields import OtherCharField
+from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class LabourMarketWages (BaseScheduledVisitModel):
+class LabourMarketWages (CrfModelMixin):
 
     """A model completed by the user to capture information about
     the participants experience in the labour market."""
-
-    CONSENT_MODEL = SubjectConsent
 
     employed = models.CharField(
         verbose_name="Are you currently employed? ",

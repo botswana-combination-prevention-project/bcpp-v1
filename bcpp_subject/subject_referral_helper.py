@@ -1,21 +1,19 @@
 from copy import copy
 from collections import namedtuple
 
-from django.db.models import get_model
+from django.apps import apps as django_apps
 
-from edc.data_manager.models import TimePointStatus
-from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc_map.site_mappers import site_mappers
-from edc_constants.constants import NOT_REQUIRED, KEYED, CLOSED, POS, NEG
+from edc_constants.constants import CLOSED, POS, NEG
+from edc_metadata.constants import NOT_REQUIRED, KEYED
+from bcpp_household_member.models import EnrollmentChecklist
+from bcpp_household.constants import BASELINE_SURVEY_SLUG
 
-from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
-from bhp066.apps.bcpp_subject.models import HivCareAdherence
-from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-
-from ..choices import REFERRAL_CODES
-from ..constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
-from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
-from ..utils import convert_to_nullboolean
+from .choices import REFERRAL_CODES
+from .constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
+from .models import (
+    SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator, HivCareAdherence)
+from .utils import convert_to_nullboolean
 
 from .subject_status_helper import SubjectStatusHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
@@ -54,8 +52,8 @@ class SubjectReferralHelper(object):
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
         })
-        self.models[BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
-        self.models[ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[BASELINE].update({'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[ANNUAL].update({'subject_requisition': django_apps.get_model('bcpp_lab', 'SubjectRequisition')})
         self.previous_subject_referrals = []
         if subject_referral:
             self.subject_referral = subject_referral
@@ -79,7 +77,7 @@ class SubjectReferralHelper(object):
 
     @subject_referral.setter
     def subject_referral(self, subject_referral):
-        SubjectReferral = get_model('bcpp_subject', 'SubjectReferral')
+        SubjectReferral = django_apps.get_model('bcpp_subject', 'SubjectReferral')
         if self._subject_referral:
             # reset every attribute
             self._subject_referral = None
@@ -138,36 +136,6 @@ class SubjectReferralHelper(object):
     def on_art(self):
         """Returns None if hiv_result==NEG otherwise True if hiv_result==POS and on ART or False if not."""
         return self.subject_status_helper.on_art
-
-    @property
-    def missing_data(self):
-        """Returns the model name of the first model used in the referral algorithm
-        with meta data that is NOT set to KEYED or NOT_REQUIRED.
-
-        If time-point status instance exists with status=CLOSED, the check is skipped."""
-        first_model_cls = None
-        internal_identifier = self.subject_visit.household_member.internal_identifier
-        if not SubjectLocator.objects.filter(
-                subject_visit__household_member__internal_identifier=internal_identifier).exists():
-            first_model_cls = SubjectLocator  # required no matter what
-        else:
-            try:
-                TimePointStatus.objects.get(appointment=self.subject_visit.appointment, status=CLOSED)
-            except TimePointStatus.DoesNotExist:
-                for model_cls in self.models[self.timepoint_key].values():
-                    try:
-                        scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
-                            appointment=self.subject_visit.appointment,
-                            entry__app_label=model_cls._meta.app_label,
-                            entry__model_name=model_cls._meta.object_name)
-                        if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
-                            first_model_cls = model_cls
-                            break
-                    except ScheduledEntryMetaData.DoesNotExist:
-                        pass
-                    except AttributeError:  # NoneType?
-                        pass
-        return first_model_cls
 
     @property
     def subject_referral_dict(self):
@@ -263,7 +231,7 @@ class SubjectReferralHelper(object):
         if not self._referral_code_list:
             is_declined = None
             try:
-                is_declined = True if self.hiv_result=="Declined" else False
+                is_declined = True if self.hiv_result == "Declined" else False
             except AttributeError:
                 pass
             if not self.hiv_result or is_declined:

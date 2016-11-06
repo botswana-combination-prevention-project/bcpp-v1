@@ -1,17 +1,13 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import AGREE_STRONGLY
+from ..choices import AGREE_STRONGLY
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class StigmaOpinion (BaseScheduledVisitModel):
-
-    """CS002"""
-    CONSENT_MODEL = SubjectConsent
+class StigmaOpinion (CrfModelMixin):
 
     test_community_stigma = models.CharField(
         verbose_name="People are hesitant to take an HIV test due to"

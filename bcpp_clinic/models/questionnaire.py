@@ -2,7 +2,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from edc.entry_meta_data.managers import EntryMetaDataManager
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
+
 from edc_base.model.fields import OtherCharField
 from edc_constants.choices import YES_NO_DWTA
 

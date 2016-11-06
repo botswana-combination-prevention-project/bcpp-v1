@@ -1,21 +1,18 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED
+from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class HivHealthCareCosts (BaseScheduledVisitModel):
+class HivHealthCareCosts (CrfModelMixin):
 
     """A model completed by the user to capture information from the
     participant about obtaining medical or clinical care related to HIV."""
-
-    CONSENT_MODEL = SubjectConsent
 
     hiv_medical_care = models.CharField(
         verbose_name="Have you ever received HIV related medical/clinical care? ",

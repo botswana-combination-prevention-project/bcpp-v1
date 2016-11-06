@@ -1,20 +1,17 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from edc_base.audit_trail import AuditTrail
+from simple_history.models import HistoricalRecords
 
-from bhp066.apps.bcpp.choices import YES_NO_REFUSED
+from edc_constants.choices import YES_NO_REFUSED
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .subject_consent import SubjectConsent
+from .crf_model_mixin import CrfModelMixin
 
 
-class ResourceUtilization (BaseScheduledVisitModel):
+class ResourceUtilization (CrfModelMixin):
 
     """A model completed by the user to capture information about participants
     use of resources to obtain medical care."""
-
-    CONSENT_MODEL = SubjectConsent
 
     out_patient = models.CharField(
         verbose_name="In the last 3 months, have you sought outpatient medical care for yourself?"
