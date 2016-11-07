@@ -1,15 +1,15 @@
 from django.contrib import admin
 
-from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
-
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-
+from ..admin_site import bcpp_household_member_admin
 from ..models import SubjectHtc
 
 from ..forms import SubjectHtcForm
 
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
-class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
+
+@admin.register(SubjectHtc, site=bcpp_household_member_admin)
+class SubjectHtcAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
     form = SubjectHtcForm
     dashboard_type = 'subject'
     subject_identifier_attribute = 'registration_identifier'
@@ -43,10 +43,3 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         super(SubjectHtcAdmin, self).get_readonly_fields(request, obj)
         return ('tracking_identifier',)
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
-        return super(SubjectHtcAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectHtc, SubjectHtcAdmin)

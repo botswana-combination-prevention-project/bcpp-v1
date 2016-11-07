@@ -10,11 +10,17 @@ from edc_identifier.apps import AppConfig as EdcIdentifierAppConfigParent
 from edc_timepoint.apps import AppConfig as EdcTimepointAppConfigParent
 from edc_timepoint.timepoint import Timepoint
 
+from bcpp_survey.apps import AppConfig as BcppSurveyAppConfigParent
+
 
 class AppConfig(DjangoApponfig):
     name = 'bcpp'
     verbose_name = 'Botswana Combination Prevention Project'
     use_current_community_filter = True
+
+
+class BcppSurveyAppConfig(BcppSurveyAppConfigParent):
+    current_survey = None
 
 
 class EdcDeviceAppConfig(EdcDeviceAppConfigParent):

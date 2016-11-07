@@ -2,12 +2,10 @@ from django.db import models
 
 from edc_base.model.validators import datetime_not_future
 from edc_base.model.validators import eligible_if_yes
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import YES_NO
 
 
-class BaseRepresentativeEligibility(SyncModelMixin, BaseUuidModel):
+class RepresentativeEligibilityMixin(models.Model):
     """Determines if the household member is eligible representative of the household."""
 
     report_datetime = models.DateTimeField(

@@ -7,10 +7,12 @@ from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
 
-from .base_member_status_model import BaseMemberStatusModel
+from ..managers import HouseholdMemberManager
+
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class SubjectDeath(BaseMemberStatusModel):
+class SubjectDeath(HouseholdMemberModelMixin):
 
     """A model completed by the user to report the death of a participant."""
 
@@ -28,14 +30,6 @@ class SubjectDeath(BaseMemberStatusModel):
         help_text="",
     )
 
-#     death_cause_info = models.ForeignKey(
-#         DeathCauseInfo,
-#         verbose_name=("What is the primary source of cause of death information? "
-#                       "(if multiple source of information, list one with the smallest "
-#                       "number closest to the top of the list) "),
-#         help_text="",
-#     )
-
     death_cause_info_other = OtherCharField(
         verbose_name="if other specify...",
         blank=True,
@@ -52,12 +46,6 @@ class SubjectDeath(BaseMemberStatusModel):
         " major cause)"
     )
 
-#     death_cause_category = models.ForeignKey(
-#         DeathCauseCategory,
-#         verbose_name="Based on the above description, what category best defines the major cause of death? ",
-#         help_text="",
-#     )
-
     death_cause_other = OtherCharField(
         verbose_name="if other specify...",
         blank=True,
@@ -70,18 +58,14 @@ class SubjectDeath(BaseMemberStatusModel):
         default=0,
     )
 
-#     primary_medical_care_giver = models.ForeignKey(
-#         DeathMedicalResponsibility,
-#         verbose_name="Who was responsible for primary medical care during the month prior to death?",
-#         help_text="",
-#     )
-
     relationship_death_study = models.CharField(
         verbose_name="What is the relationship of the death to study participation?",
         max_length=50,
         choices=DEATH_RELATIONSIP_TO_STUDY,
         help_text="",
     )
+
+    objects = HouseholdMemberManager()
 
     history = HistoricalRecords()
 
@@ -93,7 +77,7 @@ class SubjectDeath(BaseMemberStatusModel):
     def __str__(self):
         return str(self.registered_subject)
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = "bcpp_household_member"
         verbose_name = "Subject Death"
         verbose_name_plural = "Subject Death"

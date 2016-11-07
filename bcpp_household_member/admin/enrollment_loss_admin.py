@@ -1,12 +1,15 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
 
-from ..models import HouseholdMember, EnrollmentLoss
+from ..admin_site import bcpp_household_member_admin
 from ..forms import EnrollmentLossForm
+from ..models import HouseholdMember, EnrollmentLoss
+
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
 
-class EnrollmentLossAdmin(BaseModelAdmin):
+@admin.register(EnrollmentLoss, site=bcpp_household_member_admin)
+class EnrollmentLossAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = EnrollmentLossForm
 
@@ -27,5 +30,3 @@ class EnrollmentLossAdmin(BaseModelAdmin):
                     household_structure__exact=request.GET.get('household_structure', 0))
             kwargs["queryset"] = household_members
         return super(EnrollmentLossAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(EnrollmentLoss, EnrollmentLossAdmin)

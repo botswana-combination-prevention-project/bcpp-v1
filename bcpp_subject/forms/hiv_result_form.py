@@ -81,3 +81,4 @@ class HivResultForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivResult
+        fields = '__all__'

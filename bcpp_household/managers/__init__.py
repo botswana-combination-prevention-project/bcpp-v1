@@ -6,6 +6,7 @@ from .household_refusal_history_manager import HouseholdRefusalHistoryManager
 from .household_refusal_manager import HouseholdRefusalManager
 from .household_structure_manager import HouseholdStructureManager
 from .household_work_list_manager import HouseholdWorkListManager
+from .manager_mixins import HouseholdStructureManagerMixin
 from .plot_log_manager import PlotLogManager, PlotLogEntryManager
 from .plot_manager import PlotManager
 from .representative_eligibility_manager import RepresentativeEligibilityManager

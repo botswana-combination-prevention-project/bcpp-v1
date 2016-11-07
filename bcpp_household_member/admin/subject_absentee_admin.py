@@ -1,13 +1,16 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
-from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+from edc_base.modeladmin.mixins import TabularInlineMixin
 
+from ..admin_site import bcpp_household_member_admin
 from ..forms import SubjectAbsenteeEntryForm
-from ..models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
+from ..models import SubjectAbsentee, SubjectAbsenteeEntry
+
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
 
-class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
+@admin.register(SubjectAbsenteeEntry, site=bcpp_household_member_admin)
+class SubjectAbsenteeEntryAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     fields = (
         'subject_absentee',
@@ -35,10 +38,8 @@ class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
             kwargs["queryset"] = SubjectAbsentee.objects.filter(id__exact=request.GET.get('subject_absentee', 0))
         return super(SubjectAbsenteeEntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(SubjectAbsenteeEntry, SubjectAbsenteeEntryAdmin)
 
-
-class SubjectAbsenteeEntryInline(BaseTabularInline):
+class SubjectAbsenteeEntryInline(TabularInlineMixin, admin.TabularInline):
     fields = (
         'report_datetime',
         'reason',
@@ -51,7 +52,7 @@ class SubjectAbsenteeEntryInline(BaseTabularInline):
     extra = 1
 
 
-class SubjectAbsenteeAdmin(BaseRegisteredSubjectModelAdmin):
+class SubjectAbsenteeAdmin(HouseholdMemberAdminMixin):
 
     form = SubjectAbsenteeEntryForm
     inlines = [SubjectAbsenteeEntryInline, ]
@@ -79,10 +80,3 @@ class SubjectAbsenteeAdmin(BaseRegisteredSubjectModelAdmin):
         'survey',
         'report_datetime',)
     instructions = []
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
-        return super(SubjectAbsenteeAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectAbsentee, SubjectAbsenteeAdmin)

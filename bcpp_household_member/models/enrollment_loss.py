@@ -2,18 +2,17 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords
 
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
 from edc_base.model.validators import dob_not_future
 
 from ..constants import NOT_ELIGIBLE
 from ..exceptions import MemberStatusError
-from ..managers import EnrollmentLossManager
+from ..managers import HouseholdMemberManager
 
 from .household_member import HouseholdMember
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class EnrollmentLoss(SyncModelMixin, BaseUuidModel):
+class EnrollmentLoss(HouseholdMemberModelMixin):
     """A system model auto created that captures the reason for a present BHS eligible member
     who passes BHS eligibility but is not participating in the BHS."""
     household_member = models.OneToOneField(HouseholdMember)
@@ -26,7 +25,7 @@ class EnrollmentLoss(SyncModelMixin, BaseUuidModel):
         max_length=500,
         help_text='Do not include any personal identifiable information.')
 
-    objects = EnrollmentLossManager()
+    objects = HouseholdMemberManager()
 
     history = HistoricalRecords()
 

@@ -3,13 +3,14 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords as AuditTrail
 
+from bcpp.model_mixins import RepresentativeEligibilityMixin
+
 from ..managers import RepresentativeEligibilityManager
 
-from .base_representative_eligibility import BaseRepresentativeEligibility
 from .household_structure import HouseholdStructure
 
 
-class RepresentativeEligibility(BaseRepresentativeEligibility):
+class RepresentativeEligibility(RepresentativeEligibilityMixin, models.Model):
     """A model completed by the user that checks the eligibility of household member
     to be the household representative."""
 

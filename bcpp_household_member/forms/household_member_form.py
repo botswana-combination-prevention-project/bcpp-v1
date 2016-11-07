@@ -1,5 +1,4 @@
 from django import forms
-from django.forms.util import ErrorList
 
 from edc_constants.constants import DEAD, NO, YES, FEMALE, MALE
 
@@ -8,10 +7,10 @@ from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 from ..models import HouseholdMember, EnrollmentChecklist
 from ..constants import HEAD_OF_HOUSEHOLD
 
-from .base_household_member_form import BaseHouseholdMemberForm
+from django.forms.utils import ErrorList
 
 
-class HouseholdMemberForm(BaseHouseholdMemberForm):
+class HouseholdMemberForm(forms.ModelForm):
 
     def validate_on_gender(self):
         cleaned_data = self.cleaned_data
@@ -62,3 +61,4 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
 
     class Meta:
         model = HouseholdMember
+        fields = '__all__'

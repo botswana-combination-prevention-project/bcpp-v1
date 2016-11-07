@@ -74,3 +74,4 @@ class SexualBehaviourForm (BaseSubjectModelForm):
 
     class Meta:
         model = SexualBehaviour
+        fields = '__all__'

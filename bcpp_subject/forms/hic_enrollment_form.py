@@ -28,3 +28,4 @@ class HicEnrollmentForm (BaseSubjectModelForm):
 
     class Meta:
         model = HicEnrollment
+        fields = '__all__'

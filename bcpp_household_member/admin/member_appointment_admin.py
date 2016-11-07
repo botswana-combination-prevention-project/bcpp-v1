@@ -1,12 +1,14 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import MemberAppointmentForm
 from ..models import MemberAppointment
 
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
-class MemberAppointmentAdmin(BaseModelAdmin):
+
+@admin.register(MemberAppointment, site=bcpp_household_member_admin)
+class MemberAppointmentAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = MemberAppointmentForm
 
@@ -44,5 +46,3 @@ class MemberAppointmentAdmin(BaseModelAdmin):
         'household_member__household_structure__household__household_identifier',
         'household_member__household_structure__household__plot__plot_identifier',
     )
-
-admin.site.register(MemberAppointment, MemberAppointmentAdmin)

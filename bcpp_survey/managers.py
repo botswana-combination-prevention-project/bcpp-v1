@@ -1,7 +1,11 @@
 from datetime import date
+
+from django.apps import apps as django_apps
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned, ImproperlyConfigured
 from django.conf import settings
+
+app_config = django_apps.get_app_config('bcpp_survey')
 
 
 class SurveyManager(models.Manager):
@@ -44,7 +48,7 @@ class SurveyManager(models.Manager):
         * a survey relative to the given report_datetime and survey_slug;
         * None if both survey_slug and settings.CURRENT are None."""
         survey = None
-        if settings.CURRENT_SURVEY:
+        if app_config.current_survey:
             try:
                 report_date = report_datetime.date() or date.today()
             except AttributeError:

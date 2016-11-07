@@ -37,3 +37,4 @@ class OutpatientCareForm (BaseSubjectModelForm):
 
     class Meta:
         model = OutpatientCare
+        fields = '__all__'

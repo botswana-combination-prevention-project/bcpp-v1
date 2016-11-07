@@ -34,3 +34,4 @@ class ClinicQuestionnaireForm (BaseSubjectModelForm):
 
     class Meta:
         model = ClinicQuestionnaire
+        fields = '__all__'

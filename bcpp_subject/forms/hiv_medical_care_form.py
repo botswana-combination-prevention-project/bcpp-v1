@@ -7,3 +7,4 @@ class HivMedicalCareForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivMedicalCare
+        fields = '__all__'

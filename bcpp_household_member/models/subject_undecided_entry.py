@@ -2,14 +2,16 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords
 
+from edc_base.model.models import BaseUuidModel
+
 from ..choices import UNDECIDED_REASON
 from ..managers import SubjectUndecidedEntryManager
 
-from .base_subject_entry import BaseSubjectEntry
+from .model_mixins import SubjectEntryMixin
 from .subject_undecided import SubjectUndecided
 
 
-class SubjectUndecidedEntry(BaseSubjectEntry):
+class SubjectUndecidedEntry(SubjectEntryMixin, BaseUuidModel):
     """A model completed by the user that captures information on the undecided status
     of a household member potentially eligible for BHS."""
     subject_undecided = models.ForeignKey(SubjectUndecided)
@@ -19,9 +21,9 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
         max_length=100,
         choices=UNDECIDED_REASON)
 
-    history = HistoricalRecords()
-
     objects = SubjectUndecidedEntryManager()
+
+    history = HistoricalRecords()
 
     @property
     def inline_parent(self):

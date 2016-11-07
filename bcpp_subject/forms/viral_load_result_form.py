@@ -1,8 +1,10 @@
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from django import forms
+
 from ..models import ViralLoadResult
 
 
-class ViralLoadResultForm (BaseModelForm):
+class ViralLoadResultForm (forms.ModelForm):
 
     class Meta:
         model = ViralLoadResult
+        fields = '__all__'

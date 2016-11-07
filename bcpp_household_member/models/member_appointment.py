@@ -58,9 +58,9 @@ class MemberAppointment(SyncModelMixin, BaseUuidModel):
 
     is_confirmed = models.BooleanField(default=False)
 
-    history = HistoricalRecords()
-
     objects = MemberAppointmentManager()
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{}'.format(self.appt_date.strftime('%Y-%m-%d'))

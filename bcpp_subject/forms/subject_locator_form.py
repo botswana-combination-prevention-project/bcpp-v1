@@ -129,3 +129,4 @@ class SubjectLocatorForm (BaseSubjectModelForm):
 
     class Meta:
         model = SubjectLocator
+        fields = '__all__'

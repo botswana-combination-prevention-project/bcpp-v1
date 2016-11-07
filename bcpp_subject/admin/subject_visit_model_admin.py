@@ -1,12 +1,11 @@
-from edc.subject.visit_tracking.admin import BaseVisitTrackingModelAdmin
-
-from bhp066.apps.bcpp_survey.models import Survey
+from django.contrib import admin
+from edc_visit_tracking.admin import VisitAdminMixin
 
 from ..constants import ANNUAL, ANNUAL_CODES
 from ..models import SubjectVisit
 
 
-class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
+class SubjectVisitModelAdmin (VisitAdminMixin, admin.ModelAdmin):
 
     """Model Admin for models with a foreignkey to the subject visit model."""
 
@@ -14,13 +13,11 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     visit_attr = 'subject_visit'
     dashboard_type = 'subject'
     date_heirarchy = 'subject_visit__report_datetime'
-    current_survey = Survey.objects.current_survey().survey_slug
-    first_survey = Survey.objects.first_survey.survey_slug
 
     def __init__(self, *args, **kwargs):
         self.subject_visit = None
         lookups = []
-        super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
+        super(SubjectVisitModelAdmin, self).__init__(*args, **kwargs)
         self.list_filter = list(self.list_filter)
         try:
             self.list_filter.remove('subject_visit')

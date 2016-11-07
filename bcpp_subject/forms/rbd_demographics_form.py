@@ -31,3 +31,4 @@ class RbdDemographicsForm (BaseSubjectModelForm):
 
     class Meta:
         model = RbdDemographics
+        fields = '__all__'

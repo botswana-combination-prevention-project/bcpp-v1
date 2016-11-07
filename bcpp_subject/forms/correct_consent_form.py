@@ -1,11 +1,10 @@
+from django import forms
 from django.forms import ValidationError
-
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import CorrectConsent
 
 
-class CorrectConsentForm(BaseModelForm):
+class CorrectConsentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -14,3 +13,4 @@ class CorrectConsentForm(BaseModelForm):
 
     class Meta:
         model = CorrectConsent
+        fields = '__all__'

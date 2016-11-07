@@ -87,7 +87,6 @@ def update_household_work_list(label=None, household_structure=None):
                 log_attempts=log_attempts,
                 members=member_count,
                 hic=hic_count,
-                bhs=bhs_count,
-            )
+                bhs=bhs_count)
             created += 1
     return created, updated

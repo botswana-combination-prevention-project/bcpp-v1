@@ -1,14 +1,14 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import HouseholdInfoForm
 from ..models import HouseholdInfo, HouseholdMember
 
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
-class HouseholdInfoAdmin(BaseModelAdmin):
+
+@admin.register(HouseholdInfo, site=bcpp_household_member_admin)
+class HouseholdInfoAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = HouseholdInfoForm
     fields = (
@@ -43,13 +43,3 @@ class HouseholdInfoAdmin(BaseModelAdmin):
         "transport_mode",
     )
     list_filter = ('report_datetime', 'household_member__household_structure__household__community')
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(
-                household_structure__exact=request.GET.get('household_structure', 0), age_in_years__in=range(18L, 110L))
-        if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
-        return super(HouseholdInfoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(HouseholdInfo, HouseholdInfoAdmin)

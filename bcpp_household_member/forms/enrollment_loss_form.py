@@ -1,10 +1,9 @@
 from django import forms
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import EnrollmentLoss
 
 
-class EnrollmentLossForm(BaseModelForm):
+class EnrollmentLossForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(EnrollmentLossForm, self).clean()
@@ -14,3 +13,4 @@ class EnrollmentLossForm(BaseModelForm):
 
     class Meta:
         model = EnrollmentLoss
+        fields = '__all__'

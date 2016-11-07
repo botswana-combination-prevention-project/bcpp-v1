@@ -1,11 +1,9 @@
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
-
 from ..models import HouseholdHeadEligibility
 
 
-class HouseholdHeadEligibilityForm(BaseModelForm):
+class HouseholdHeadEligibilityForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -16,3 +14,4 @@ class HouseholdHeadEligibilityForm(BaseModelForm):
 
     class Meta:
         model = HouseholdHeadEligibility
+        fields = '__all__'

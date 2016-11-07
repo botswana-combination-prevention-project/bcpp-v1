@@ -20,3 +20,4 @@ class CommunityEngagementForm (BaseSubjectModelForm):
 
     class Meta:
         model = CommunityEngagement
+        fields = '__all__'

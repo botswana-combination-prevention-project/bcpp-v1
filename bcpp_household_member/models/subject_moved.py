@@ -5,10 +5,12 @@ from simple_history.models import HistoricalRecords
 
 from edc_constants.choices import YES_NO_UNKNOWN
 
-from .base_member_status_model import BaseMemberStatusModel
+from ..managers import HouseholdMemberManager
+
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class SubjectMoved(BaseMemberStatusModel):
+class SubjectMoved(HouseholdMemberModelMixin):
 
     """A model completed by the user to indicate a subject has moved from the household and or community."""
 
@@ -55,14 +57,15 @@ class SubjectMoved(BaseMemberStatusModel):
         help_text=('')
     )
 
+    objects = HouseholdMemberManager()
+
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
         super(SubjectMoved, self).save(*args, **kwargs)
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
-        ordering = ['household_member']

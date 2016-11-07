@@ -1,16 +1,15 @@
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from edc_map.site_mappers import site_mappers
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
-from django.core.exceptions import ObjectDoesNotExist
 
 
-class BaseSubjectModelForm(BaseModelForm):
+class BaseSubjectModelForm(forms.ModelForm):
 
     visit_model = SubjectVisit
 

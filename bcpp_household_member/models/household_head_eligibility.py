@@ -3,15 +3,15 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords
 
-from bcpp_household.models import BaseRepresentativeEligibility
+from bcpp.model_mixins import RepresentativeEligibilityMixin
 from bcpp_household.models import HouseholdStructure
-
-from ..managers import HouseholdHeadEligibilityManager
 
 from .household_member import HouseholdMember
 
+from ..managers import HouseholdMemberManagerMixin
 
-class HouseholdHeadEligibility(BaseRepresentativeEligibility):
+
+class HouseholdHeadEligibility(RepresentativeEligibilityMixin, models.Model):
     """A model completed by the user that determines if the household member is eligible to act
     as a head of household or household representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
@@ -21,7 +21,7 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
         help_text=('Important: The household member must verbally consent '
                    'before completing this questionnaire.'))
 
-    objects = HouseholdHeadEligibilityManager()
+    objects = HouseholdMemberManagerMixin()
 
     history = HistoricalRecords()
 

@@ -16,6 +16,7 @@ class CircumcisionForm (BaseSubjectModelForm):
 
     class Meta:
         model = Circumcision
+        fields = '__all__'
 
 
 class CircumcisedForm (BaseSubjectModelForm):
@@ -34,6 +35,7 @@ class CircumcisedForm (BaseSubjectModelForm):
 
     class Meta:
         model = Circumcised
+        fields = '__all__'
 
 
 class UncircumcisedForm (BaseSubjectModelForm):
@@ -46,3 +48,4 @@ class UncircumcisedForm (BaseSubjectModelForm):
 
     class Meta:
         model = Uncircumcised
+        fields = '__all__'

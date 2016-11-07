@@ -29,3 +29,4 @@ class SubjectMovedForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectMoved
+        fields = '__all__'

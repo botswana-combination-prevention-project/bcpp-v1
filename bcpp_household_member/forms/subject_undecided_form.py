@@ -9,9 +9,11 @@ class SubjectUndecidedEntryForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectUndecidedEntry
+        fields = '__all__'
 
 
 class SubjectUndecidedForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectUndecided
+        fields = '__all__'

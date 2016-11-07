@@ -1,4 +1,3 @@
-from .base_member_status_model import BaseMemberStatusModel
 from .enrollment_checklist import EnrollmentChecklist
 from .enrollment_loss import EnrollmentLoss
 from .household_head_eligibility import HouseholdHeadEligibility

@@ -7,3 +7,4 @@ class HivResultDocumentationForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivResultDocumentation
+        fields = '__all__'

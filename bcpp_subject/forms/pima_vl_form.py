@@ -1,5 +1,5 @@
+from django.apps import apps as django_apps
 from django import forms
-from django.db.models import get_model
 from edc_constants.constants import YES, NO
 
 from ..models import PimaVl
@@ -44,8 +44,8 @@ class PimaVlForm (BaseSubjectModelForm):
     def check_preorder_exists(self, cleaned_data):
         """Check if preorder exists."""
 
-        Panel = get_model('bcpp_lab', 'Panel')
-        PreOrder = get_model('bcpp_lab', 'PreOrder')
+        Panel = django_apps.get_model('bcpp_lab', 'Panel')
+        PreOrder = django_apps.get_model('bcpp_lab', 'PreOrder')
         try:
             panel = Panel.objects.get(name=POC_VIRAL_LOAD)
             PreOrder.objects.get(

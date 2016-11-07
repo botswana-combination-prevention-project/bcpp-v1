@@ -31,3 +31,4 @@ class PimaForm (BaseSubjectModelForm):
 
     class Meta:
         model = Pima
+        fields = '__all__'

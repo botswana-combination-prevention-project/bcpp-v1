@@ -2,13 +2,12 @@ from django import forms
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from edc_constants.constants import NOT_APPLICABLE
 
 from ..models import EnrollmentChecklist
 
 
-class EnrollmentChecklistForm(BaseModelForm):
+class EnrollmentChecklistForm(forms.ModelForm):
 
     def validate_study_participation(self):
         cleaned_data = self.cleaned_data
@@ -68,3 +67,4 @@ class EnrollmentChecklistForm(BaseModelForm):
 
     class Meta:
         model = EnrollmentChecklist
+        fields = '__all__'

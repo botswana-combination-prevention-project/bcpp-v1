@@ -9,9 +9,11 @@ class SubjectAbsenteeEntryForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectAbsenteeEntry
+        fields = '__all__'
 
 
 class SubjectAbsenteeForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectAbsentee
+        fields = '__all__'

@@ -1,7 +1,7 @@
 from django import forms
 
-from ..classes import SubjectReferralHelper
 from ..models import SubjectReferral
+from ..subject_referral_helper import SubjectReferralHelper
 
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -19,3 +19,4 @@ class SubjectReferralForm(BaseSubjectModelForm):
 
     class Meta:
         model = SubjectReferral
+        fields = '__all__'

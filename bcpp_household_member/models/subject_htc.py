@@ -7,11 +7,12 @@ from edc_base.utils import get_safe_random_string, safe_allowed_chars
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from ..constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
 from ..choices import HIV_RESULT
+from ..constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
 from ..exceptions import MemberStatusError
+from ..managers import HouseholdMemberManager
 
-from .base_member_status_model import BaseMemberStatusModel
+from .model_mixins import HouseholdMemberModelMixin
 
 
 HIV_RESULT = list(HIV_RESULT)
@@ -21,7 +22,7 @@ HIV_RESULT = tuple(HIV_RESULT)
 app_config = django_apps.get_app_config('edc_device')
 
 
-class SubjectHtc(BaseMemberStatusModel):
+class SubjectHtc(HouseholdMemberModelMixin):
     """A model completed by the user that captures HTC information for a household member
     not participating in BHS."""
     tracking_identifier = models.CharField(
@@ -63,6 +64,8 @@ class SubjectHtc(BaseMemberStatusModel):
 
     comment = models.TextField(max_length=250, null=True, blank=True)
 
+    objects = HouseholdMemberManager()
+
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
@@ -103,8 +106,7 @@ class SubjectHtc(BaseMemberStatusModel):
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Htc"
         verbose_name_plural = "Subject Htc"
-        unique_together = ('registered_subject', 'survey',)

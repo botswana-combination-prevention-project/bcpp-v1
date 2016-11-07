@@ -2,11 +2,10 @@ from django import forms
 
 from ..models import SubjectHtc
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from edc_constants.constants import NOT_APPLICABLE
 
 
-class SubjectHtcForm(BaseModelForm):
+class SubjectHtcForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(SubjectHtcForm, self).clean()
@@ -46,3 +45,4 @@ class SubjectHtcForm(BaseModelForm):
 
     class Meta:
         model = SubjectHtc
+        fields = '__all__'

@@ -1,22 +1,22 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseTabularInline
-from edc.export.actions import export_as_csv_action
+from edc_base.modeladmin.mixins import TabularInlineMixin
+from edc_export.actions import export_as_csv_action
 
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import HouseholdMemberForm
 from ..models import HouseholdMember
 
-from .base_household_member_admin import BaseHouseholdMemberAdmin
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
 
-class HouseholdMemberInline(BaseTabularInline):
+class HouseholdMemberInline(TabularInlineMixin, admin.TabularInline):
     model = HouseholdMember
     extra = 3
 
 
-class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
+@admin.register(HouseholdMember, site=bcpp_household_member_admin)
+class HouseholdMemberAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = HouseholdMemberForm
     date_hierarchy = 'modified'
@@ -26,19 +26,6 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
             'initials', 'gender', 'age_in_years', 'member_status', 'present_today', 'study_resident', 'relation',
             'eligible_member', 'eligible_subject'],
         extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_structure":
-            if request.GET.get('household_structure'):
-                kwargs["queryset"] = HouseholdStructure.objects.filter(
-                    id__exact=request.GET.get('household_structure', 0))
-            else:
-                self.readonly_fields = list(self.readonly_fields)
-                try:
-                    self.readonly_fields.index('household_structure')
-                except ValueError:
-                    self.readonly_fields.append('household_structure')
-        return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = ['household_structure',
               'first_name',
@@ -114,4 +101,3 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
         return [(None, {'fields': fields})]
 
     list_per_page = 15
-admin.site.register(HouseholdMember, HouseholdMemberAdmin)

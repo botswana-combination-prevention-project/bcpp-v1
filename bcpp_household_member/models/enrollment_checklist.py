@@ -8,18 +8,17 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc_base.model.models import BaseUuidModel
 from edc_base.model.validators import dob_not_future, datetime_not_future
 from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
-from edc_sync.model_mixins import SyncModelMixin
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
-from ..managers import EnrollmentChecklistManager
+from ..managers import HouseholdMemberManager
 
 from .household_member import HouseholdMember
+from .model_mixins import HouseholdMemberModelMixin
 
 BLOCK_CONTINUE = (
     ('Block', 'Yes( Block from further participation)'),
@@ -167,13 +166,13 @@ class BaseEnrollmentChecklist(models.Model):
         abstract = True
 
 
-class EnrollmentChecklist(BaseEnrollmentChecklist, SyncModelMixin, BaseUuidModel):
+class EnrollmentChecklist(BaseEnrollmentChecklist, HouseholdMemberModelMixin):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
 
     household_member = models.ForeignKey(HouseholdMember)
 
-    objects = EnrollmentChecklistManager()
+    objects = HouseholdMemberManager()
 
     history = HistoricalRecords()
 
@@ -272,7 +271,7 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, SyncModelMixin, BaseUuidModel
             signals.post_delete.connect(enrollment_checklist_on_post_delete, weak=False,
                                         dispatch_uid="enrollment_checklist_on_post_delete")
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = "bcpp_household_member"
         verbose_name = "Enrollment Checklist"
         unique_together = (('household_member', 'report_datetime'))

@@ -38,3 +38,4 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
 
     class Meta:
         model = ReproductiveHealth
+        fields = '__all__'

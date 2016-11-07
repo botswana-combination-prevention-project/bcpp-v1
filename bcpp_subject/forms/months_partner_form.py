@@ -1,9 +1,9 @@
 from django import forms
 
 from edc_constants.constants import NOT_APPLICABLE, NO
+from edc_constants.choices import YES_NO_UNSURE
 
-from bhp066.apps.bcpp.choices import FIRSTPARTNERHIV_CHOICE, YES_NO_UNSURE
-
+from ..choices import FIRST_PARTNER_HIV_CHOICE
 from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, SexualBehaviour
 
 from .base_subject_model_form import BaseSubjectModelForm
@@ -16,7 +16,7 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
     def check_tuples(self):
         # check tuples have not changed
         self.options_in_tuple(YES_NO_UNSURE, self.yes_no_unsure_options)
-        self.options_in_tuple(FIRSTPARTNERHIV_CHOICE, ['negative', 'I am not sure'])
+        self.options_in_tuple(FIRST_PARTNER_HIV_CHOICE, ['negative', 'I am not sure'])
 
     def clean(self):
         """Ensures that question about antiretrovirals is not answered if partner is known to be HIV negative."""
@@ -54,15 +54,18 @@ class MonthsRecentPartnerForm(BaseMonthsPartnerForm):
 
     class Meta:
         model = MonthsRecentPartner
+        fields = '__all__'
 
 
 class MonthsSecondPartnerForm(BaseMonthsPartnerForm):
 
     class Meta:
         model = MonthsSecondPartner
+        fields = '__all__'
 
 
 class MonthsThirdPartnerForm(BaseMonthsPartnerForm):
 
     class Meta:
         model = MonthsThirdPartner
+        fields = '__all__'

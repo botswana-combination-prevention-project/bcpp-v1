@@ -14,8 +14,7 @@ from edc_protocol.validators import datetime_not_before_study_start
 from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from ..choices import EASY_OF_USE, QUANTIFIER
-
-from ..managers import PimaVlManager
+from ..managers import ScheduledModelManager
 
 from .crf_model_mixin import CrfModelMixin
 
@@ -122,7 +121,7 @@ class PimaVl (QuotaMixin, CrfModelMixin):
         blank=True,
         help_text="Comment")
 
-    objects = PimaVlManager()
+    objects = ScheduledModelManager()
 
     history = HistoricalRecords()
 

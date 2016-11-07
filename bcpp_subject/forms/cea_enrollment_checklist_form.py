@@ -24,3 +24,4 @@ class CeaEnrollmentChecklistForm (BaseSubjectModelForm):
 
     class Meta:
         model = CeaEnrollmentChecklist
+        fields = '__all__'

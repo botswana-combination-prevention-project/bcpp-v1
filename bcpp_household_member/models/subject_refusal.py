@@ -6,11 +6,12 @@ from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future
 
 from ..choices import WHY_NOPARTICIPATE_CHOICE
+from ..managers import HouseholdMemberManager
 
-from .base_member_status_model import BaseMemberStatusModel
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class SubjectRefusal (BaseMemberStatusModel):
+class SubjectRefusal (HouseholdMemberModelMixin):
     """A model completed by the user that captures reasons for a
     potentially eligible household member refusing participating in BHS."""
     refusal_date = models.DateField(
@@ -44,10 +45,9 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text='IMPORTANT: Do not include any names or other personally identifying '
                   'information in this comment')
 
-    history = HistoricalRecords()
+    objects = HouseholdMemberManager()
 
-    def get_registration_datetime(self):
-        return self.report_datetime
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
@@ -65,8 +65,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = "bcpp_household_member"
         verbose_name = "Subject Refusal"
         verbose_name_plural = "Subject Refusal"
-        ordering = ['household_member']

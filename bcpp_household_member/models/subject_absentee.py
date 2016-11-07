@@ -1,10 +1,14 @@
 from simple_history.models import HistoricalRecords
 
-from .base_member_status_model import BaseMemberStatusModel
+from ..managers import HouseholdMemberManager
+
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class SubjectAbsentee(BaseMemberStatusModel):
+class SubjectAbsentee(HouseholdMemberModelMixin):
     """A system model that links the absentee information with the household member."""
+
+    objects = HouseholdMemberManager()
 
     history = HistoricalRecords()
 
@@ -25,8 +29,7 @@ class SubjectAbsentee(BaseMemberStatusModel):
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Absentee"
         verbose_name_plural = "Subject Absentee"
-        unique_together = ('registered_subject', 'survey',)

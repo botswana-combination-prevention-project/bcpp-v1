@@ -50,3 +50,4 @@ class MedicalDiagnosesForm (BaseSubjectModelForm):
 
     class Meta:
         model = MedicalDiagnoses
+        fields = '__all__'

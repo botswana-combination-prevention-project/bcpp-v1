@@ -1,17 +1,20 @@
 from django.db import models
 
+from edc_base.model.models import BaseUuidModel
+
 from simple_history.models import HistoricalRecords
 
 from ..choices import ABSENTEE_REASON
 from ..managers import SubjectAbsenteeEntryManager
 
-from .base_subject_entry import BaseSubjectEntry
 from .subject_absentee import SubjectAbsentee
+from .model_mixins import SubjectEntryMixin
 
 
-class SubjectAbsenteeEntry(BaseSubjectEntry):
+class SubjectAbsenteeEntry(SubjectEntryMixin, BaseUuidModel):
     """A model completed by the user that indicates the reason a household member
     is absent for each time the RA visits."""
+
     subject_absentee = models.ForeignKey(SubjectAbsentee)
 
     reason = models.CharField(
@@ -19,9 +22,9 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
         max_length=100,
         choices=ABSENTEE_REASON)
 
-    history = HistoricalRecords()
-
     objects = SubjectAbsenteeEntryManager()
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{} {}'.format(self.report_datetime.strftime('%Y-%m-%d'), self.reason[0:20])

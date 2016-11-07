@@ -1,10 +1,9 @@
 from django import forms
 from datetime import date
 
-from ..models import HivTestReview
+from ..models import HivTestReview, HivTestingHistory
 
 from .base_subject_model_form import BaseSubjectModelForm
-from bhp066.apps.bcpp_subject.models.hiv_testing_history import HivTestingHistory
 
 
 class HivTestReviewForm (BaseSubjectModelForm):
@@ -22,3 +21,4 @@ class HivTestReviewForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivTestReview
+        fields = '__all__'

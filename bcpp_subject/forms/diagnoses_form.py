@@ -9,18 +9,21 @@ class HeartAttackForm (BaseSubjectModelForm):
 
     class Meta:
         model = HeartAttack
+        fields = '__all__'
 
 
 class CancerForm (BaseSubjectModelForm):
 
     class Meta:
         model = Cancer
+        fields = '__all__'
 
 
 class TubercolosisForm (BaseSubjectModelForm):
 
     class Meta:
         model = Tubercolosis
+        fields = '__all__'
 
 
 class StiForm (BaseSubjectModelForm):
@@ -75,3 +78,4 @@ class StiForm (BaseSubjectModelForm):
 
     class Meta:
         model = Sti
+        fields = '__all__'

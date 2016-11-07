@@ -1,10 +1,7 @@
-from .base_member_status_manager import BaseMemberStatusManager
 from .contact_log_manager import ContactLogManager, ContactLogItemManager
-from .enrollment_checklist_manager import EnrollmentChecklistManager
-from .enrollment_loss_manager import EnrollmentLossManager
-from .household_head_eligibility_manager import HouseholdHeadEligibilityManager
 from .household_info_manager import HouseholdInfoManager
 from .household_member_manager import HouseholdMemberManager
+from .manager_mixins import HouseholdMemberManagerMixin
 from .member_appointment_manager import MemberAppointmentManager
 from .subject_absentee_entry_manager import SubjectAbsenteeEntryManager
 from .subject_refusal_history_manager import SubjectRefusalHistoryManager

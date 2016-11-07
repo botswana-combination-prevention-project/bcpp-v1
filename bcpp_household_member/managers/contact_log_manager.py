@@ -7,11 +7,13 @@ from django.db import models
 
 
 class ContactLogManager(models.Manager):
+
     def get_by_natural_key(self, pk):
         return self.get(pk=pk)
 
 
 class ContactLogItemManager(models.Manager):
+
     def get_by_natural_key(self, contact_datetime, pk):
         contact_datetime = dateutil.parser.parse(contact_datetime)
         margin = timedelta(microseconds=999)

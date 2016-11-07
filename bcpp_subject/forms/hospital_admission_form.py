@@ -72,3 +72,4 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
 
     class Meta:
         model = HospitalAdmission
+        fields = '__all__'

@@ -27,3 +27,4 @@ class Cd4HistoryForm (BaseSubjectModelForm):
 
     class Meta:
         model = Cd4History
+        fields = '__all__'

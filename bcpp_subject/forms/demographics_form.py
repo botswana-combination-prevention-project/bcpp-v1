@@ -1,10 +1,10 @@
 from django import forms
 
-from ..models import Demographics
+from edc_constants.constants import MALE, FEMALE
+
+from ..models import Demographics, SubjectConsent
 
 from .base_subject_model_form import BaseSubjectModelForm
-from edc_constants.constants import MALE, FEMALE
-from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
 
 
 class DemographicsForm(BaseSubjectModelForm):
@@ -57,3 +57,4 @@ class DemographicsForm(BaseSubjectModelForm):
 
     class Meta:
         model = Demographics
+        fields = '__all__'

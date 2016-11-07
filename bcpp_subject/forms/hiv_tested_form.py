@@ -29,3 +29,4 @@ class HivTestedForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivTested
+        fields = '__all__'

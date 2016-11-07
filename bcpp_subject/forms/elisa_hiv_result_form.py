@@ -30,3 +30,4 @@ class ElisaHivResultForm (BaseSubjectModelForm):
 
     class Meta:
         model = ElisaHivResult
+        fields = '__all__'

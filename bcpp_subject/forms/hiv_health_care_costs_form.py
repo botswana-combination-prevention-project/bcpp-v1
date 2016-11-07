@@ -38,3 +38,4 @@ class HivHealthCareCostsForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivHealthCareCosts
+        fields = '__all__'

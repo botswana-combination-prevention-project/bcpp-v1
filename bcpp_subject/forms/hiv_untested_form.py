@@ -26,3 +26,4 @@ class HivUntestedForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivUntested
+        fields = '__all__'

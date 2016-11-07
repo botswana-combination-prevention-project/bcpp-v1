@@ -1,10 +1,15 @@
 from simple_history.models import HistoricalRecords
 
-from .base_member_status_model import BaseMemberStatusModel
+from ..managers import HouseholdMemberManager
+
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class SubjectUndecided (BaseMemberStatusModel):
+class SubjectUndecided (HouseholdMemberModelMixin):
     """A system model that links "undecided" information to a household member."""
+
+    objects = HouseholdMemberManager()
+
     history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
@@ -24,8 +29,7 @@ class SubjectUndecided (BaseMemberStatusModel):
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
 
-    class Meta:
+    class Meta(HouseholdMemberModelMixin.Meta):
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Undecided"
         verbose_name_plural = "Subject Undecided"
-        unique_together = ('registered_subject', 'survey',)

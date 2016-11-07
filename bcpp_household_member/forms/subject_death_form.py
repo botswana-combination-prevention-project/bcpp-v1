@@ -1,10 +1,9 @@
 from django import forms
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import SubjectDeath
 
 
-class SubjectDeathForm (BaseModelForm):
+class SubjectDeathForm (forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -17,3 +16,4 @@ class SubjectDeathForm (BaseModelForm):
 
     class Meta:
         model = SubjectDeath
+        fields = '__all__'

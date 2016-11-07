@@ -18,3 +18,4 @@ class ResourceUtilizationForm (BaseSubjectModelForm):
 
     class Meta:
         model = ResourceUtilization
+        fields = '__all__'

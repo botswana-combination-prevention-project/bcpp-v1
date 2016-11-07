@@ -14,5 +14,4 @@ from .signals import (household_on_post_save, household_structure_on_post_save, 
                       increase_plot_radius_on_post_save, household_assessment_on_post_save,
                       household_assessment_on_delete, household_log_entry_on_post_save)
 from .representative_eligibility import RepresentativeEligibility
-from .base_representative_eligibility import BaseRepresentativeEligibility
 from .increase_plot_radius import IncreasePlotRadius

@@ -1,9 +1,11 @@
 from django.apps import apps as django_apps
+from django.db import models
 
 from edc_map.site_mappers import site_mappers
 from edc_device.constants import CLIENT
 
 from .models import AvailablePlot
+
 
 app_config = django_apps.get_app_config('bcpp')
 edc_device_app_config = django_apps.get_app_config('edc_device')

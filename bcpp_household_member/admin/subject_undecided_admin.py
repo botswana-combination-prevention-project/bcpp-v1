@@ -1,15 +1,16 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
-from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+from edc_base.modeladmin.mixins import TabularInlineMixin
 
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import SubjectUndecidedForm, SubjectUndecidedEntryForm
 from ..models import SubjectUndecided, SubjectUndecidedEntry
 
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
-class SubjectUndecidedEntryAdmin(BaseModelAdmin):
+
+@admin.register(SubjectUndecidedEntry, site=bcpp_household_member_admin)
+class SubjectUndecidedEntryAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     fields = (
         'subject_undecided',
@@ -40,14 +41,15 @@ class SubjectUndecidedEntryAdmin(BaseModelAdmin):
 admin.site.register(SubjectUndecidedEntry, SubjectUndecidedEntryAdmin)
 
 
-class SubjectUndecidedEntryInline(BaseTabularInline):
+class SubjectUndecidedEntryInline(TabularInlineMixin, admin.TabularInline):
     form = SubjectUndecidedEntryForm
     model = SubjectUndecidedEntry
     max_num = 2
     extra = 1
 
 
-class SubjectUndecidedAdmin(BaseRegisteredSubjectModelAdmin):
+@admin.register(SubjectUndecided, site=bcpp_household_member_admin)
+class SubjectUndecidedAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = SubjectUndecidedForm
     inlines = [SubjectUndecidedEntryInline, ]
@@ -77,10 +79,3 @@ class SubjectUndecidedAdmin(BaseRegisteredSubjectModelAdmin):
         'survey',
         'report_datetime',)
     instructions = []
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
-            return super(SubjectUndecidedAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectUndecided, SubjectUndecidedAdmin)

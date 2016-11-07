@@ -1,14 +1,14 @@
 from django.contrib import admin
 
-from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
-
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import SubjectMovedForm
 from ..models import SubjectMoved
 
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
-class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
+
+@admin.register(SubjectMoved, site=bcpp_household_member_admin)
+class SubjectMovedAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
     form = SubjectMovedForm
     dashboard_type = 'subject'
     subject_identifier_attribute = 'registration_identifier'
@@ -37,10 +37,3 @@ class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
         "moved_community": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
     }
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('HouseholdMember', 0))
-        return super(SubjectMovedAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectMoved, SubjectMovedAdmin)

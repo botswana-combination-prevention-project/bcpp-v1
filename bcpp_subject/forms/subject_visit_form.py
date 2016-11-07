@@ -1,12 +1,10 @@
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
-
 from ..models import SubjectVisit
 from ..models import SubjectConsent
 
 
-class SubjectVisitForm (BaseModelForm):
+class SubjectVisitForm (forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(SubjectVisitForm, self).clean()
@@ -21,3 +19,4 @@ class SubjectVisitForm (BaseModelForm):
 
     class Meta:
         model = SubjectVisit
+        fields = '__all__'

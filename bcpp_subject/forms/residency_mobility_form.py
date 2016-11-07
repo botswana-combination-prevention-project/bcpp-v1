@@ -44,3 +44,4 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
     class Meta:
         model = ResidencyMobility
+        fields = '__all__'

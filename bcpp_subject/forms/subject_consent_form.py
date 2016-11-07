@@ -1,38 +1,35 @@
 import pytz
+from copy import deepcopy
 
 from django import forms
 from django.forms import ValidationError
 from django.conf import settings
-from django.core.exceptions import MultipleObjectsReturned
 from django.utils.timezone import is_naive
-from django.forms.util import ErrorList
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from django.db.models import Max, Min
 
 from edc_constants.constants import YES, NO
 from edc_base.utils import formatted_age
 from edc_map.site_mappers import site_mappers
-from edc_consent.forms.base_consent_form import BaseConsentForm
 from edc_constants.constants import NOT_APPLICABLE
 
-from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
-from bhp066.apps.bcpp_household_member.models import HouseholdInfo
-from bhp066.apps.bcpp_household.models import HouseholdLogEntry
-from bhp066.apps.bcpp_survey.models import Survey
-from bhp066.apps.bcpp_household_member.models.household_head_eligibility import HouseholdHeadEligibility
+from bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
+from bcpp_household_member.models import HouseholdInfo
+from bcpp_household.models import HouseholdLogEntry
+from bcpp_survey.models import Survey
+from bcpp_household_member.models import HouseholdHeadEligibility
 
-from ..models import SubjectConsent, SubjectConsentExtended
-from copy import deepcopy
+from ..models import SubjectConsent
+from django.forms.utils import ErrorList
 
 tz = pytz.timezone(settings.TIME_ZONE)
 
 
-class BaseBcppConsentForm(BaseConsentForm):
+class ConsentFormMixin:
 
     def clean(self):
-        cleaned_data = super(BaseBcppConsentForm, self).clean()
+        cleaned_data = super(ConsentFormMixin, self).clean()
         self.clean_consent_with_household_member()
         self.clean_citizen_with_legally_married()
         self.limit_edit_to_current_community()
@@ -267,15 +264,8 @@ class BaseBcppConsentForm(BaseConsentForm):
                     code='invalid')
 
 
-class SubjectConsentForm(BaseBcppConsentForm):
+class SubjectConsentForm(ConsentFormMixin, forms.ModelForm):
 
     class Meta:
         model = SubjectConsent
-        fields = '__all__'
-
-
-class SubjectConsentExtendedForm(BaseBcppConsentForm):
-
-    class Meta:
-        model = SubjectConsentExtended
         fields = '__all__'

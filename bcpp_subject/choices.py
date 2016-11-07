@@ -1106,3 +1106,10 @@ ALCOHOL_SEX = (
     ('Both of us', _('Both of us')),
     (DWTA, _('Don\'t want to answer')),
 )
+
+FIRST_PARTNER_HIV_CHOICE = (
+    (POS, _('HIV-positive')),
+    (NEG, _('HIV-negative')),
+    ('not_sure', _('I am not sure HIV status')),
+    (DWTA, _('Don\'t want to answer')),
+)

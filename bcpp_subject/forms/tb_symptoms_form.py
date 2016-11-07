@@ -7,3 +7,4 @@ class TbSymptomsForm (BaseSubjectModelForm):
 
     class Meta:
         model = TbSymptoms
+        fields = '__all__'

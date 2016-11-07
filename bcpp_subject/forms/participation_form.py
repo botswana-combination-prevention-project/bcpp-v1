@@ -20,3 +20,4 @@ class ParticipationForm (BaseSubjectModelForm):
 
     class Meta:
         model = Participation
+        fields = '__all__'

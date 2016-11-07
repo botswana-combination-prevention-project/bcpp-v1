@@ -120,3 +120,4 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivCareAdherence
+        fields = '__all__'

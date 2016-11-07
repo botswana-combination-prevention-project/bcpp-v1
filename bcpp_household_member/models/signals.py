@@ -9,7 +9,6 @@ from bcpp_household.models import HouseholdStructure
 
 from ..constants import NOT_ELIGIBLE, HEAD_OF_HOUSEHOLD
 
-from .base_member_status_model import BaseMemberStatusModel
 from .enrollment_checklist import EnrollmentChecklist
 from .enrollment_loss import EnrollmentLoss
 from .household_head_eligibility import HouseholdHeadEligibility
@@ -237,8 +236,10 @@ def base_household_member_consent_on_post_save(sender, instance, raw, created, u
     """Confirms registered subject info for all child models
     of this base class."""
     if not raw:
-        if isinstance(instance, BaseMemberStatusModel):
+        try:
             instance.confirm_registered_subject_pk_on_post_save(using)
+        except AttributeError:
+            pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_htc_on_post_save')

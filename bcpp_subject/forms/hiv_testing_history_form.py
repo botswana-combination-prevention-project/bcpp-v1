@@ -51,3 +51,4 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivTestingHistory
+        fields = '__all__'

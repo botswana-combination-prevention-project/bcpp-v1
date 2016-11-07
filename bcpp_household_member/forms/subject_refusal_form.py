@@ -7,3 +7,4 @@ class SubjectRefusalForm(BaseMembershipForm):
 
     class Meta:
         model = SubjectRefusal
+        fields = '__all__'

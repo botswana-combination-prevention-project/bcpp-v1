@@ -1,9 +1,9 @@
 from django.apps import apps as django_apps
 
-from .base_household_member_manager import BaseHouseholdMemberManager
+from .manager_mixins import HouseholdMemberManagerMixin
 
 
-class MemberAppointmentManager(BaseHouseholdMemberManager):
+class MemberAppointmentManager(HouseholdMemberManagerMixin):
 
     def get_by_natural_key(self, label, household_identifier, survey_name, subject_identifier_as_pk):
         HouseholdMember = django_apps.get_model('bcpp_household_member', 'HouseholdMember')

@@ -1,6 +1,4 @@
 from .access_to_care_form import AccessToCareForm
-from .call_list_form import CallListForm
-from .call_log_form import CallLogForm, CallLogEntryForm
 from .cd4_history_form import Cd4HistoryForm
 from .cea_enrollment_checklist_form import CeaEnrollmentChecklistForm
 from .circumcision_form import CircumcisionForm, CircumcisedForm, UncircumcisedForm
@@ -38,7 +36,7 @@ from .residency_mobility_form import ResidencyMobilityForm
 from .resource_utilization_form import ResourceUtilizationForm
 from .sexual_behaviour_form import SexualBehaviourForm
 from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
-from .subject_consent_form import SubjectConsentForm, SubjectConsentExtendedForm
+from .subject_consent_form import SubjectConsentForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_referral_form import SubjectReferralForm
 from .subject_visit_form import SubjectVisitForm

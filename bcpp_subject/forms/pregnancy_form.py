@@ -18,3 +18,4 @@ class PregnancyForm (BaseSubjectModelForm):
 
     class Meta:
         model = Pregnancy
+        fields = '__all__'

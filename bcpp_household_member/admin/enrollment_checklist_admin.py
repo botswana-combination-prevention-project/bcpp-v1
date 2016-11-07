@@ -1,14 +1,15 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
 
-from bhp066.apps.bcpp_household.models import HouseholdStructure
-
+from ..admin_site import bcpp_household_member_admin
 from ..forms import EnrollmentChecklistForm
-from ..models import EnrollmentChecklist, HouseholdMember
+from ..models import EnrollmentChecklist
+
+from .modeladmin_mixins import HouseholdMemberAdminMixin
 
 
-class EnrollmentChecklistAdmin(BaseModelAdmin):
+@admin.register(EnrollmentChecklist, site=bcpp_household_member_admin)
+class EnrollmentChecklistAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     form = EnrollmentChecklistForm
 
@@ -55,18 +56,3 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
     }
 
     search_fields = ('household_member__first_name', 'household_member__pk')
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_member":
-            if request.GET.get('household_member'):
-                kwargs["queryset"] = HouseholdMember.objects.filter(
-                    id__exact=request.GET.get('household_member', 0))
-            else:
-                self.readonly_fields = list(self.readonly_fields)
-                try:
-                    self.readonly_fields.index('household_member')
-                except ValueError:
-                    self.readonly_fields.append('household_member')
-        return super(EnrollmentChecklistAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(EnrollmentChecklist, EnrollmentChecklistAdmin)

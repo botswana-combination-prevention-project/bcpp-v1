@@ -7,15 +7,18 @@ class StigmaForm (BaseSubjectModelForm):
 
     class Meta:
         model = Stigma
+        fields = '__all__'
 
 
 class StigmaOpinionForm (BaseSubjectModelForm):
 
     class Meta:
         model = StigmaOpinion
+        fields = '__all__'
 
 
 class PositiveParticipantForm (BaseSubjectModelForm):
 
     class Meta:
         model = PositiveParticipant
+        fields = '__all__'
