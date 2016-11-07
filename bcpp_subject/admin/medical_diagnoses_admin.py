@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..constants import BASELINE, ANNUAL
 from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
@@ -9,6 +10,7 @@ from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(MedicalDiagnoses, site=bcpp_subject_admin)
 class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = MedicalDiagnosesForm
@@ -42,4 +44,3 @@ class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
             " Also, please remember that your answers will be"
             " kept confidential. (annual)")]
     }
-admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)

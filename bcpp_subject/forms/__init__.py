@@ -23,7 +23,7 @@ from .hospital_admission_form import HospitalAdmissionForm
 from .labour_market_wages_form import LabourMarketWagesForm, GrantForm
 from .main import QualityOfLifeForm, SubstanceUseForm
 from .medical_diagnoses_form import MedicalDiagnosesForm
-from .months_partner_form import MonthsThirdPartnerForm, MonthsSecondPartnerForm, MonthsRecentPartnerForm
+from .partner_form import ThirdPartnerForm, SecondPartnerForm, RecentPartnerForm
 from .non_pregnancy_form import NonPregnancyForm
 from .outpatient_care_form import OutpatientCareForm
 from .participation_form import ParticipationForm

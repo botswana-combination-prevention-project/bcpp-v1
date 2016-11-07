@@ -1,7 +1,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
-from bhp066.apps.bcpp.choices import YES_NO
+from edc_constants.choices import YES_NO
 
 
 class HicEnrollmentFilter(SimpleListFilter):

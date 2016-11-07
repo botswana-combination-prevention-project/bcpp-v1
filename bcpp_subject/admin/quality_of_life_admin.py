@@ -1,12 +1,14 @@
 from django.utils.translation import ugettext as _
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import QualityOfLifeForm
 from ..models import QualityOfLife
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(QualityOfLife, site=bcpp_subject_admin)
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
 
     form = QualityOfLifeForm
@@ -33,4 +35,3 @@ class QualityOfLifeAdmin(SubjectVisitModelAdmin):
         _("<H5>Read to Participant</H5> To start, I will ask some questions regarding your "
           "overall health. Under each heading, please indicate the ONE statement that best "
           "describes your health TODAY.")]
-admin.site.register(QualityOfLife, QualityOfLifeAdmin)

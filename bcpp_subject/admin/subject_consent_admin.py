@@ -6,10 +6,12 @@ from edc.subject.registration.models import RegisteredSubject
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..actions import add_to_call_list_action
-from ..forms import SubjectConsentForm, SubjectConsentExtendedForm
-from ..models import SubjectConsent, SubjectConsentExtended
+from ..admin_site import bcpp_subject_admin
+from ..forms import SubjectConsentForm
+from ..models import SubjectConsent
 
 
+@admin.register(SubjectConsent, site=bcpp_subject_admin)
 class SubjectConsentAdmin(BaseConsentModelAdmin):
 
     dashboard_type = 'subject'
@@ -94,10 +96,3 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         if db_field.name == "registered_subject":
             kwargs["queryset"] = RegisteredSubject.objects.filter(id__exact=request.GET.get('registered_subject', 0))
         return super(SubjectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectConsent, SubjectConsentAdmin)
-
-
-class SubjectConsentExtendedAdmin(SubjectConsentAdmin):
-    form = SubjectConsentExtendedForm
-admin.site.register(SubjectConsentExtended, SubjectConsentExtendedAdmin)

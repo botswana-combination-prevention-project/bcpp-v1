@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..filters import HicEnrollmentFilter
 from ..forms import HicEnrollmentForm
 from ..models import HicEnrollment
@@ -7,6 +8,7 @@ from ..models import HicEnrollment
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HicEnrollment, site=bcpp_subject_admin)
 class HicEnrollmentAdmin(SubjectVisitModelAdmin):
 
     form = HicEnrollmentForm
@@ -45,4 +47,3 @@ class HicEnrollmentAdmin(SubjectVisitModelAdmin):
         "locator_information",
         "consent_datetime",
     )
-admin.site.register(HicEnrollment, HicEnrollmentAdmin)

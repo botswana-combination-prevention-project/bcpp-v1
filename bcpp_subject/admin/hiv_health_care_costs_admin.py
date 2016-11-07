@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import HivHealthCareCostsForm
 from ..models import HivHealthCareCosts
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivHealthCareCosts, site=bcpp_subject_admin)
 class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
 
     form = HivHealthCareCostsForm
@@ -24,4 +26,3 @@ class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
         "care_regularity": admin.VERTICAL,
         "doctor_visits": admin.VERTICAL,
     }
-admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)

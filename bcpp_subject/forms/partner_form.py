@@ -4,12 +4,12 @@ from edc_constants.constants import NOT_APPLICABLE, NO
 from edc_constants.choices import YES_NO_UNSURE
 
 from ..choices import FIRST_PARTNER_HIV_CHOICE
-from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, SexualBehaviour
+from ..models import RecentPartner, SecondPartner, ThirdPartner, SexualBehaviour
 
 from .base_subject_model_form import BaseSubjectModelForm
 
 
-class BaseMonthsPartnerForm (BaseSubjectModelForm):
+class BasePartnerForm (BaseSubjectModelForm):
 
     yes_no_unsure_options = ['Yes', 'No', 'not sure', 'Don\'t want to answer']
 
@@ -20,7 +20,7 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
 
     def clean(self):
         """Ensures that question about antiretrovirals is not answered if partner is known to be HIV negative."""
-        cleaned_data = super(BaseMonthsPartnerForm, self).clean()
+        cleaned_data = super(BasePartnerForm, self).clean()
         if(cleaned_data.get('firstpartnerhiv') == 'negative' and
            cleaned_data.get('firsthaart') in self.yes_no_unsure_options):
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
@@ -46,26 +46,28 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
         subject_behaviour = SexualBehaviour.objects.get(subject_visit=cleaned_data.get('subject_visit'))
         if subject_behaviour.lifetime_sex_partners == 1:
             if not (cleaned_data.get('concurrent') in [NO, 'DWTA']):
-                raise forms.ValidationError( "You wrote that you have only one partner ever in sexual behavior form. Please correct if you have sex with other partners.")
+                raise forms.ValidationError(
+                    "You wrote that you have only one partner ever in sexual behavior form. "
+                    "Please correct if you have sex with other partners.")
         return cleaned_data
 
 
-class MonthsRecentPartnerForm(BaseMonthsPartnerForm):
+class RecentPartnerForm(BasePartnerForm):
 
     class Meta:
-        model = MonthsRecentPartner
+        model = RecentPartner
         fields = '__all__'
 
 
-class MonthsSecondPartnerForm(BaseMonthsPartnerForm):
+class SecondPartnerForm(BasePartnerForm):
 
     class Meta:
-        model = MonthsSecondPartner
+        model = SecondPartner
         fields = '__all__'
 
 
-class MonthsThirdPartnerForm(BaseMonthsPartnerForm):
+class ThirdPartnerForm(BasePartnerForm):
 
     class Meta:
-        model = MonthsThirdPartner
+        model = ThirdPartner
         fields = '__all__'

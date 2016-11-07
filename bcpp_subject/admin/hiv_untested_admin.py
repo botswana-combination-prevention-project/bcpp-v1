@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import HivUntestedForm
 from ..models import HivUntested
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivUntested, site=bcpp_subject_admin)
 class HivUntestedAdmin(SubjectVisitModelAdmin):
 
     form = HivUntestedForm
@@ -18,4 +20,3 @@ class HivUntestedAdmin(SubjectVisitModelAdmin):
         "why_no_hiv_test": admin.VERTICAL,
         "hiv_pills": admin.VERTICAL,
         "arvs_hiv_test": admin.VERTICAL, }
-admin.site.register(HivUntested, HivUntestedAdmin)

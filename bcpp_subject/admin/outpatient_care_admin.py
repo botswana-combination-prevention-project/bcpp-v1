@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import OutpatientCareForm
 from ..models import OutpatientCare
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(OutpatientCare, site=bcpp_subject_admin)
 class OutpatientCareAdmin(SubjectVisitModelAdmin):
 
     form = OutpatientCareForm
@@ -37,4 +39,3 @@ class OutpatientCareAdmin(SubjectVisitModelAdmin):
         "cost_cover": admin.VERTICAL,
         "waiting_hours": admin.VERTICAL,
     }
-admin.site.register(OutpatientCare, OutpatientCareAdmin)

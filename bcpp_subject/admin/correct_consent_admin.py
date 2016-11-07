@@ -1,12 +1,10 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
 from ..forms import CorrectConsentForm
 from ..models import CorrectConsent, SubjectConsent
 
 
-class CorrectConsentAdmin(BaseModelAdmin):
+class CorrectConsentAdmin(admin.ModelAdmin):
 
     form = CorrectConsentForm
 

@@ -25,12 +25,10 @@ from .hiv_untested import HivUntested
 from .hospital_admission import HospitalAdmission
 from .labour_market_wages import LabourMarketWages
 from .medical_diagnoses import MedicalDiagnoses
-from .months_recent_partner import MonthsRecentPartner
-from .months_second_partner import MonthsSecondPartner
-from .months_third_partner import MonthsThirdPartner
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
 from .participation import Participation
+from .partner import RecentPartner, SecondPartner, ThirdPartner
 from .pima import Pima
 from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant

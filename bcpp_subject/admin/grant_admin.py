@@ -1,12 +1,16 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
+from edc_base.modeladmin.mixins import TabularInlineMixin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import GrantForm
 from ..models import LabourMarketWages, Grant
 
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
-class GrantAdmin(BaseModelAdmin):
+
+@admin.register(Grant, site=bcpp_subject_admin)
+class GrantAdmin(SubjectVisitModelAdmin):
     form = GrantForm
     fields = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant',)
     list_display = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant', )
@@ -16,10 +20,8 @@ class GrantAdmin(BaseModelAdmin):
             kwargs["queryset"] = LabourMarketWages.objects.filter(id__exact=request.GET.get('labour_market_wages', 0))
         return super(GrantAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(Grant, GrantAdmin)
 
-
-class GrantInlineAdmin(BaseTabularInline):
+class GrantInlineAdmin(TabularInlineMixin, admin.TabularInline):
     model = Grant
     form = GrantForm
     extra = 1

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL, BASELINE
 from ..forms import HivResultDocumentationForm
 from ..models import HivResultDocumentation
@@ -8,6 +9,7 @@ from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivResultDocumentation, site=bcpp_subject_admin)
 class HivResultDocumentationAdmin (SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = HivResultDocumentationForm
@@ -33,5 +35,3 @@ class HivResultDocumentationAdmin (SubjectAdminExcludeMixin, SubjectVisitModelAd
                   " <li>documentation that supports a previous diagnosis of"
                   " HIV, if record of positive HIV test is not available.</li></ol> (annual)")]
     }
-
-admin.site.register(HivResultDocumentation, HivResultDocumentationAdmin)

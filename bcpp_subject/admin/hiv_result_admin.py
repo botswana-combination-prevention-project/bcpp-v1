@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..filters import HivResultFilter
 from ..forms import HivResultForm
 from ..models import HivResult
@@ -7,6 +8,7 @@ from ..models import HivResult
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivResult, site=bcpp_subject_admin)
 class HivResultAdmin (SubjectVisitModelAdmin):
 
     form = HivResultForm
@@ -25,4 +27,3 @@ class HivResultAdmin (SubjectVisitModelAdmin):
         "blood_draw_type": admin.VERTICAL,
         "insufficient_vol": admin.VERTICAL,
         'why_not_tested': admin.VERTICAL, }
-admin.site.register(HivResult, HivResultAdmin)

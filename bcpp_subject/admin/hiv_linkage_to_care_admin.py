@@ -2,12 +2,14 @@ from django.contrib import admin
 
 from edc_field_label.admin_mixin import ModifyFormLabelMixin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import HivLinkageToCareForm
 from ..models import HivLinkageToCare
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivLinkageToCare, site=bcpp_subject_admin)
 class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
 
     replacements = {
@@ -83,5 +85,3 @@ class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
         "startered_therapy": admin.VERTICAL,
         "start_therapy_clininc": admin.VERTICAL,
         "evidence_not_refered": admin.VERTICAL}
-
-admin.site.register(HivLinkageToCare, HivLinkageToCareAdmin)

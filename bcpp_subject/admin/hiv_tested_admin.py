@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import HivTestedForm
 from ..models import HivTested
@@ -8,6 +9,7 @@ from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivTested, site=bcpp_subject_admin)
 class HivTestedAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = HivTestedForm
@@ -28,5 +30,3 @@ class HivTestedAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
         "why_hiv_test": admin.VERTICAL,
         "hiv_pills": admin.VERTICAL,
         "arvs_hiv_test": admin.VERTICAL, }
-
-admin.site.register(HivTested, HivTestedAdmin)

@@ -15,7 +15,7 @@ from .hiv_testing_history_admin import HivTestingHistoryAdmin
 from .hiv_untested_admin import HivUntestedAdmin
 from .labour_market_wages_admin import LabourMarketWagesAdmin
 from .medical_diagnoses_admin import MedicalDiagnosesAdmin
-from .months_partner_admin import MonthsThirdPartnerAdmin, MonthsSecondPartnerAdmin, MonthsRecentPartnerAdmin
+from .partner_admin import ThirdPartnerAdmin, SecondPartnerAdmin, RecentPartnerAdmin
 from .non_pregnancy_admin import NonPregnancyAdmin
 from .pima_admin import PimaAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin

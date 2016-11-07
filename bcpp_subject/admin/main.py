@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..models import (HivMedicalCare, HeartAttack, Cancer, Sti,
                       Tubercolosis, SubstanceUse)
 from ..forms import (HivMedicalCareForm,
@@ -8,6 +9,7 @@ from ..forms import (HivMedicalCareForm,
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivMedicalCare, site=bcpp_subject_admin)
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
 
     form = HivMedicalCareForm
@@ -18,9 +20,9 @@ class HivMedicalCareAdmin(SubjectVisitModelAdmin):
         'lowest_cd4',)
     radio_fields = {
         "lowest_cd4": admin.VERTICAL}
-admin.site.register(HivMedicalCare, HivMedicalCareAdmin)
 
 
+@admin.register(HeartAttack, site=bcpp_subject_admin)
 class HeartAttackAdmin(SubjectVisitModelAdmin):
 
     form = HeartAttackForm
@@ -32,9 +34,9 @@ class HeartAttackAdmin(SubjectVisitModelAdmin):
     filter_horizontal = ('dx_heart_attack',)
     instructions = [("Note to Interviewer: This form is to be filled for all participants"
                      " even if they do not have a record (on hand) of the diagnosis.")]
-admin.site.register(HeartAttack, HeartAttackAdmin)
 
 
+@admin.register(Cancer, site=bcpp_subject_admin)
 class CancerAdmin(SubjectVisitModelAdmin):
 
     form = CancerForm
@@ -45,9 +47,9 @@ class CancerAdmin(SubjectVisitModelAdmin):
     radio_fields = {'dx_cancer': admin.VERTICAL, }
     instructions = [("Note to Interviewer: This form is to be filled for all participants"
                      " even if they do not have a record (on hand) of the diagnosis.")]
-admin.site.register(Cancer, CancerAdmin)
 
 
+@admin.register(Tubercolosis, site=bcpp_subject_admin)
 class TubercolosisAdmin(SubjectVisitModelAdmin):
 
     form = TubercolosisForm
@@ -60,9 +62,9 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
         "dx_tb": admin.VERTICAL, }
     instructions = [("Note to Interviewer: This form is to be filled for all participants"
                     " even if they do not have a record (on hand) of the diagnosis.")]
-admin.site.register(Tubercolosis, TubercolosisAdmin)
 
 
+@admin.register(Sti, site=bcpp_subject_admin)
 class StiAdmin(SubjectVisitModelAdmin):
 
     form = StiForm
@@ -78,9 +80,9 @@ class StiAdmin(SubjectVisitModelAdmin):
         'herpes_date',
         'comments',)
     filter_horizontal = ('sti_dx',)
-admin.site.register(Sti, StiAdmin)
 
 
+@admin.register(SubstanceUse, site=bcpp_subject_admin)
 class SubstanceUseAdmin(SubjectVisitModelAdmin):
 
     form = SubstanceUseForm
@@ -93,4 +95,3 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
         "smoke": admin.VERTICAL, }
     instructions = [("Read to Participant: I would like to now ask you "
                     "questions about drinking alcohol and smoking.")]
-admin.site.register(SubstanceUse, SubstanceUseAdmin)

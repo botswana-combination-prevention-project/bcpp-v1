@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..models import HivTestingHistory
 from ..forms import HivTestingHistoryForm
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+@admin.register(HivTestingHistory, site=bcpp_subject_admin)
 class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
 
     form = HivTestingHistoryForm
@@ -44,6 +46,3 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
             "If yes,  you have tested since we last visited you, "
             "when was this test you had since we last visited you?"),
     }
-
-
-admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)
