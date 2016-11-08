@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import SexualBehaviourForm
 from ..models import SexualBehaviour
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class SexualBehaviourAdmin(SubjectVisitModelAdmin):
+@admin.register(SexualBehaviour, site=bcpp_subject_admin)
+class SexualBehaviourAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SexualBehaviourForm
     fields = (
@@ -35,4 +37,3 @@ class SexualBehaviourAdmin(SubjectVisitModelAdmin):
                       " however, it is really important for us to get the"
                       " most honest answer that you can give us. Please"
                       " remember that all of your answers are confidential.")]
-admin.site.register(SexualBehaviour, SexualBehaviourAdmin)

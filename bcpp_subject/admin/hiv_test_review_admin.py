@@ -4,11 +4,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import HivTestReviewForm
 from ..models import HivTestReview
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivTestReview, site=bcpp_subject_admin)
-class HivTestReviewAdmin(SubjectVisitModelAdmin):
+class HivTestReviewAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestReviewForm
     fields = (

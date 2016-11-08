@@ -6,11 +6,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import GrantForm
 from ..models import LabourMarketWages, Grant
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(Grant, site=bcpp_subject_admin)
-class GrantAdmin(SubjectVisitModelAdmin):
+class GrantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = GrantForm
     fields = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant',)
     list_display = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant', )

@@ -15,7 +15,7 @@ class IncreasePlotRadiusAdmin(ModelAdminMixin):
     form = IncreasePlotRadiusForm
 
     fields = ('radius', )
-    list_display = ('plot', 'radius', 'action', 'status', 'producer', 'modified', 'created')
+    list_display = ('plot', 'radius', 'action', 'status', 'modified', 'created')
     list_filter = (ActionFilter, )
     search_fields = ('plot__plot_identifier', 'plot__hostname_modified')
     actions = [update_increaseplotradius_action]

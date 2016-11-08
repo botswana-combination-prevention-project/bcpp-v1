@@ -3,10 +3,10 @@ from django.contrib import admin
 from ..forms import TbSymptomsForm
 from ..models import TbSymptoms
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class TbSymptomsAdmin(SubjectVisitModelAdmin):
+class TbSymptomsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = TbSymptomsForm
     fields = (

@@ -1,13 +1,15 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..filters import Cd4ThreshHoldFilter
 from ..forms import PimaForm
 from ..models import Pima
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class PimaAdmin(SubjectVisitModelAdmin):
+@admin.register(Pima, site=bcpp_subject_admin)
+class PimaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = PimaForm
     fields = (
@@ -24,4 +26,3 @@ class PimaAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         'pima_today': admin.VERTICAL,
         'pima_today_other': admin.VERTICAL}
-admin.site.register(Pima, PimaAdmin)

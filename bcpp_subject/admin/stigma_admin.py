@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import StigmaForm
 from ..models import Stigma
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class StigmaAdmin(SubjectVisitModelAdmin):
+@admin.register(Stigma, site=bcpp_subject_admin)
+class StigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = StigmaForm
     fields = (
@@ -35,4 +37,3 @@ class StigmaAdmin(SubjectVisitModelAdmin):
           " opinion on how you think people living with HIV are treated."
           " To start, when thinking about yourself, please tell me how "
           " strongly you agree or disagree with the following statements.")]
-admin.site.register(Stigma, StigmaAdmin)

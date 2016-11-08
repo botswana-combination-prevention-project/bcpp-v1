@@ -28,7 +28,6 @@ class SexualBehaviour (CrfModelMixin):
                      " (prostitutes and truck drivers) as well as long-term partners"
                      " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
                      "number, please give a best guess]",
-        max_length=3,
         null=True,
         blank=True,
         help_text="",
@@ -40,7 +39,6 @@ class SexualBehaviour (CrfModelMixin):
                      " (prostitutes and truck drivers) as well as long-term partners"
                      " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
                      "number, please give a best guess]",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note:Leave blank if participant does not want to respond. ",
@@ -59,7 +57,6 @@ class SexualBehaviour (CrfModelMixin):
     first_sex = models.IntegerField(
         verbose_name="How old were you when you had sex for the first time?"
                      " [If you can't recall the exact age, please give a best guess]",
-        max_length=2,
         null=True,
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],

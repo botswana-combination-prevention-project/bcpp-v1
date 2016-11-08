@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import ClinicQuestionnaireForm
 from ..models import ClinicQuestionnaire
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class ClinicQuestionnaireAdmin(SubjectVisitModelAdmin):
+@admin.register(ClinicQuestionnaire, site=bcpp_subject_admin)
+class ClinicQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ClinicQuestionnaireForm
     fields = (
@@ -22,5 +24,3 @@ class ClinicQuestionnaireAdmin(SubjectVisitModelAdmin):
         "current_hiv_status": admin.VERTICAL,
         "on_arv": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL}
-
-admin.site.register(ClinicQuestionnaire, ClinicQuestionnaireAdmin)

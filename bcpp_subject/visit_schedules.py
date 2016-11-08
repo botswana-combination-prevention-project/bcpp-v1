@@ -1,9 +1,13 @@
+import sys
+from django.core.management.color import color_style
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_schedule.visit_schedule import VisitSchedule
 from edc_visit_schedule.schedule import Schedule
 from edc_visit_schedule.visit import Crf
 from edc_map.site_mappers import site_mappers
 
+style = color_style()
 
 crfs_baseline = (
     Crf(show_order=10, model='bcpp_subject.subjectlocator', required=True),
@@ -99,13 +103,16 @@ visit_schedule = VisitSchedule(
     visit_model='bcpp_subject.subjectvisit',
 )
 
-if site_mappers.current_mapper.intervention:
-    crfs_annual = [crf for crf in crfs_annual
-                   if crf.model not in ['bcpp_subject.hivuntested']]
-else:
-    crfs_annual = [crf for crf in crfs_annual
-                   if crf.model not in ['bcpp_subject.tbsymptoms', 'bcpp_subject.hivuntested']]
-
+try:
+    if site_mappers.current_mapper.intervention:
+        crfs_annual = [crf for crf in crfs_annual
+                       if crf.model not in ['bcpp_subject.hivuntested']]
+    else:
+        crfs_annual = [crf for crf in crfs_annual
+                       if crf.model not in ['bcpp_subject.tbsymptoms', 'bcpp_subject.hivuntested']]
+except AttributeError:
+    sys.stdout.write(style.WARNING(
+        '  * WARNING: visit schedule requires the current mapper but the mapper is not set.\n'))
 
 schedule = Schedule(name='survey_schedule', enrollment_model='bcpp_subject.enrollment')
 

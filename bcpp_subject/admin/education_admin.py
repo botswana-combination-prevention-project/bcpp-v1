@@ -6,12 +6,11 @@ from ..constants import ANNUAL
 from ..forms import EducationForm
 from ..models import Education
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(Education, site=bcpp_subject_admin)
-class EducationAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class EducationAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = EducationForm
 

@@ -16,7 +16,6 @@ class HivTested (HivTestingSupplemental):
 
     num_hiv_tests = models.IntegerField(
         verbose_name="How many times before today have you had an HIV test?",
-        max_length=2,
         null=True,
         help_text="",
     )

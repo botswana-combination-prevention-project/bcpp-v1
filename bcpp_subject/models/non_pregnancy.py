@@ -4,10 +4,11 @@ from simple_history.models import HistoricalRecords
 
 from edc_constants.choices import YES_NO_UNSURE
 
-from .base_pregnancy import BasePregnancy
+from .crf_model_mixin import CrfModelMixin
+from .model_mixins import PregnancyMixin
 
 
-class NonPregnancy (BasePregnancy):
+class NonPregnancy (PregnancyMixin, CrfModelMixin):
 
     """A model completed by the user for female participants who are not pregnant."""
 
@@ -20,7 +21,7 @@ class NonPregnancy (BasePregnancy):
 
     history = HistoricalRecords()
 
-    class Meta(BasePregnancy.Meta):
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Non Pregnancy"
         verbose_name_plural = "Non Pregnancy"

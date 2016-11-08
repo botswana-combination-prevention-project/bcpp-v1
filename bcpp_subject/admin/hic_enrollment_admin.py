@@ -5,11 +5,11 @@ from ..filters import HicEnrollmentFilter
 from ..forms import HicEnrollmentForm
 from ..models import HicEnrollment
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HicEnrollment, site=bcpp_subject_admin)
-class HicEnrollmentAdmin(SubjectVisitModelAdmin):
+class HicEnrollmentAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HicEnrollmentForm
     fields = (

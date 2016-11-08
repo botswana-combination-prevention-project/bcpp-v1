@@ -10,6 +10,7 @@ from .community_engagement import CommunityEngagement
 from .demographics import Demographics
 from .education import Education
 from .elisa_hiv_result import ElisaHivResult
+from .enrollment import Enrollment
 from .grant import Grant
 from .heart_attack import HeartAttack
 from .hic_enrollment import HicEnrollment
@@ -42,10 +43,8 @@ from .sti import Sti
 from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion
 from .subject_consent import SubjectConsent
-from .subject_consent_mixin import SubjectConsentMixin
 from .subject_locator import SubjectLocator
 from .subject_off_study import SubjectOffStudy
-from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_referral import SubjectReferral
 from .subject_visit import SubjectVisit
 from .substance_use import SubstanceUse

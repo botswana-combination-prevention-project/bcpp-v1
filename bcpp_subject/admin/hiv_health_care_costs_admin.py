@@ -4,11 +4,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import HivHealthCareCostsForm
 from ..models import HivHealthCareCosts
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivHealthCareCosts, site=bcpp_subject_admin)
-class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
+class HivHealthCareCostsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivHealthCareCostsForm
     fields = (

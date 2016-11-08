@@ -3,10 +3,10 @@ from django.contrib import admin
 from ..forms import ResourceUtilizationForm
 from ..models import ResourceUtilization
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class ResourceUtilizationAdmin(SubjectVisitModelAdmin):
+class ResourceUtilizationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResourceUtilizationForm
     fields = (

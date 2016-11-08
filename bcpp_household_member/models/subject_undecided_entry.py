@@ -3,6 +3,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 
 from edc_base.model.models import BaseUuidModel
+from edc_sync.model_mixins import SyncModelMixin
 
 from ..choices import UNDECIDED_REASON
 from ..managers import SubjectUndecidedEntryManager
@@ -11,7 +12,7 @@ from .model_mixins import SubjectEntryMixin
 from .subject_undecided import SubjectUndecided
 
 
-class SubjectUndecidedEntry(SubjectEntryMixin, BaseUuidModel):
+class SubjectUndecidedEntry(SyncModelMixin, SubjectEntryMixin, BaseUuidModel):
     """A model completed by the user that captures information on the undecided status
     of a household member potentially eligible for BHS."""
     subject_undecided = models.ForeignKey(SubjectUndecided)

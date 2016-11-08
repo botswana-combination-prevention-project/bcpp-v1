@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc_base.model.validators import dob_not_future, datetime_not_future
+from edc_base.model.validators import dob_not_future
 from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
@@ -30,12 +30,6 @@ BLOCK_CONTINUE = (
 class BaseEnrollmentChecklist(models.Model):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date and Time",
-        validators=[datetime_not_future],
-        help_text=''
-    )
 
     initials = models.CharField(
         verbose_name='Initials',

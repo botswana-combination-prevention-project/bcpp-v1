@@ -35,7 +35,6 @@ class CommunityEngagement (CrfModelMixin):
     problems_engagement = models.ManyToManyField(
         NeighbourhoodProblems,
         verbose_name="What are the major problems in this neighbourhood??",
-        null=True,
         help_text=("Note:Interviewer to read question but NOT the responses. Check the boxes of"
                    " any of problems mentioned."))
 

@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import AccessToCareForm
 from ..models import AccessToCare
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class AccessToCareAdmin(SubjectVisitModelAdmin):
+@admin.register(AccessToCare, site=bcpp_subject_admin)
+class AccessToCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = AccessToCareForm
 
@@ -38,5 +40,3 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
     instructions = [_("<h5>Read to Participant</h5> Now, I will be asking you "
                       "about your preferences and options for accessing "
                       "health care when you need it.")]
-
-admin.site.register(AccessToCare, AccessToCareAdmin)

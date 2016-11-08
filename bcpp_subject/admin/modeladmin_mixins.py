@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 
+from edc_admin_exclude.admin import AdminExcludeFieldsMixin
 from edc_base.modeladmin.mixins import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
     ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin)
+from edc_visit_tracking.admin import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
 
+from ..constants import BASELINE, ANNUAL
 from ..models import SubjectVisit
 
 
@@ -20,14 +23,19 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructions
         return request.GET.get('next')
 
 
-class CrfModelAdminMixin(ModelAdminMixin):
+class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin, ModelAdminMixin):
+
+    visit_model = 'bcpp_subject.subjectvisit'
+    visit_attr = 'subject_visit'
 
     instructions = (
         'Please complete the questions below. Required questions are in bold. '
         'When all required questions are complete click SAVE. Based on your responses, additional questions may be '
         'required or some answers may need to be corrected.')
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'subject_visit' and request.GET.get('subject_visit'):
-            kwargs["queryset"] = SubjectVisit.objects.filter(pk=request.GET.get('subject_visit', 0))
-        return super(CrfModelAdminMixin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+class SubjectAdminExcludeMixin(AdminExcludeFieldsMixin):
+
+    visit_model = SubjectVisit
+    visit_attr = 'subject_visit'
+    visit_codes = {BASELINE: ['T0'], ANNUAL: ['T1', 'T2', 'T3']}

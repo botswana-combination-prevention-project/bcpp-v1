@@ -1,6 +1,7 @@
 from django.db import models
 
 from edc_base.model.models import BaseUuidModel
+from edc_sync.model_mixins import SyncModelMixin
 
 from simple_history.models import HistoricalRecords
 
@@ -11,7 +12,7 @@ from .subject_absentee import SubjectAbsentee
 from .model_mixins import SubjectEntryMixin
 
 
-class SubjectAbsenteeEntry(SubjectEntryMixin, BaseUuidModel):
+class SubjectAbsenteeEntry(SyncModelMixin, SubjectEntryMixin, BaseUuidModel):
     """A model completed by the user that indicates the reason a household member
     is absent for each time the RA visits."""
 

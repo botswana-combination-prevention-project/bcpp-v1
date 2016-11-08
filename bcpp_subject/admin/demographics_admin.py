@@ -5,12 +5,11 @@ from ..constants import ANNUAL
 from ..forms import DemographicsForm
 from ..models import Demographics
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(Demographics, site=bcpp_subject_admin)
-class DemographicsAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class DemographicsAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = DemographicsForm
 

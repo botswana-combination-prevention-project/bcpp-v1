@@ -1,21 +1,57 @@
 from django.db import models
 
 from edc_constants.constants import NOT_APPLICABLE, OTHER
-from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA
+from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, YES_NO
 from edc_map.site_mappers import site_mappers
+from edc_offstudy.model_mixins import OffStudyMixin
+
+from bcpp_household_member.models import HouseholdMember
+from bcpp_list.models import PartnerResidency
 
 from ..choices import (
     SEXDAYS_CHOICE,
     LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
     FIRST_PARTNER_HIV_CHOICE, FIRST_DISCLOSE_CHOICE,
-    FIRST_CONDOM_FREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
-from bcpp_list.models import PartnerResidency
-
+    FIRST_CONDOM_FREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR, PREG_ARV_CHOICE)
 from ..constants import ECC, CPC
-from bcpp_subject.models.crf_model_mixin import CrfModelMixin
+
+from .subject_off_study import SubjectOffStudy
 
 
-class BaseSexualPartner (CrfModelMixin):
+class SubjectConsentMixin(models.Model):
+
+    household_member = models.ForeignKey(HouseholdMember, help_text='')
+
+    study_site = models.CharField(
+        verbose_name='Site',
+        max_length=15,
+        null=True,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented.",
+        editable=False,
+    )
+
+    is_minor = models.CharField(
+        verbose_name=("Is subject a minor?"),
+        max_length=10,
+        null=True,
+        blank=False,
+        default='-',
+        choices=YES_NO,
+        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+                   'HIV status may NOT be revealed in the household.'),
+        editable=False,
+    )
+
+    is_signed = models.BooleanField(default=False, editable=False)
+
+    def __str__(self):
+        return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
+
+    class Meta:
+        abstract = True
+
+
+class SexualPartnerMixin (models.Model):
 
     first_partner_live = models.ManyToManyField(
         PartnerResidency,
@@ -45,7 +81,6 @@ class BaseSexualPartner (CrfModelMixin):
 
     third_last_sex_calc = models.IntegerField(
         verbose_name="Give the number of days/months since last had sex with this person.",
-        max_length=2,
         null=True,
         blank=True,
         help_text="e.g. if last sex was last night, then it should be recorded as 1 day")
@@ -58,7 +93,6 @@ class BaseSexualPartner (CrfModelMixin):
 
     first_first_sex_calc = models.IntegerField(
         verbose_name="Give the number of days/months/years since first had sex with this person.",
-        max_length=2,
         null=True,
         blank=True,
         help_text="e.g. if first sex was last night, then it should be recorded as 1 day")
@@ -98,7 +132,6 @@ class BaseSexualPartner (CrfModelMixin):
     first_sex_freq = models.IntegerField(
         verbose_name="During the last 3 months [of your relationship, if it has ended] how many "
                      "times did you have sex with this partner?",
-        max_length=2,
         null=True,
         blank=True,
         help_text="")
@@ -183,5 +216,49 @@ class BaseSexualPartner (CrfModelMixin):
             partner_arm = ''
         return partner_arm
 
-    class Meta(CrfModelMixin.Meta):
+    class Meta:
+        abstract = True
+
+
+class SubjectOffStudyMixin(OffStudyMixin):
+
+    OFF_STUDY_MODEL = SubjectOffStudy
+
+    class Meta:
+        abstract = True
+
+
+class PregnancyMixin:
+
+    last_birth = models.DateField(
+        verbose_name="When did you last (most recently) give birth?",
+        null=True,
+        blank=True,
+        help_text="")
+
+    anc_last_pregnancy = models.CharField(
+        verbose_name="During your last pregnancy (not current pregnancy) did you go for antenatal care?",
+        max_length=25,
+        choices=YES_NO_DWTA,
+        null=True,
+        blank=True,
+        help_text="")
+
+    hiv_last_pregnancy = models.CharField(
+        verbose_name="During your last pregnancy (not current pregnancy) were you tested for HIV?",
+        max_length=25,
+        choices=YES_NO_UNSURE,
+        null=True,
+        blank=True,
+        help_text="If respondent was aware that she was HIV-positive prior to last pregnancy")
+
+    preg_arv = models.CharField(
+        verbose_name="Were you given antiretroviral medications to protect the baby?",
+        max_length=95,
+        choices=PREG_ARV_CHOICE,
+        null=True,
+        blank=True,
+        help_text="")
+
+    class Meta:
         abstract = True

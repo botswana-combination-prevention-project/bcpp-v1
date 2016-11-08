@@ -19,7 +19,6 @@ class ReproductiveHealth (CrfModelMixin):
                      " children that may have died at (stillbirth) or after birth. "
                      "Do not include any current pregnancies or miscarriages that occur"
                      " early in pregnancy (prior to 20 weeks).",
-        max_length=2,
         default=0,
         help_text="",
     )
@@ -35,7 +34,6 @@ class ReproductiveHealth (CrfModelMixin):
         FamilyPlanning,
         verbose_name="In the past 12 months, have you used any methods to prevent"
                      " pregnancy ?",
-        null=True,
         blank=True,
         help_text="check all that apply",
     )
@@ -63,7 +61,6 @@ class ReproductiveHealth (CrfModelMixin):
         "this (or your last) pregnancy?",
         null=True,
         blank=True,
-        max_length=2,
         help_text="gestational age in WEEKS. Among HIV-infected women who took/started ARVs during their last"
         " (or current pregnancy).",
     )

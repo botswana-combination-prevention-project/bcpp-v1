@@ -12,12 +12,16 @@ from bcpp_household_member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
 
+from .appointment import Appointment
+
 
 class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
                    SyncModelMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
+
+    appointment = models.OneToOneField(Appointment)
 
     household_member = models.ForeignKey(HouseholdMember)
 

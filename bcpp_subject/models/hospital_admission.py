@@ -15,7 +15,6 @@ class HospitalAdmission (CrfModelMixin):
 
     admission_nights = models.IntegerField(
         verbose_name="How many total nights did you spend in the hospital in the past 3 months? ",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note:If participant does not want to answer, leave blank",
@@ -39,7 +38,6 @@ class HospitalAdmission (CrfModelMixin):
     nights_hospitalized = models.IntegerField(
         verbose_name="For this most recent hospitization, how many nights total did you"
                      " spend in the hospital? ",
-        max_length=2,
         null=True,
         blank=True,
         help_text=" ",

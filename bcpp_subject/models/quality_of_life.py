@@ -47,7 +47,6 @@ class QualityOfLife (CrfModelMixin):
                      "This scale is numbered from 0 to 100. 100 means the 'best' health"
                      " you can imagine. 0 means the 'worst' health you can imagine. "
                      "Indicate on the scale how your health is TODAY.  ",
-        max_length=3,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         null=True,
         blank=True,

@@ -2,17 +2,17 @@ from collections import OrderedDict
 
 from django.contrib import admin
 
-from edc.export.actions import export_as_csv_action
+from edc_export.actions import export_as_csv_action
 
 from ..actions import export_referrals_for_cdc_action
 from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
 from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class SubjectReferralAdmin(SubjectVisitModelAdmin):
+class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectReferralForm
 

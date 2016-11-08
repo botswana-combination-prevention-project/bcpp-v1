@@ -1,9 +1,11 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import CorrectConsentForm
 from ..models import CorrectConsent, SubjectConsent
 
 
+@admin.register(CorrectConsent, site=bcpp_subject_admin)
 class CorrectConsentAdmin(admin.ModelAdmin):
 
     form = CorrectConsentForm
@@ -51,4 +53,3 @@ class CorrectConsentAdmin(admin.ModelAdmin):
         if db_field.name == "subject_consent":
             kwargs["queryset"] = SubjectConsent.objects.filter(id__exact=request.GET.get('subject_consent', 0))
         return super(CorrectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-admin.site.register(CorrectConsent, CorrectConsentAdmin)

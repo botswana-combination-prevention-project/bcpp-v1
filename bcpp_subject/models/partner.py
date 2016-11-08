@@ -2,10 +2,11 @@ from simple_history.models import HistoricalRecords
 
 from django.db import models
 
-from .base_sexual_partner import BaseSexualPartner
+from .model_mixins import SexualPartnerMixin
+from .crf_model_mixin import CrfModelMixin
 
 
-class RecentPartner (BaseSexualPartner):
+class RecentPartner (SexualPartnerMixin, CrfModelMixin):
     """A model completed by the user on the participant's recent sexual behaviour."""
 
     first_partner_arm = models.CharField(
@@ -20,13 +21,13 @@ class RecentPartner (BaseSexualPartner):
         self.first_partner_arm = self.get_partner_arm()
         super(RecentPartner, self).save(*args, **kwargs)
 
-    class Meta(BaseSexualPartner.Meta):
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Recent Partner - 12 Months"
         verbose_name_plural = "Recent Partner - 12 Months"
 
 
-class SecondPartner (BaseSexualPartner):
+class SecondPartner (SexualPartnerMixin, CrfModelMixin):
     """A model completed by the user on the participant's recent sexual behaviour."""
 
     second_partner_arm = models.CharField(
@@ -41,13 +42,13 @@ class SecondPartner (BaseSexualPartner):
         self.second_partner_arm = self.get_partner_arm()
         super(SecondPartner, self).save(*args, **kwargs)
 
-    class Meta(BaseSexualPartner.Meta):
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Second Partner - 12 Months"
         verbose_name_plural = "Second Partner - 12 Months"
 
 
-class ThirdPartner (BaseSexualPartner):
+class ThirdPartner (SexualPartnerMixin, CrfModelMixin):
     """A model completed by the user on the participant's recent sexual behaviour."""
 
     third_partner_arm = models.CharField(
@@ -62,7 +63,7 @@ class ThirdPartner (BaseSexualPartner):
         self.third_partner_arm = self.get_partner_arm()
         super(ThirdPartner, self).save(*args, **kwargs)
 
-    class Meta(BaseSexualPartner.Meta):
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Third Partner - 12 Months"
         verbose_name_plural = "Third Partner - 12 Months"

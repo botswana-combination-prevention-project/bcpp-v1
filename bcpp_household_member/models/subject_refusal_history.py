@@ -1,9 +1,9 @@
-from datetime import datetime
-
 from django.db import models
+from django.utils import timezone
 
 from edc_base.model.fields import OtherCharField
 from edc_base.model.models import BaseUuidModel
+from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_survey.models import Survey
 
@@ -13,7 +13,7 @@ from ..managers import SubjectRefusalHistoryManager
 from .household_member import HouseholdMember
 
 
-class SubjectRefusalHistory(BaseUuidModel):
+class SubjectRefusalHistory(SyncModelMixin, BaseUuidModel):
     """A system model that tracks the history of deleted refusal instances."""
 
     transaction = models.UUIDField()
@@ -22,7 +22,7 @@ class SubjectRefusalHistory(BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
-        default=datetime.today())
+        default=timezone.now)
 
     survey = models.ForeignKey(Survey, editable=False)
 

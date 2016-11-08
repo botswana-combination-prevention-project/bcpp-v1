@@ -6,11 +6,12 @@ from ..models import (HivMedicalCare, HeartAttack, Cancer, Sti,
 from ..forms import (HivMedicalCareForm,
                      HeartAttackForm, CancerForm, StiForm,
                      TubercolosisForm, SubstanceUseForm)
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivMedicalCare, site=bcpp_subject_admin)
-class HivMedicalCareAdmin(SubjectVisitModelAdmin):
+class HivMedicalCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivMedicalCareForm
     fields = (
@@ -23,7 +24,7 @@ class HivMedicalCareAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(HeartAttack, site=bcpp_subject_admin)
-class HeartAttackAdmin(SubjectVisitModelAdmin):
+class HeartAttackAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HeartAttackForm
     fields = (
@@ -37,7 +38,7 @@ class HeartAttackAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(Cancer, site=bcpp_subject_admin)
-class CancerAdmin(SubjectVisitModelAdmin):
+class CancerAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CancerForm
     fields = (
@@ -50,7 +51,7 @@ class CancerAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(Tubercolosis, site=bcpp_subject_admin)
-class TubercolosisAdmin(SubjectVisitModelAdmin):
+class TubercolosisAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = TubercolosisForm
     fields = (
@@ -65,7 +66,7 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(Sti, site=bcpp_subject_admin)
-class StiAdmin(SubjectVisitModelAdmin):
+class StiAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = StiForm
     fields = (
@@ -83,7 +84,7 @@ class StiAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(SubstanceUse, site=bcpp_subject_admin)
-class SubstanceUseAdmin(SubjectVisitModelAdmin):
+class SubstanceUseAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SubstanceUseForm
     fields = (

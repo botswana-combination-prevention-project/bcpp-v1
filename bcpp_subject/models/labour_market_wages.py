@@ -35,7 +35,6 @@ class LabourMarketWages (CrfModelMixin):
     job_description_change = models.IntegerField(
         verbose_name="In the past 3 months, how many times have you changed your job? "
                      "For example, changed your type of work or your employer. ",
-        max_length=2,
         null=True,
         blank=True,
         help_text=("Note: Enter number of times. If participant does not want to answer, leave blank"),
@@ -43,7 +42,6 @@ class LabourMarketWages (CrfModelMixin):
 
     days_worked = models.IntegerField(
         verbose_name="In the past month, how many days did you work?. ",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note: Enter number of times. If participant does not want to answer, leave blank",
@@ -93,7 +91,6 @@ class LabourMarketWages (CrfModelMixin):
     )
     nights_out = models.IntegerField(
         verbose_name="In the past month, how many nights did you spend away from home?. ",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note: Enter number of nights. If participant does not want to answer, leave blank",
@@ -107,7 +104,6 @@ class LabourMarketWages (CrfModelMixin):
     days_not_worked = models.IntegerField(
         verbose_name="How many days have you been prevented from working because of sickness"
                      " or visits to seek healthcare in the last 3 months. ",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note: Enter number of days including zero. If participant does not want to answer,leave blank",
@@ -116,7 +112,6 @@ class LabourMarketWages (CrfModelMixin):
         verbose_name="How many days have you been prevented by illness from doing the things"
                      " you normally do (studying, housework etc.) because of sickness or visits to"
                      " seek healthcare in the last 3 months? ",
-        max_length=2,
         null=True,
         blank=True,
         help_text=("Note: Enter number of days including zero. If participant "

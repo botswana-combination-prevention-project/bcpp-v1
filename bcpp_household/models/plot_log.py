@@ -17,7 +17,6 @@ from .plot import Plot
 class PlotLog(SyncModelMixin, BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot (related)."""
 
-    # TODO: Dispatch
     plot = models.OneToOneField(Plot)
 
     history = AuditTrail()
@@ -93,9 +92,6 @@ class PlotLogEntry(SyncModelMixin, BaseUuidModel):
 
     def natural_key(self):
         return (self.report_datetime, ) + self.plot_log.natural_key()
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'plot_log__plot__plot_identifier')
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Stops enrollments."""

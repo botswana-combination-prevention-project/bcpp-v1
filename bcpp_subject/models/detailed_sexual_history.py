@@ -8,10 +8,8 @@ from edc_constants.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
 
 from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
 
-from .crf_model_mixin import CrfModelMixin
 
-
-class DetailedSexualHistory (CrfModelMixin):
+class DetailedSexualHistory:
 
     rel_type = models.CharField(
         verbose_name="What type of relationship do you have with this person?",
@@ -124,5 +122,5 @@ class DetailedSexualHistory (CrfModelMixin):
 
     history = HistoricalRecords()
 
-    class Meta(CrfModelMixin.Meta):
+    class Meta:
         abstract = True

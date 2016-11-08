@@ -10,6 +10,8 @@ from .modeladmin_mixins import HouseholdMemberAdminMixin
 @admin.register(HouseholdHeadEligibility, site=bcpp_household_member_admin)
 class HouseholdHeadEligibilityAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
+    instructions = ['Important: The household member must verbally consent before completing this questionnaire.']
+
     form = HouseholdHeadEligibilityForm
     fields = (
         "household_structure",

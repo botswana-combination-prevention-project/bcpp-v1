@@ -5,11 +5,11 @@ from ..forms import ElisaHivResultForm
 from ..models import ElisaHivResult
 from ..filters import HivResultFilter
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(ElisaHivResult, site=bcpp_subject_admin)
-class ElisaHivResultAdmin (SubjectVisitModelAdmin):
+class ElisaHivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ElisaHivResultForm
     fields = (

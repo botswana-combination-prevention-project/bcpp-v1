@@ -1,15 +1,15 @@
 from django.contrib import admin
 
-from edc.subject.appointment.admin import BaseAppointmentModelAdmin
+from edc_visit_tracking.admin import VisitModelAdminMixin
 
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_lab.models import SubjectRequisition
+from bcpp_household_member.models import HouseholdMember
+from bcpp_lab.models import SubjectRequisition
 
 from ..forms import SubjectVisitForm
 from ..models import SubjectVisit
 
 
-class SubjectVisitAdmin(BaseAppointmentModelAdmin):
+class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectVisitForm
     visit_model_instance_field = 'subject_visit'

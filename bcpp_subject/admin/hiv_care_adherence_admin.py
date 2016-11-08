@@ -4,12 +4,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(HivCareAdherence, site=bcpp_subject_admin)
-class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     fields = [
         "subject_visit",

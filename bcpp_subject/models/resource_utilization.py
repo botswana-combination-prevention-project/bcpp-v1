@@ -23,7 +23,6 @@ class ResourceUtilization (CrfModelMixin):
         verbose_name="In the last 3 months, how many times were you admitted to hospital or"
                      " other types of inpatient care and stayed one or more nights? This could be"
                      " a government, private, or church/mission hospital. ",
-        max_length=2,
         null=True,
         help_text="",
     )

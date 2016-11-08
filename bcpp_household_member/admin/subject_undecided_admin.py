@@ -38,8 +38,6 @@ class SubjectUndecidedEntryAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
             kwargs["queryset"] = SubjectUndecided.objects.filter(id__exact=request.GET.get('subject_undecided', 0))
         return super(SubjectUndecidedEntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(SubjectUndecidedEntry, SubjectUndecidedEntryAdmin)
-
 
 class SubjectUndecidedEntryInline(TabularInlineMixin, admin.TabularInline):
     form = SubjectUndecidedEntryForm

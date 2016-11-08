@@ -3,8 +3,6 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords
 
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import datetime_not_future
 
@@ -17,9 +15,10 @@ from bcpp_subject.choices import (
 from ..managers import HouseholdInfoManager
 
 from .household_member import HouseholdMember
+from .model_mixins import HouseholdMemberModelMixin
 
 
-class HouseholdInfo(SyncModelMixin, BaseUuidModel):
+class HouseholdInfo(HouseholdMemberModelMixin):
     """A model completed by the user that captures household economic status
     from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)
@@ -48,7 +47,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "How many living rooms are there in this household unit"
             " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? "),
-        max_length=2,
         null=True,
         blank=True,
         help_text=(
@@ -85,7 +83,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "Does any member of this household have any of the following that are"
             " currently working? (check all that apply)."),
-        null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
                    "If participant does not want to answer, leave blank."))
@@ -95,7 +92,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "Does any member of this household (excluding visitors) own any of the"
             " following forms of transport in working condition? (check all that apply)."),
-        null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
                    "If participant does not want to answer, leave blank."))
@@ -104,7 +100,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "How many goats are owned by the members of this household?"
             " [If unsure of exact number, give your best guess] "),
-        max_length=3,
         null=True,
         blank=True,
         help_text=("Note: May need to assist in adding up goats between household members"
@@ -114,7 +109,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "How many sheep are owned by the members of this household?"
             " [If unsure of exact number, give your best guess] "),
-        max_length=3,
         null=True,
         blank=True,
         help_text=("Note: May need to assist in adding up sheep between household members"
@@ -124,7 +118,6 @@ class HouseholdInfo(SyncModelMixin, BaseUuidModel):
         verbose_name=(
             "How many head of cattle (cows and bulls) are owned by the members"
             " of this household? [If unsure of exact number, give your best guess] "),
-        max_length=3,
         null=True,
         blank=True,
         help_text=("Note: May need to assist in adding up cows and bulls between household members"

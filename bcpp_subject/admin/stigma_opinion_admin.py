@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import StigmaOpinionForm
 from ..models import StigmaOpinion
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class StigmaOpinionAdmin(SubjectVisitModelAdmin):
+@admin.register(StigmaOpinion, site=bcpp_subject_admin)
+class StigmaOpinionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = StigmaOpinionForm
     fields = (
@@ -31,4 +33,3 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
          " thinking about this community, please tell me how"
          " strongly you agree or disagree with the following"
          " statements.")]
-admin.site.register(StigmaOpinion, StigmaOpinionAdmin)

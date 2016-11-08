@@ -6,12 +6,11 @@ from ..constants import BASELINE, ANNUAL
 from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(MedicalDiagnoses, site=bcpp_subject_admin)
-class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = MedicalDiagnosesForm
     fields = (

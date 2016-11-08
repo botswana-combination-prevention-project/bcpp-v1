@@ -5,11 +5,11 @@ from ..filters import HivResultFilter
 from ..forms import HivResultForm
 from ..models import HivResult
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivResult, site=bcpp_subject_admin)
-class HivResultAdmin (SubjectVisitModelAdmin):
+class HivResultAdmin (CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivResultForm
     fields = (

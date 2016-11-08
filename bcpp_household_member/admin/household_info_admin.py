@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from ..admin_site import bcpp_household_member_admin
 from ..forms import HouseholdInfoForm
-from ..models import HouseholdInfo, HouseholdMember
+from ..models import HouseholdInfo
 
 from .modeladmin_mixins import HouseholdMemberAdminMixin
 

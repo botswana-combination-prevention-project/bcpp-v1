@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import CommunityEngagementForm
 from ..models import CommunityEngagement
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class CommunityEngagementAdmin(SubjectVisitModelAdmin):
+@admin.register(CommunityEngagement, site=bcpp_subject_admin)
+class CommunityEngagementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CommunityEngagementForm
     fields = (
@@ -21,4 +23,3 @@ class CommunityEngagementAdmin(SubjectVisitModelAdmin):
         "vote_engagement": admin.VERTICAL,
         "solve_engagement": admin.VERTICAL, }
     filter_horizontal = ('problems_engagement',)
-admin.site.register(CommunityEngagement, CommunityEngagementAdmin)

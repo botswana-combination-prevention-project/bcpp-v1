@@ -5,11 +5,10 @@ from ..constants import ANNUAL
 from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
-class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResidencyMobilityForm
 

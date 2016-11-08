@@ -5,12 +5,11 @@ from ..constants import ANNUAL
 from ..forms import HivTestedForm
 from ..models import HivTested
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(HivTested, site=bcpp_subject_admin)
-class HivTestedAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class HivTestedAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestedForm
     fields = [

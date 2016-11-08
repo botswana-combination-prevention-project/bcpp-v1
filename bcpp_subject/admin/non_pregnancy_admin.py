@@ -4,11 +4,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import NonPregnancyForm
 from ..models import NonPregnancy
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(NonPregnancy, site=bcpp_subject_admin)
-class NonPregnancyAdmin(SubjectVisitModelAdmin):
+class NonPregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = NonPregnancyForm
     fields = (

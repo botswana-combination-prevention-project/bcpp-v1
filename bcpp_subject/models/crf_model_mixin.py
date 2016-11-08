@@ -19,6 +19,8 @@ class CrfModelMixin(SyncModelMixin, VisitTrackingCrfModelMixin, UrlMixin, Requir
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
+    ADMIN_SITE_NAME = 'bcpp_subject_admin'
+
     subject_visit = models.OneToOneField(SubjectVisit)
 
     report_datetime = models.DateTimeField(

@@ -1,8 +1,9 @@
-from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+from django.contrib import admin
+
+from edc_registration.admin import RegisteredSubjectModelAdminMixin
 
 
-class RegisteredSubjectModelAdmin (BaseRegisteredSubjectModelAdmin):
+class RegisteredSubjectModelAdmin (RegisteredSubjectModelAdminMixin, admin.ModelAdmin):
 
     """ModelAdmin subclass for models with a ForeignKey to 'registered_subject'"""
-
-    dashboard_type = 'subject'
+    pass

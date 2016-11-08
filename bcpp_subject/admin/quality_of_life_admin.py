@@ -5,11 +5,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import QualityOfLifeForm
 from ..models import QualityOfLife
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(QualityOfLife, site=bcpp_subject_admin)
-class QualityOfLifeAdmin(SubjectVisitModelAdmin):
+class QualityOfLifeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = QualityOfLifeForm
     fields = (

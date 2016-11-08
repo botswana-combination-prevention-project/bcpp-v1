@@ -4,11 +4,15 @@ from django.conf import settings
 from django.utils import timezone
 
 from edc_device.apps import AppConfig as EdcDeviceAppConfigParent
+from edc_lab.apps import AppConfig as EdcLabAppConfigParent
 from edc_map.apps import AppConfig as EdcMapAppConfigParent
+from edc_metadata.apps import AppConfig as EdcMetadataAppConfigParent
 from edc_protocol.apps import AppConfig as EdcProtocolAppConfigParent
 from edc_identifier.apps import AppConfig as EdcIdentifierAppConfigParent
+from edc_registration.apps import AppConfig as EdcRegistrationAppConfigParent
 from edc_timepoint.apps import AppConfig as EdcTimepointAppConfigParent
 from edc_timepoint.timepoint import Timepoint
+from edc_visit_tracking.apps import AppConfig as EdcVisitTrackingAppConfigParent
 
 from bcpp_survey.apps import AppConfig as BcppSurveyAppConfigParent
 
@@ -55,3 +59,30 @@ class EdcTimepointAppConfig(EdcTimepointAppConfigParent):
             closed_status='CLOSED'
         )
     ]
+
+
+class EdcLabAppConfig(EdcLabAppConfigParent):
+    requisition = 'bcpp_lab.subjectrequisition'
+
+
+class EdcVisitTrackingAppConfig(EdcVisitTrackingAppConfigParent):
+    visit_models = {'bcpp_subject': ('subject_visit', 'bcpp_subject.subjectvisit')}
+
+
+class EdcMetadataAppConfig(EdcMetadataAppConfigParent):
+    app_label = 'bcpp_subject'
+    reason_field = {'bcpp_subject.subjectvisit': 'reason'}
+
+
+class EdcRegistrationAppConfig(EdcRegistrationAppConfigParent):
+    app_label = 'bcpp_subject'
+
+
+# class EdcTimepointAppConfig(EdcTimepointAppConfigParent):
+#     timepoints = [
+#         Timepoint(
+#             model='bcpp_subject.examplemodel',
+#             datetime_field='report_datetime',
+#             status_field='example_status',
+#             closed_status='finish')
+#     ]

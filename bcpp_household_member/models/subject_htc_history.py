@@ -1,17 +1,17 @@
-from datetime import datetime
-
 from django.db import models
+from django.utils import timezone
 from django_extensions.db.fields import UUIDField
 
 from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import YES_NO
+from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 
 
-class SubjectHtcHistory(BaseUuidModel):
+class SubjectHtcHistory(SyncModelMixin, BaseUuidModel):
     """A system model that tracks the history of deleted subject HTC instances."""
     transaction = UUIDField()
 
@@ -19,7 +19,7 @@ class SubjectHtcHistory(BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
-        default=datetime.today())
+        default=timezone.now)
 
     survey = models.ForeignKey(Survey, editable=False)
 

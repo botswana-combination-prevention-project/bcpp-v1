@@ -18,7 +18,6 @@ class Circumcised (CircumcisionMixin, CrfModelMixin):
 
     when_circ = models.IntegerField(
         verbose_name="At what age were you circumcised?",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note:Leave blank if participant does not want to respond.")

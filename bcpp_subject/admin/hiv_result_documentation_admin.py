@@ -5,12 +5,11 @@ from ..constants import ANNUAL, BASELINE
 from ..forms import HivResultDocumentationForm
 from ..models import HivResultDocumentation
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
 @admin.register(HivResultDocumentation, site=bcpp_subject_admin)
-class HivResultDocumentationAdmin (SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class HivResultDocumentationAdmin (SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivResultDocumentationForm
     fields = (

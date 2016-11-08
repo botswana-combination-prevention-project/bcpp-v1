@@ -5,11 +5,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
 from ..models import RecentPartner, SecondPartner, ThirdPartner
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(RecentPartner, site=bcpp_subject_admin)
-class RecentPartnerAdmin(SubjectVisitModelAdmin):
+class RecentPartnerAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = RecentPartnerForm
     fields = (
@@ -63,7 +63,7 @@ class RecentPartnerAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(SecondPartner, site=bcpp_subject_admin)
-class SecondPartnerAdmin(SubjectVisitModelAdmin):
+class SecondPartnerAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SecondPartnerForm
     fields = (
@@ -119,7 +119,7 @@ class SecondPartnerAdmin(SubjectVisitModelAdmin):
 
 
 @admin.register(ThirdPartner, site=bcpp_subject_admin)
-class ThirdPartnerAdmin(SubjectVisitModelAdmin):
+class ThirdPartnerAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ThirdPartnerForm
     fields = (

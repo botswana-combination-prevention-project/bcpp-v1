@@ -6,11 +6,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import HivLinkageToCareForm
 from ..models import HivLinkageToCare
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivLinkageToCare, site=bcpp_subject_admin)
-class HivLinkageToCareAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
+class HivLinkageToCareAdmin(ModifyFormLabelMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     replacements = {
         'first_rep': {

@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..models import CeaEnrollmentChecklist
 from ..forms import CeaEnrollmentChecklistForm
 
 from .registered_subject_model_admin import RegisteredSubjectModelAdmin
 
 
+@admin.register(CeaEnrollmentChecklist, site=bcpp_subject_admin)
 class CeaEnrollmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
     form = CeaEnrollmentChecklistForm
@@ -30,4 +32,3 @@ class CeaEnrollmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "community_resident": admin.VERTICAL,
         "enrollment_reason": admin.VERTICAL,
         "opportunistic_illness": admin.VERTICAL, }
-admin.site.register(CeaEnrollmentChecklist, CeaEnrollmentChecklistAdmin)

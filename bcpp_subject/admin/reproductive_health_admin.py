@@ -4,11 +4,10 @@ from django.utils.translation import ugettext as _
 from ..forms import ReproductiveHealthForm
 from ..models import ReproductiveHealth
 
-from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
-class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
+class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ReproductiveHealthForm
     fields = [

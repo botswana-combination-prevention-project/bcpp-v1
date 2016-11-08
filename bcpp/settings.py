@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from unipath.path import Path
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,16 +42,28 @@ INSTALLED_APPS = [
     'django_crypto_fields.apps.AppConfig',
     'django_revision.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
-    'bcpp_map.apps.AppConfig',
+    'edc_base.apps.AppConfig',
+    'edc_export.apps.AppConfig',
+    'edc_locator.apps.AppConfig',
+    'edc_offstudy.apps.AppConfig',
+    'edc_rule_groups.apps.AppConfig',
+    'edc_visit_schedule.apps.AppConfig',
+    'bcpp.apps.AppConfig',
+    'bcpp.apps.EdcDeviceAppConfig',
+    'bcpp.apps.EdcIdentifierAppConfig',
+    'bcpp.apps.EdcLabAppConfig',
+    'bcpp.apps.EdcMapAppConfig',
+    'bcpp.apps.EdcRegistrationAppConfig',
+    'bcpp.apps.EdcTimepointAppConfig',
+    'bcpp.apps.EdcVisitTrackingAppConfigParent',
     'bcpp_household.apps.AppConfig',
     'bcpp_household_member.apps.AppConfig',
-    'bcpp_survey.apps.AppConfig',
+    'bcpp_lab.apps.AppConfig',
+    'bcpp_map.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
-    'bcpp.apps.EdcDeviceAppConfig',
-    'bcpp.apps.EdcMapAppConfig',
-    'bcpp.apps.EdcIdentifierAppConfig',
-    'bcpp.apps.EdcTimepointAppConfig',
-    'bcpp.apps.AppConfig',
+    'bcpp_survey.apps.AppConfig',
+    # 'edc_call_manager.apps.AppConfig',
+    # 'edc_label.apps.AppConfig',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +146,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR.ancestor(1).child('static')
+
+MEDIA_ROOT = BASE_DIR.child('media')
+MEDIA_URL = '/media/'
+
+
 GIT_DIR = BASE_DIR
 
-CURRENT_MAPPER_NAME = 'digawana'
+CURRENT_MAPPER_NAME = None

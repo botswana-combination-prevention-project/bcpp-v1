@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils import timezone
 
 from simple_history.models import HistoricalRecords
 
@@ -30,11 +29,10 @@ class Grant(CrfModelMixin):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.today())
+        default=timezone.now)
 
     grant_number = models.IntegerField(
         verbose_name="How many of each type of grant do you receive?",
-        max_length=2,
         null=True,
         blank=True,
     )

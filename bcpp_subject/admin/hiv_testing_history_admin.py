@@ -5,11 +5,11 @@ from ..admin_site import bcpp_subject_admin
 from ..models import HivTestingHistory
 from ..forms import HivTestingHistoryForm
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HivTestingHistory, site=bcpp_subject_admin)
-class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
+class HivTestingHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivTestingHistoryForm
 

@@ -488,25 +488,6 @@ class Plot(SyncModelMixin, BaseUuidModel):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s,
                                           self.gps_degrees_e, self.gps_minutes_e)
 
-    def is_dispatch_container_model(self):
-        return True
-
-    def dispatched_as_container_identifier_attr(self):
-        return 'plot_identifier'
-
-    def dispatch_container_lookup(self):
-        return (self.__class__, 'plot_identifier')
-
-    def include_for_dispatch(self):
-        return True
-
-    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
-        """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if update_fields:
-            if 'replaces' in update_fields or 'htc' in update_fields or 'replaced_by' in update_fields:
-                return True
-        return False
-
     def get_contained_households(self):
         from bhp066.apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)

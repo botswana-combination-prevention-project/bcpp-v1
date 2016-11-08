@@ -4,11 +4,11 @@ from ..admin_site import bcpp_subject_admin
 from ..forms import OutpatientCareForm
 from ..models import OutpatientCare
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(OutpatientCare, site=bcpp_subject_admin)
-class OutpatientCareAdmin(SubjectVisitModelAdmin):
+class OutpatientCareAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = OutpatientCareForm
     fields = (

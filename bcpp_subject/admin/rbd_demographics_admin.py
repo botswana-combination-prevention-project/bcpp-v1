@@ -3,10 +3,10 @@ from django.contrib import admin
 from ..forms import RbdDemographicsForm
 from ..models import RbdDemographics
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class RbdDemographicsAdmin(SubjectVisitModelAdmin):
+class RbdDemographicsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = RbdDemographicsForm
     fields = (

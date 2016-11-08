@@ -5,10 +5,11 @@ from edc_base.model.validators import date_not_future
 
 from ..choices import ANC_REG_CHOICE
 
-from .base_pregnancy import BasePregnancy
+from .crf_model_mixin import CrfModelMixin
+from .model_mixins import PregnancyMixin
 
 
-class Pregnancy (BasePregnancy):
+class Pregnancy (PregnancyMixin, CrfModelMixin):
 
     """A model completed by the user for pregnant participants."""
 
@@ -29,7 +30,7 @@ class Pregnancy (BasePregnancy):
 
     history = HistoricalRecords()
 
-    class Meta(BasePregnancy.Meta):
+    class Meta(CrfModelMixin.Meta):
         app_label = 'bcpp_subject'
         verbose_name = "Pregnancy"
         verbose_name_plural = "Pregnancy"

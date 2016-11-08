@@ -1,15 +1,15 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import LabourMarketWagesForm
 from ..models import LabourMarketWages
 
-from ..admin_site import bcpp_subject_admin
 from .grant_admin import GrantInlineAdmin
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(LabourMarketWages, site=bcpp_subject_admin)
-class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
+class LabourMarketWagesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = LabourMarketWagesForm
     inlines = [GrantInlineAdmin, ]

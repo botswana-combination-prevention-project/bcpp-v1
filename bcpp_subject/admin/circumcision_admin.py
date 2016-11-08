@@ -3,14 +3,16 @@ from django.utils.translation import ugettext as _
 
 from edc_field_label.admin_mixin import ModifyFormLabelMixin
 
+from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from ..models import Circumcision, Circumcised, Uncircumcised
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class CircumcisionAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
+@admin.register(Circumcision, site=bcpp_subject_admin)
+class CircumcisionAdmin(ModifyFormLabelMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     replacements = {
         'first_circ_rep': {
@@ -39,10 +41,10 @@ class CircumcisionAdmin(ModifyFormLabelMixin, SubjectVisitModelAdmin):
                       "the foreskin of the man's penis has been cut off. "
                       "I would like to ask you a few questions regarding "
                       "male circumcision.")]
-admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-class CircumcisedAdmin(SubjectVisitModelAdmin):
+@admin.register(Circumcised, site=bcpp_subject_admin)
+class CircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CircumcisedForm
 
@@ -71,10 +73,9 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     filter_horizontal = ("health_benefits_smc",)
 
-admin.site.register(Circumcised, CircumcisedAdmin)
 
-
-class UncircumcisedAdmin(SubjectVisitModelAdmin):
+@admin.register(Uncircumcised, site=bcpp_subject_admin)
+class UncircumcisedAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = UncircumcisedForm
 
@@ -96,4 +97,3 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
         "service_facilities": admin.VERTICAL,
         "aware_free": admin.VERTICAL}
     filter_horizontal = ("health_benefits_smc",)
-admin.site.register(Uncircumcised, UncircumcisedAdmin)

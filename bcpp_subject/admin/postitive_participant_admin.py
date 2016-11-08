@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import PositiveParticipantForm
 from ..models import PositiveParticipant
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class PositiveParticipantAdmin(SubjectVisitModelAdmin):
+@admin.register(PositiveParticipant, site=bcpp_subject_admin)
+class PositiveParticipantAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = PositiveParticipantForm
     fields = (
@@ -41,4 +43,3 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
           " HIV/AIDS infection. I would like you to tell me"
           " if you strongly agree, agree, disagree or strongly"
           " disagree with each statement?")]
-admin.site.register(PositiveParticipant, PositiveParticipantAdmin)

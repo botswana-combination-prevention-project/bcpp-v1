@@ -6,20 +6,15 @@ from simple_history.models import HistoricalRecords
 from bcpp.model_mixins import RepresentativeEligibilityMixin
 from bcpp_household.models import HouseholdStructure
 
-from .household_member import HouseholdMember
-
 from ..managers import HouseholdMemberManagerMixin
 
+from .model_mixins import HouseholdMemberModelMixin
 
-class HouseholdHeadEligibility(RepresentativeEligibilityMixin, models.Model):
+
+class HouseholdHeadEligibility(RepresentativeEligibilityMixin, HouseholdMemberModelMixin):
     """A model completed by the user that determines if the household member is eligible to act
     as a head of household or household representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
-
-    household_member = models.OneToOneField(
-        HouseholdMember,
-        help_text=('Important: The household member must verbally consent '
-                   'before completing this questionnaire.'))
 
     objects = HouseholdMemberManagerMixin()
 

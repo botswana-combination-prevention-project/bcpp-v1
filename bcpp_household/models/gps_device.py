@@ -1,11 +1,11 @@
 from django.db import models
 
-from edc_base.model.models import ListModelMixin
+from edc_base.model.models import ListModelMixin, BaseUuidModel
 
 from ..managers import GpsDeviceManager
 
 
-class GpsDevice(ListModelMixin):
+class GpsDevice(ListModelMixin, BaseUuidModel):
     """A system model that indicates the GPS device used to confirm a plot."""
     gps_make = models.CharField("Make", max_length=25)
     gps_model = models.CharField("Model", max_length=25)

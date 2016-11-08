@@ -22,8 +22,7 @@ from bcpp_household_member.models import EnrollmentChecklist
 
 from ..managers import SubjectConsentManager
 
-from .subject_consent_mixin import SubjectConsentMixin as BcppSubjectConsentMixin
-from .subject_off_study_mixin import SubjectOffStudyMixin
+from .model_mixins import SubjectConsentMixin as BcppSubjectConsentMixin, SubjectOffStudyMixin
 
 
 class BaseSubjectConsent(models.Model):

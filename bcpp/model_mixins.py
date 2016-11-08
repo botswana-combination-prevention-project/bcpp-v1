@@ -1,17 +1,11 @@
 from django.db import models
 
-from edc_base.model.validators import datetime_not_future
 from edc_base.model.validators import eligible_if_yes
 from edc_constants.choices import YES_NO
 
 
 class RepresentativeEligibilityMixin(models.Model):
     """Determines if the household member is eligible representative of the household."""
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date/Time",
-        validators=[datetime_not_future],
-    )
 
     aged_over_18 = models.CharField(
         verbose_name=("Did you verify that the respondent is aged 18 or older? "),

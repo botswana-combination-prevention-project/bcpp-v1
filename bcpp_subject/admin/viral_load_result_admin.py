@@ -3,10 +3,10 @@ from django.contrib import admin
 from ..forms import ViralLoadResultForm
 from ..models import ViralLoadResult
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class ViralLoadResultAdmin(SubjectVisitModelAdmin):
+class ViralLoadResultAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ViralLoadResultForm
     list_display = ('subject_visit', 'sample_id', 'clinician_initials',

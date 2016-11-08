@@ -29,7 +29,6 @@ class AccessToCare (CrfModelMixin):
         verbose_name="In the past year, where else have you obtained"
                      " medical care or treatment when you or someone in your family"
                      " is sick or hurt? (check all that apply)",
-        null=True,
         help_text="")
 
     medical_care_access_other = OtherCharField(

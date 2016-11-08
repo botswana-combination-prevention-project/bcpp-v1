@@ -1,12 +1,14 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..models import PimaVl
 from ..forms import PimaVlForm
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class PimaVlAdmin(SubjectVisitModelAdmin):
+@admin.register(PimaVl, site=bcpp_subject_admin)
+class PimaVlAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = PimaVlForm
     fields = (
@@ -30,5 +32,3 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'poc_vl_today_other': admin.VERTICAL,
         'vl_value_quatifier': admin.VERTICAL,
         'easy_of_use': admin.VERTICAL}
-
-admin.site.register(PimaVl, PimaVlAdmin)

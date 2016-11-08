@@ -45,7 +45,6 @@ class OutpatientCare (CrfModelMixin):
     care_visits = models.IntegerField(
         verbose_name="In the last 3 months, how many total outpatient visits have"
                      " you to all of the above places? ",
-        max_length=2,
         null=True,
         blank=True,
         help_text="Note:If participant does not want to answer, leave blank.",

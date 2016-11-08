@@ -5,11 +5,11 @@ from ..admin_site import bcpp_subject_admin
 from ..models import HospitalAdmission
 from ..forms import HospitalAdmissionForm
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(HospitalAdmission, site=bcpp_subject_admin)
-class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
+class HospitalAdmissionAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HospitalAdmissionForm
     fields = (
