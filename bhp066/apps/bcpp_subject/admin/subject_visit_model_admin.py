@@ -1,9 +1,11 @@
+from django.core.urlresolvers import reverse
 from edc.subject.visit_tracking.admin import BaseVisitTrackingModelAdmin
 
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..constants import ANNUAL, ANNUAL_CODES
 from ..models import SubjectVisit
+from edc.subject.appointment.models.appointment import Appointment
 
 
 class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
@@ -19,6 +21,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     def __init__(self, *args, **kwargs):
         self.subject_visit = None
+        self.obj_instance = None
         lookups = []
         super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
         self.list_filter = list(self.list_filter)
@@ -39,6 +42,26 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
                 self.search_fields.index(lookup)
             except ValueError:
                 self.search_fields.insert(0, lookup)
+
+    def edc_readonly_next(self, dashboard_id):
+        url = reverse(
+            'subject_dashboard_url',
+            kwargs={
+                'dashboard_type': 'subject',
+                'dashboard_model': 'visit',
+                'dashboard_id': dashboard_id,
+                'show': 'forms'
+            })
+        return url
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        dashboard_id = request.GET.get('dashboard_id')
+        if request.GET.get('edc_readonly'):
+            extra_context.update({'edc_readonly': request.GET.get('edc_readonly')})
+            extra_context.update({'edc_readonly_next': self.edc_readonly_next(dashboard_id)})
+        return super(SubjectVisitModelAdmin, self).change_view(
+            request, object_id, form_url=form_url, extra_context=extra_context)
 
     def get_form_post(self, form, request, obj, **kwargs):
         NAME = 0
