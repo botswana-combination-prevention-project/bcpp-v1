@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc_visit_tracking.admin import VisitModelAdminMixin
+from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
 from bcpp_household_member.models import HouseholdMember
 from bcpp_lab.models import SubjectRequisition

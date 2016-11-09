@@ -3,10 +3,10 @@ from django.contrib import admin
 from ..models import Cd4History
 from ..forms import Cd4HistoryForm
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
-class Cd4HistoryAdmin(SubjectVisitModelAdmin):
+class Cd4HistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = Cd4HistoryForm
     fields = (

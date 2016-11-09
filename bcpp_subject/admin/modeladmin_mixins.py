@@ -5,7 +5,7 @@ from edc_admin_exclude.admin import AdminExcludeFieldsMixin
 from edc_base.modeladmin.mixins import (
     ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
     ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin)
-from edc_visit_tracking.admin import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
+from edc_visit_tracking.modeladmin_mixins import CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin
 
 from ..constants import BASELINE, ANNUAL
 from ..models import SubjectVisit
