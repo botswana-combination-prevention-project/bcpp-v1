@@ -16,6 +16,8 @@ class RepresentativeEligibility(RepresentativeEligibilityMixin, BaseUuidModel):
     """A model completed by the user that checks the eligibility of household member
     to be the household representative."""
 
+    report_datetime = models.DateTimeField()
+
     household_structure = models.OneToOneField(HouseholdStructure)
 
     auto_filled = models.BooleanField(

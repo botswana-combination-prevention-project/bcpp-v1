@@ -49,6 +49,8 @@ class SubjectUndecidedEntryInline(TabularInlineMixin, admin.TabularInline):
 @admin.register(SubjectUndecided, site=bcpp_household_member_admin)
 class SubjectUndecidedAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
+    instructions = []
+
     form = SubjectUndecidedForm
     inlines = [SubjectUndecidedEntryInline, ]
 
@@ -71,9 +73,8 @@ class SubjectUndecidedAdmin(HouseholdMemberAdminMixin, admin.ModelAdmin):
 
     list_filter = ('survey',)
 
-    readonly_fields = (
-        'registered_subject',
-        'household_member',
-        'survey',
-        'report_datetime',)
-    instructions = []
+#     readonly_fields = [
+#         'registered_subject',
+#         'household_member',
+#         'survey',
+#         'report_datetime']

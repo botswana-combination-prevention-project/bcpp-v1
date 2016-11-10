@@ -1,6 +1,6 @@
 from django.apps import apps as django_apps
 from django.db import models
-from django_crypto_fields.fields import EncryptedTextField, EncryptedDecimalField
+from django_crypto_fields.fields import EncryptedTextField
 from simple_history.models import HistoricalRecords as AuditTrail
 
 from edc_base.model.models import BaseUuidModel
@@ -45,7 +45,7 @@ class Household(SyncModelMixin, BaseUuidModel):
         verbose_name='Report Date/Time',
         null=True)
 
-    gps_degrees_s = EncryptedDecimalField(
+    gps_degrees_s = models.DecimalField(
         verbose_name='GPS Degrees-South',
         max_digits=10,
         null=True,
@@ -53,7 +53,7 @@ class Household(SyncModelMixin, BaseUuidModel):
         editable=False,
         help_text='comes from plot')
 
-    gps_minutes_s = EncryptedDecimalField(
+    gps_minutes_s = models.DecimalField(
         verbose_name='GPS Minutes-South',
         max_digits=10,
         null=True,
@@ -61,7 +61,7 @@ class Household(SyncModelMixin, BaseUuidModel):
         editable=False,
         help_text='comes from plot')
 
-    gps_degrees_e = EncryptedDecimalField(
+    gps_degrees_e = models.DecimalField(
         verbose_name='GPS Degrees-East',
         null=True,
         max_digits=10,
@@ -69,7 +69,7 @@ class Household(SyncModelMixin, BaseUuidModel):
         editable=False,
         help_text='comes from plot')
 
-    gps_minutes_e = EncryptedDecimalField(
+    gps_minutes_e = models.DecimalField(
         verbose_name='GPS Minutes-East',
         max_digits=10,
         null=True,

@@ -1,7 +1,7 @@
-from edc_base.model.models import ListModelMixin
+from edc_base.model.models import ListModelMixin, BaseUuidModel
 
 
-class FamilyPlanning (ListModelMixin):
+class FamilyPlanning (ListModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = "bcpp_list"

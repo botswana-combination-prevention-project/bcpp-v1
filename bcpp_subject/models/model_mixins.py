@@ -22,14 +22,6 @@ class SubjectConsentMixin(models.Model):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 
-    study_site = models.CharField(
-        verbose_name='Site',
-        max_length=15,
-        null=True,
-        help_text="This refers to the site or 'clinic area' where the subject is being consented.",
-        editable=False,
-    )
-
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
         max_length=10,
@@ -228,7 +220,7 @@ class SubjectOffStudyMixin(OffStudyMixin):
         abstract = True
 
 
-class PregnancyMixin:
+class PregnancyMixin(models.Model):
 
     last_birth = models.DateField(
         verbose_name="When did you last (most recently) give birth?",

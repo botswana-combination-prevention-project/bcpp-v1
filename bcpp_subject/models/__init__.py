@@ -29,7 +29,6 @@ from .medical_diagnoses import MedicalDiagnoses
 from .non_pregnancy import NonPregnancy
 from .outpatient_care import OutpatientCare
 from .participation import Participation
-from .partner import RecentPartner, SecondPartner, ThirdPartner
 from .pima import Pima
 from .pima_vl import PimaVl
 from .positive_participant import PositiveParticipant
@@ -39,6 +38,7 @@ from .reproductive_health import ReproductiveHealth
 from .residency_mobility import ResidencyMobility
 from .resource_utilization import ResourceUtilization
 from .sexual_behaviour import SexualBehaviour
+from .sexual_partner import RecentPartner, SecondPartner, ThirdPartner
 from .sti import Sti
 from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion

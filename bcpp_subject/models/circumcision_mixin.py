@@ -5,7 +5,7 @@ from edc_constants.choices import YES_NO_UNSURE
 from bcpp_list.models import CircumcisionBenefits
 
 
-class CircumcisionMixin:
+class CircumcisionMixin(models.Model):
 
     circumcised = models.CharField(
         verbose_name="Do you believe that male circumcision"
@@ -19,7 +19,6 @@ class CircumcisionMixin:
         CircumcisionBenefits,
         verbose_name="What do you believe are the health"
                      " benefits of male circumcision? (Indicate all that apply.)",
-        null=True,
         blank=True,
         help_text="")
 

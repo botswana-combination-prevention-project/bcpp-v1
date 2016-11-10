@@ -6,6 +6,7 @@ from ..models import HouseholdMember
 class HouseholdMemberAdminMixin:
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+
         if db_field.name == "household_structure":
             if request.GET.get('household_structure'):
                 kwargs["queryset"] = HouseholdStructure.objects.filter(

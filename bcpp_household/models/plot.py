@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction, DatabaseError
-from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField, EncryptedDecimalField
+from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField
+
 from simple_history.models import HistoricalRecords as AuditTrail
 
 from edc_sync.model_mixins import SyncModelMixin
@@ -31,7 +32,7 @@ def is_valid_community(self, value):
 class Plot(SyncModelMixin, BaseUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
-    # TODO: Dispatch
+
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
@@ -63,7 +64,6 @@ class Plot(SyncModelMixin, BaseUuidModel):
         verbose_name="CSO Number",
         blank=True,
         null=True,
-        db_index=True,
         help_text=("provide the CSO number or leave BLANK."))
 
     household_count = models.IntegerField(
@@ -87,49 +87,49 @@ class Plot(SyncModelMixin, BaseUuidModel):
         blank=True,
         null=True)
 
-    gps_degrees_s = EncryptedDecimalField(
+    gps_degrees_s = models.DecimalField(
         verbose_name='GPS Degrees-South',
         max_digits=10,
         null=True,
         decimal_places=0)
 
-    gps_minutes_s = EncryptedDecimalField(
+    gps_minutes_s = models.DecimalField(
         verbose_name='GPS Minutes-South',
         max_digits=10,
         null=True,
         decimal_places=4)
 
-    gps_degrees_e = EncryptedDecimalField(
+    gps_degrees_e = models.DecimalField(
         verbose_name='GPS Degrees-East',
         null=True,
         max_digits=10,
         decimal_places=0)
 
-    gps_minutes_e = EncryptedDecimalField(
+    gps_minutes_e = models.DecimalField(
         verbose_name='GPS Minutes-East',
         max_digits=10,
         null=True,
         decimal_places=4)
 
-    gps_lon = EncryptedDecimalField(
+    gps_lon = models.DecimalField(
         verbose_name='longitude',
         max_digits=10,
         null=True,
         decimal_places=6)
 
-    gps_lat = EncryptedDecimalField(
+    gps_lat = models.DecimalField(
         verbose_name='latitude',
         max_digits=10,
         null=True,
         decimal_places=6)
 
-    gps_target_lon = EncryptedDecimalField(
+    gps_target_lon = models.DecimalField(
         verbose_name='target waypoint longitude',
         max_digits=10,
         null=True,
         decimal_places=6)
 
-    gps_target_lat = EncryptedDecimalField(
+    gps_target_lat = models.DecimalField(
         verbose_name='target waypoint latitude',
         max_digits=10,
         null=True,
@@ -489,7 +489,7 @@ class Plot(SyncModelMixin, BaseUuidModel):
                                           self.gps_degrees_e, self.gps_minutes_e)
 
     def get_contained_households(self):
-        from bhp066.apps.bcpp_household.models import Household
+        from bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 

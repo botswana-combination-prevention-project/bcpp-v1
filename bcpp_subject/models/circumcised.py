@@ -20,7 +20,7 @@ class Circumcised (CircumcisionMixin, CrfModelMixin):
         verbose_name="At what age were you circumcised?",
         null=True,
         blank=True,
-        help_text="Note:Leave blank if participant does not want to respond.")
+        help_text="Note: Leave blank if participant does not want to respond.")
 
     age_unit_circ = models.CharField(
         verbose_name="The unit of age of circumcision is?",

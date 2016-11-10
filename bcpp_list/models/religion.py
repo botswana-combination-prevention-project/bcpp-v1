@@ -1,7 +1,7 @@
-from edc_base.model.models import ListModelMixin
+from edc_base.model.models import ListModelMixin, BaseUuidModel
 
 
-class Religion (ListModelMixin):
+class Religion (ListModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = "bcpp_list"

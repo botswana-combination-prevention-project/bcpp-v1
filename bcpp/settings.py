@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'bcpp_household.apps.AppConfig',
     'bcpp_household_member.apps.AppConfig',
     'bcpp_lab.apps.AppConfig',
+    'bcpp_list.apps.AppConfig',
     'bcpp_map.apps.AppConfig',
     'bcpp_subject.apps.AppConfig',
     'bcpp_survey.apps.AppConfig',

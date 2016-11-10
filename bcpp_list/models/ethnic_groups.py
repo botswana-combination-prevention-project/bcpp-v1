@@ -1,7 +1,7 @@
-from edc_base.model.models import ListModelMixin
+from edc_base.model.models import ListModelMixin, BaseUuidModel
 
 
-class EthnicGroups (ListModelMixin):
+class EthnicGroups (ListModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = "bcpp_list"

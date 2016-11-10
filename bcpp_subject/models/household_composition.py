@@ -2,7 +2,7 @@ from django.db import models
 
 from simple_history.models import HistoricalRecords
 
-from django_crypto_fields.fields import EncryptedCharField, EncryptedDecimalField
+from django_crypto_fields.fields import EncryptedCharField
 
 from edc_base.model.fields import OtherCharField
 from edc_constants.choices import GENDER, YES_NO
@@ -22,7 +22,7 @@ class HouseholdComposition (CrfModelMixin):
         help_text="",
     )
 
-    coordinates = EncryptedDecimalField(
+    coordinates = models.DecimalField(
         verbose_name="GPS coordinates",
         max_digits=10,
         decimal_places=4,

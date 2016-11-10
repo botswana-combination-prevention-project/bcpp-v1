@@ -177,6 +177,6 @@ class SubjectConsent(
     class Meta:
         app_label = 'bcpp_subject'
         get_latest_by = 'consent_datetime'
-        unique_together = (('subject_identifier', 'survey', 'version'),
-                           ('first_name', 'dob', 'initials', 'version', 'survey'))
+        unique_together = (('subject_identifier', 'version'),
+                           ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )

@@ -17,6 +17,7 @@ from .plot import Plot
 
 class HouseholdLog(SyncModelMixin, BaseUuidModel):
     """A system model that links the household log to the household."""
+
     household_structure = models.ForeignKey(HouseholdStructure)
 
     history = AuditTrail()
