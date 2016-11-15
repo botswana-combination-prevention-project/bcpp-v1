@@ -3,7 +3,7 @@ from django.db import models
 from edc_constants.constants import NOT_APPLICABLE, OTHER
 from edc_constants.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, YES_NO
 from edc_map.site_mappers import site_mappers
-from edc_offstudy.model_mixins import OffStudyMixin
+from edc_offstudy.model_mixins import OffstudyMixin
 
 from bcpp_household_member.models import HouseholdMember
 from bcpp_list.models import PartnerResidency
@@ -15,7 +15,7 @@ from ..choices import (
     FIRST_CONDOM_FREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR, PREG_ARV_CHOICE)
 from ..constants import ECC, CPC
 
-from .subject_off_study import SubjectOffStudy
+from .subject_offstudy import SubjectOffstudy
 
 
 class SubjectConsentMixin(models.Model):
@@ -212,12 +212,11 @@ class SexualPartnerMixin (models.Model):
         abstract = True
 
 
-class SubjectOffStudyMixin(OffStudyMixin):
-
-    OFF_STUDY_MODEL = SubjectOffStudy
+class SubjectOffstudyMixin(OffstudyMixin):
 
     class Meta:
         abstract = True
+        offstudy_model = 'bcpp_subject.subjectoffstudy'
 
 
 class PregnancyMixin(models.Model):

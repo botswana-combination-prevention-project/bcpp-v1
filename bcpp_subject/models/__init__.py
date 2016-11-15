@@ -44,7 +44,7 @@ from .stigma import Stigma
 from .stigma_opinion import StigmaOpinion
 from .subject_consent import SubjectConsent
 from .subject_locator import SubjectLocator
-from .subject_off_study import SubjectOffStudy
+from .subject_offstudy import SubjectOffstudy
 from .subject_referral import SubjectReferral
 from .subject_visit import SubjectVisit
 from .substance_use import SubstanceUse

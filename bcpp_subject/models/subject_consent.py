@@ -19,7 +19,7 @@ from bcpp_household_member.models import EnrollmentChecklist
 
 from ..managers import SubjectConsentManager
 
-from .model_mixins import SubjectConsentMixin as BcppSubjectConsentMixin, SubjectOffStudyMixin
+from .model_mixins import SubjectConsentMixin as BcppSubjectConsentMixin, SubjectOffstudyMixin
 
 
 class BaseSubjectConsent(models.Model):
@@ -160,7 +160,7 @@ class BaseSubjectConsent(models.Model):
 
 
 class SubjectConsent(
-        ConsentModelMixin, SubjectOffStudyMixin,
+        ConsentModelMixin, SubjectOffstudyMixin,
         BcppSubjectConsentMixin, IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
         SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
         BaseUuidModel):
