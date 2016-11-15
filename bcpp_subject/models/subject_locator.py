@@ -8,14 +8,14 @@ from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 from edc_export.managers import ExportHistoryManager
 from edc_export.model_mixins import ExportTrackingFieldsMixin
-from edc_locator.models import LocatorMixin
+from edc_locator.model_mixins import LocatorModelMixin
 
 from ..managers import SubjectLocatorManager
 
 from .crf_model_mixin import CrfModelMixin
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, LocatorMixin, CrfModelMixin):
+class SubjectLocator(ExportTrackingFieldsMixin, LocatorModelMixin, CrfModelMixin):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
