@@ -1,12 +1,9 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
 from edc_appointment.choices import APPT_STATUS
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import TIME_OF_DAY, TIME_OF_WEEK
-from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_survey.models import Survey
 
@@ -15,7 +12,7 @@ from ..managers import MemberAppointmentManager
 from .household_member import HouseholdMember
 
 
-class MemberAppointment(SyncModelMixin, BaseUuidModel):
+class MemberAppointment(BaseUuidModel):
 
     """A model created by the system and updated by the user for annual survey appointments."""
 
@@ -58,9 +55,9 @@ class MemberAppointment(SyncModelMixin, BaseUuidModel):
 
     is_confirmed = models.BooleanField(default=False)
 
-    objects = MemberAppointmentManager()
-
     history = HistoricalRecords()
+
+    objects = MemberAppointmentManager()
 
     def __str__(self):
         return '{}'.format(self.appt_date.strftime('%Y-%m-%d'))

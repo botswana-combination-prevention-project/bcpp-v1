@@ -3,13 +3,11 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
+from edc_base.model.models import HistoricalRecords
+from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 from edc_export.managers import ExportHistoryManager
 from edc_export.model_mixins import ExportTrackingFieldsMixin
-
-from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
-from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 from edc_locator.models import LocatorMixin
 
 from ..managers import SubjectLocatorManager
@@ -81,11 +79,14 @@ class SubjectLocator(ExportTrackingFieldsMixin, LocatorMixin, CrfModelMixin):
         null=True,
     )
 
-    export_history = ExportHistoryManager()
-
     objects = SubjectLocatorManager()
 
+    export_history = ExportHistoryManager()
+
     history = HistoricalRecords()
+
+    def __str__(self):
+        return str(self.subject_visit)
 
     def save(self, *args, **kwargs):
         self.hic_enrollment_checks()
@@ -166,9 +167,6 @@ class SubjectLocator(ExportTrackingFieldsMixin, LocatorMixin, CrfModelMixin):
                             info=info, physical_address=self.physical_address)
         return info
 
-    def __str__(self):
-        return str(self.subject_visit)
-
     class Meta(CrfModelMixin.Meta):
-        verbose_name = 'Subject Locator'
         app_label = 'bcpp_subject'
+        verbose_name = 'Subject Locator'

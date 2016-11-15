@@ -8,10 +8,7 @@ from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction, DatabaseError
 from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField
 
-from simple_history.models import HistoricalRecords as AuditTrail
-
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc_identifier.exceptions import IdentifierError
 from edc_map.site_mappers import site_mappers
@@ -29,7 +26,7 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(SyncModelMixin, BaseUuidModel):
+class Plot(BaseUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
 
@@ -254,11 +251,11 @@ class Plot(SyncModelMixin, BaseUuidModel):
         editable=False,
         help_text='Updated by replacement helper')
 
-    history = AuditTrail()
-
     objects = PlotManager()
 
-    def __unicode__(self):
+    history = HistoricalRecords()
+
+    def __str__(self):
         if site_mappers.get_mapper(site_mappers.current_community).clinic_plot_identifier == self.plot_identifier:
             return 'BCPP-CLINIC'
         else:

@@ -1,8 +1,7 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
 from edc_base.model.fields import OtherCharField
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import GENDER, POS_NEG_UNKNOWN
 from edc_constants.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
 

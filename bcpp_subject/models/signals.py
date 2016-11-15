@@ -3,13 +3,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
-from edc_constants.constants import COMPLETE, PENDING
 
 from bcpp_household_member.exceptions import MemberStatusError
-from bcpp_subject.constants import BASELINE_CODES
+from bcpp_subject.constants import BASELINE_CODES, ANNUAL, BASELINE
 
-from ..constants import POC_VIRAL_LOAD
-from ..models import SubjectReferral, PimaVl, SubjectConsent
+from ..models import SubjectReferral, SubjectConsent
 from ..subject_referral_helper import SubjectReferralHelper
 
 
@@ -101,9 +99,9 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     if not raw:
         try:
             if instance.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
-                timepoint_key = SubjectReferralHelper.BASELINE
+                timepoint_key = BASELINE
             else:
-                timepoint_key = SubjectReferralHelper.ANNUAL
+                timepoint_key = ANNUAL
             if sender in SubjectReferralHelper.models[timepoint_key].values():
                 subject_referral = SubjectReferral.objects.using(using).get(
                     subject_visit=instance.subject_visit)
@@ -123,20 +121,3 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
                 pass
             else:
                 raise
-
-
-@receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
-def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using, **kwargs):
-    if not raw:
-        if isinstance(instance, PimaVl):
-            from bcpp_lab.models import PreOrder
-            try:
-                pre_order = PreOrder.objects.get(
-                    subject_visit=instance.subject_visit,
-                    panel__name=POC_VIRAL_LOAD,
-                    status=PENDING
-                )
-                pre_order.status = COMPLETE
-                pre_order.save(update_fields=['status'])
-            except PreOrder.DoesNotExist:
-                pass

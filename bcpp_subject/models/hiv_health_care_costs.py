@@ -1,7 +1,6 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS

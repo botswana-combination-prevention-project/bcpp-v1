@@ -1,10 +1,8 @@
 from django.db import models
 from django_crypto_fields.fields import EncryptedTextField
-from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.validators.date import datetime_not_future
-from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_survey.validators import date_in_survey
 
@@ -14,12 +12,12 @@ from ..managers import PlotLogManager, PlotLogEntryManager
 from .plot import Plot
 
 
-class PlotLog(SyncModelMixin, BaseUuidModel):
+class PlotLog(BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot (related)."""
 
     plot = models.OneToOneField(Plot)
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = PlotLogManager()
 
@@ -47,7 +45,7 @@ class PlotLog(SyncModelMixin, BaseUuidModel):
         app_label = 'bcpp_household'
 
 
-class PlotLogEntry(SyncModelMixin, BaseUuidModel):
+class PlotLogEntry(BaseUuidModel):
     """A model completed by the user to track an RA\'s attempts to confirm a Plot."""
     plot_log = models.ForeignKey(PlotLog)
 
@@ -81,7 +79,7 @@ class PlotLogEntry(SyncModelMixin, BaseUuidModel):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = PlotLogEntryManager()
 

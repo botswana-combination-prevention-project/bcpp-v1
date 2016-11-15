@@ -3,11 +3,10 @@ from datetime import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, RegexValidator
-
-from simple_history.models import HistoricalRecords
-
 from django_crypto_fields.fields import EncryptedTextField
+
 from edc_base.model.fields import OtherCharField
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import YES_NO, PIMA
 from edc_protocol.validators import datetime_not_before_study_start

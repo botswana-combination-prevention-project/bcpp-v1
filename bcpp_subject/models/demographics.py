@@ -1,8 +1,7 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
 from edc_base.model.fields import OtherCharField
+from edc_base.model.models import HistoricalRecords
 
 from bcpp_list.models import LiveWith, Religion, EthnicGroups
 

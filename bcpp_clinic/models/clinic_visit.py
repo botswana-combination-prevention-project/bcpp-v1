@@ -1,6 +1,7 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_constants.constants import NEW
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData

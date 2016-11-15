@@ -1,7 +1,6 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_REFUSED
 
 from ..choices import CARE_REASON, TRAVEL_HOURS

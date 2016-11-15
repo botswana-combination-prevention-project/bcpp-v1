@@ -4,7 +4,6 @@ from django_crypto_fields.fields import EncryptedCharField, EncryptedTextField
 
 from edc_base.model.models import BaseUuidModel
 from edc_base.model.validators import datetime_not_future, date_not_future
-from edc_sync.model_mixins import SyncModelMixin
 from edc_base.model.fields import OtherCharField
 
 from bcpp_survey.models import Survey
@@ -14,7 +13,7 @@ from ..choices import NEXT_APPOINTMENT_SOURCE
 from .household_member import HouseholdMember
 
 
-class HouseholdMemberModelMixin(SyncModelMixin, BaseUuidModel):
+class HouseholdMemberModelMixin(BaseUuidModel):
 
     """ Base for membership form models that need a foreignkey to
     the registered subject and household_member model"""

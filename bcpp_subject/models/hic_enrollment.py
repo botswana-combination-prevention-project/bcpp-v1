@@ -1,11 +1,10 @@
 from dateutil.relativedelta import relativedelta
 
-from simple_history.models import HistoricalRecords
-
 from django.apps import apps as django_apps
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import YES_NO

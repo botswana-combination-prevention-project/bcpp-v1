@@ -1,4 +1,4 @@
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
 
 from .detailed_sexual_history import DetailedSexualHistory
 

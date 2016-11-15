@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from simple_history.models import HistoricalRecords
 
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future, eligible_if_yes
 from edc_constants.choices import YES_NO, YES_NO_REFUSED
 

@@ -1,6 +1,6 @@
-from simple_history.models import HistoricalRecords
-
 from django.db import models
+
+from edc_base.model.models import HistoricalRecords
 
 from .model_mixins import SexualPartnerMixin
 from .crf_model_mixin import CrfModelMixin

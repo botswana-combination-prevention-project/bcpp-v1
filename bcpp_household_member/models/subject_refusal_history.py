@@ -2,9 +2,9 @@ from django.db import models
 from django.utils import timezone
 
 from edc_base.model.fields import OtherCharField
-from edc_base.model.models import BaseUuidModel
-from edc_sync.model_mixins import SyncModelMixin
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 
+from bcpp.manager_mixins import CurrentCommunityManagerMixin
 from bcpp_survey.models import Survey
 
 from ..choices import WHY_NOPARTICIPATE_CHOICE
@@ -13,7 +13,15 @@ from ..managers import SubjectRefusalHistoryManager
 from .household_member import HouseholdMember
 
 
-class SubjectRefusalHistory(SyncModelMixin, BaseUuidModel):
+class SubjectRefusalHistoryManager(CurrentCommunityManagerMixin, models.Manager):
+
+    lookup = ['household_member', 'household_structure', 'household', 'plot']
+
+    def get_by_natural_key(self, transaction):
+        return self.get(transaction=transaction)
+
+
+class SubjectRefusalHistory(BaseUuidModel):
     """A system model that tracks the history of deleted refusal instances."""
 
     transaction = models.UUIDField()
@@ -41,6 +49,8 @@ class SubjectRefusalHistory(SyncModelMixin, BaseUuidModel):
     reason_other = OtherCharField()
 
     objects = SubjectRefusalHistoryManager()
+
+    history = HistoricalRecords()
 
     def natural_key(self):
         return (self.transaction, )

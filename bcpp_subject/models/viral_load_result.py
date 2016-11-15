@@ -1,8 +1,7 @@
 from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.fields import InitialsField
 
 from ..managers import ViralLoadResultManager

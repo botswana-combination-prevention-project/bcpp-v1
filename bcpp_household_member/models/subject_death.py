@@ -1,11 +1,9 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
-from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
-# from edc_death_report.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
 from edc_base.model.fields import OtherCharField
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import date_not_future
+from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
 
 from ..managers import HouseholdMemberManager
 
@@ -65,9 +63,9 @@ class SubjectDeath(HouseholdMemberModelMixin):
         help_text="",
     )
 
-    objects = HouseholdMemberManager()
-
     history = HistoricalRecords()
+
+    objects = HouseholdMemberManager()
 
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey

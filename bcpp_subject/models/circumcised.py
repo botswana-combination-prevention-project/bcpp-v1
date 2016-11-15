@@ -1,7 +1,7 @@
 from django.db import models
-from simple_history.models import HistoricalRecords
 
 from edc_base.model.fields import OtherCharField
+from edc_base.model.models import HistoricalRecords
 
 from ..choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 

@@ -1,8 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from simple_history.models import HistoricalRecords as AuditTrail
-from edc_sync.model_mixins import SyncModelMixin
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.models import BaseUuidModel
 from edc_constants.choices import YES_NO_DONT_KNOW
 
@@ -11,10 +10,9 @@ from ..managers import HouseholdAssessmentManager
 from ..choices import RESIDENT_LAST_SEEN
 
 from .household_structure import HouseholdStructure
-from .plot import Plot
 
 
-class HouseholdAssessment(SyncModelMixin, BaseUuidModel):
+class HouseholdAssessment(BaseUuidModel):
     """A model completed by the user to assess a household that could not
     be enumerated."""
     household_structure = models.OneToOneField(HouseholdStructure)
@@ -42,7 +40,7 @@ class HouseholdAssessment(SyncModelMixin, BaseUuidModel):
 
     objects = HouseholdAssessmentManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         if self.household_structure.enumerated:
@@ -54,9 +52,6 @@ class HouseholdAssessment(SyncModelMixin, BaseUuidModel):
     def natural_key(self):
         return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure']
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     @property
     def vdc_househould_status(self):

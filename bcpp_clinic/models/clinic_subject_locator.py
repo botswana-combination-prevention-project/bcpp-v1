@@ -8,7 +8,8 @@ from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.encrypted_fields import EncryptedCharField

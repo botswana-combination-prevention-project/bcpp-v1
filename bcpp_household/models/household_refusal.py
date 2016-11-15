@@ -2,19 +2,16 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django_extensions.db.fields import UUIDField
 from django_crypto_fields.fields import EncryptedTextField, EncryptedCharField
-from simple_history.models import HistoricalRecords as AuditTrail
-
-from edc_sync.model_mixins import SyncModelMixin
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.models import BaseUuidModel
 
 from ..choices import HOUSEHOLD_REFUSAL
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
-from .plot import Plot
 
 
-class BaseHouseholdRefusal(SyncModelMixin, BaseUuidModel):
+class BaseHouseholdRefusal(BaseUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -42,10 +39,7 @@ class BaseHouseholdRefusal(SyncModelMixin, BaseUuidModel):
             raise ValidationError('Household is enrolled.')
         super(BaseHouseholdRefusal, self).save(*args, **kwargs)
 
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__household__plot__plot_identifier')
-
-    def __unicode__(self):
+    def __str__(self):
         return '{} ({})'.format(self.household_structure, self.report_datetime.strftime('%Y-%m-%d'))
 
     class Meta:
@@ -57,7 +51,7 @@ class HouseholdRefusal(BaseHouseholdRefusal):
     cannot be enumerated."""
     objects = HouseholdRefusalManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def natural_key(self):
         return self.household_structure.natural_key()
@@ -75,7 +69,7 @@ class HouseholdRefusalHistory(BaseHouseholdRefusal):
 
     objects = HouseholdRefusalHistoryManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def natural_key(self):
         return (self.transaction, )

@@ -1,17 +1,15 @@
 from django.db import models
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.subject.registration.models import RegisteredSubject
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
+from bcpp.models import RegisteredSubject
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_survey.models import Survey
+from bcpp_household_member.models import HouseholdMember
+from bcpp_survey.models import Survey
 
 from ..managers import ConsentHistoryManager
 
 
-class SubjectConsentHistory(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidModel):
+class SubjectConsentHistory(BaseUuidModel):
 
     survey = models.ForeignKey(Survey)
 
@@ -24,6 +22,8 @@ class SubjectConsentHistory(BaseDispatchSyncUuidModel, SyncModelMixin, BaseUuidM
     consent_model_name = models.CharField(max_length=50)
 
     objects = ConsentHistoryManager()
+
+    history = HistoricalRecords()
 
     def natural_key(self):
         if not self.registered_subject:

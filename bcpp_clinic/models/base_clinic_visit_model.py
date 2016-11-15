@@ -2,7 +2,8 @@ from datetime import datetime
 
 from django.db import models
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_sync.model_mixins import SyncModelMixin

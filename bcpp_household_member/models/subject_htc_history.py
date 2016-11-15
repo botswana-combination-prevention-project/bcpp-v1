@@ -2,18 +2,25 @@ from django.db import models
 from django.utils import timezone
 from django_extensions.db.fields import UUIDField
 
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import YES_NO
-from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 
 
-class SubjectHtcHistory(SyncModelMixin, BaseUuidModel):
+class SubjectHtcHistoryManager(models.Manager):
+
+    lookup = ['subject_refusal', 'household_member', 'household_structure', 'household', 'plot']
+
+    def get_by_natural_key(self, transaction):
+        self.get(transaction=transaction)
+
+
+class SubjectHtcHistory(BaseUuidModel):
     """A system model that tracks the history of deleted subject HTC instances."""
-    transaction = UUIDField()
+    transaction = UUIDField(unique=True)
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -61,6 +68,10 @@ class SubjectHtcHistory(SyncModelMixin, BaseUuidModel):
         help_text='Required if subject was referred')
 
     comment = models.TextField(max_length=250, null=True, blank=True)
+
+    objects = SubjectHtcHistoryManager()
+
+    history = HistoricalRecords()
 
     def natural_key(self):
         return (self.transaction, )

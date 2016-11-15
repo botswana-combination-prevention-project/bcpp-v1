@@ -1,8 +1,8 @@
-from edc_identifier.models import BaseIdentifierModel
+from edc_identifier.models import IdentifierModelMixin
 from edc_base.model.models import BaseUuidModel
 
 
-class PlotIdentifierHistory(BaseIdentifierModel, BaseUuidModel):
+class PlotIdentifierHistory(IdentifierModelMixin, BaseUuidModel):
     """A system model to track allocated plot identifiers."""
 
     class Meta:

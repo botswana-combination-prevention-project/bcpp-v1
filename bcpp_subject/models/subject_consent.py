@@ -1,20 +1,17 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from simple_history.models import HistoricalRecords
-
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.field_mixins.bw import IdentityFieldsMixin
 from edc_consent.field_mixins import (
     ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
     SampleCollectionFieldsMixin, CitizenFieldsMixin)
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.constants import YES, NO
-from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bcpp_household_member.exceptions import MemberStatusError
@@ -163,7 +160,7 @@ class BaseSubjectConsent(models.Model):
 
 
 class SubjectConsent(
-        ConsentModelMixin, SubjectOffStudyMixin, SyncModelMixin,
+        ConsentModelMixin, SubjectOffStudyMixin,
         BcppSubjectConsentMixin, IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
         SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
         BaseUuidModel):

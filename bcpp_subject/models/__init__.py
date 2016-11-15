@@ -51,9 +51,6 @@ from .substance_use import SubstanceUse
 from .tb_symptoms import TbSymptoms
 from .tubercolosis import Tubercolosis
 from .uncircumcised import Uncircumcised
-from .signals import (
-    subject_consent_on_post_save, update_or_create_registered_subject_on_post_save,
-    update_subject_referral_on_post_save, update_pocvl_preorder_status_post_save)
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
 from .correct_consent import CorrectConsent

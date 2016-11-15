@@ -2,7 +2,8 @@ from django.db import models
 
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.lab.lab_requisition.choices import REASON_NOT_DRAWN
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_base.model.fields import InitialsField
 from edc_constants.choices import YES_NO

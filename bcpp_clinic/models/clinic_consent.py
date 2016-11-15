@@ -1,7 +1,8 @@
 from django.db import models
 
 from edc_map.site_mappers import site_mappers
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models.fields import (

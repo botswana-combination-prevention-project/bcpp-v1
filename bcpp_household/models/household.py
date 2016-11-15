@@ -1,18 +1,16 @@
 from django.apps import apps as django_apps
 from django.db import models
 from django_crypto_fields.fields import EncryptedTextField
-from simple_history.models import HistoricalRecords as AuditTrail
 
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_map.site_mappers import site_mappers
-from edc_sync.model_mixins import SyncModelMixin
 
 from ..managers import HouseholdManager
 
 from .plot import Plot
 
 
-class Household(SyncModelMixin, BaseUuidModel):
+class Household(BaseUuidModel):
     """A system model that represents the household asset. See also HouseholdStructure."""
 
     plot = models.ForeignKey(Plot, null=True)
@@ -153,7 +151,7 @@ class Household(SyncModelMixin, BaseUuidModel):
         help_text=('datetime that household is enrolled. '
                    'Updated by Household_structure post_save.'))
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     objects = HouseholdManager()
 

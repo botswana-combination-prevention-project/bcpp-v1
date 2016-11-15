@@ -1,8 +1,7 @@
 from django.db import models
 from django_crypto_fields.fields import EncryptedTextField
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_UNKNOWN
 
 from ..managers import HouseholdMemberManager

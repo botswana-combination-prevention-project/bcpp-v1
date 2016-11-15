@@ -1,6 +1,6 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO
 
 from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION, EDUCATION_CHOICE

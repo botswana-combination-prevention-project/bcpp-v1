@@ -2,12 +2,12 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_constants.choices import POS_NEG
 
 from .crf_model_mixin import CrfModelMixin
 from .hic_enrollment import HicEnrollment
-from simple_history.models import HistoricalRecords
 
 
 class ElisaHivResult (CrfModelMixin):

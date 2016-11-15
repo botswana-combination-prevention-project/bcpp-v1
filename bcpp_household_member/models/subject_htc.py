@@ -1,8 +1,7 @@
 from django.apps import apps as django_apps
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_base.utils import get_safe_random_string, safe_allowed_chars
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
@@ -64,9 +63,9 @@ class SubjectHtc(HouseholdMemberModelMixin):
 
     comment = models.TextField(max_length=250, null=True, blank=True)
 
-    objects = HouseholdMemberManager()
-
     history = HistoricalRecords()
+
+    objects = HouseholdMemberManager()
 
     def save(self, *args, **kwargs):
         if self.household_member.member_status not in [HTC, HTC_ELIGIBLE, REFUSED_HTC]:

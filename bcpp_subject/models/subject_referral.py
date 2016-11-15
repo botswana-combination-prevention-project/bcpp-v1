@@ -3,8 +3,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Max
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import datetime_is_future, date_is_future
 from edc_constants.constants import NOT_APPLICABLE
 from edc_export.managers import ExportHistoryManager

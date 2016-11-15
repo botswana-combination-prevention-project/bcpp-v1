@@ -1,8 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_constants.choices import YES_NO_DWTA
 
 from ..choices import ALCOHOL_SEX

@@ -62,6 +62,7 @@ class EdcTimepointAppConfig(EdcTimepointAppConfigParent):
 
 
 class EdcLabAppConfig(EdcLabAppConfigParent):
+    app_label = 'bcpp_lab'
     requisition = 'bcpp_lab.subjectrequisition'
 
 

@@ -6,13 +6,10 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, EncryptedCharField, LastnameField
 
-from simple_history.models import HistoricalRecords
-
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.validators import datetime_not_future
 from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
-from edc_sync.model_mixins import SyncModelMixin
 
 from ..managers import CorrectConsentManager
 
@@ -320,7 +317,7 @@ class BaseCorrectConsent(models.Model):
         abstract = True
 
 
-class CorrectConsent(BaseCorrectConsent, SyncModelMixin, BaseUuidModel):
+class CorrectConsent(BaseCorrectConsent, BaseUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 

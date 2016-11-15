@@ -1,11 +1,9 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_consent.model_mixins import RequiresConsentMixin
 from edc_metadata.model_mixins import CreatesMetadataModelMixin
-from edc_sync.model_mixins import SyncModelMixin
+from edc_visit_tracking.managers import VisitModelManager
 from edc_visit_tracking.model_mixins import VisitModelMixin
 
 from bcpp_household_member.models import HouseholdMember
@@ -15,8 +13,7 @@ from ..choices import VISIT_UNSCHEDULED_REASON
 from .appointment import Appointment
 
 
-class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin,
-                   SyncModelMixin, BaseUuidModel):
+class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMixin, BaseUuidModel):
 
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
@@ -32,6 +29,8 @@ class SubjectVisit(VisitModelMixin, CreatesMetadataModelMixin, RequiresConsentMi
         null=True,
         choices=VISIT_UNSCHEDULED_REASON,
     )
+
+    objects = VisitModelManager()
 
     history = HistoricalRecords()
 

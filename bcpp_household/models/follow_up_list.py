@@ -1,15 +1,12 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords as AuditTrail
-
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.constants import CLOSED, OPEN, NEW
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
 
 from ..models import HouseholdStructure
 
 
-class FollowUpList(SyncModelMixin, BaseUuidModel):
+class FollowUpList(BaseUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure)
 
@@ -39,7 +36,7 @@ class FollowUpList(SyncModelMixin, BaseUuidModel):
         help_text="label to group reasons for contact, e.g. T1 preparation"
     )
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     class Meta:
         app_label = 'bcpp_household'

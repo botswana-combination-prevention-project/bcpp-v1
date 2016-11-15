@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
 
 from bcpp.model_mixins import RepresentativeEligibilityMixin
 from bcpp_household.models import HouseholdStructure

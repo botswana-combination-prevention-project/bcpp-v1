@@ -1,13 +1,12 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from simple_history.models import HistoricalRecords
-
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import dob_not_future
 from edc_consent.validators import AgeTodayValidator
 from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
@@ -166,11 +165,11 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, HouseholdMemberModelMixin):
 
     household_member = models.ForeignKey(HouseholdMember)
 
-    objects = HouseholdMemberManager()
-
     history = HistoricalRecords()
 
-    def __unicode__(self):
+    objects = HouseholdMemberManager()
+
+    def __str__(self):
         return str((self.household_member, self.report_datetime))
 
     def natural_key(self):

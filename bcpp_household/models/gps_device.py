@@ -17,7 +17,7 @@ class GpsDevice(ListModelMixin, BaseUuidModel):
 
     objects = GpsDeviceManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0} {1} {2}".format(self.name, self.gps_make, self.gps_model)
 
     def natural_key(self):

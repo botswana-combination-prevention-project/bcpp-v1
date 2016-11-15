@@ -5,9 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from simple_history.models import HistoricalRecords as AuditTrail
-from edc_sync.model_mixins import SyncModelMixin
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 
 from bcpp_survey.models import Survey
 
@@ -17,7 +15,7 @@ from .household import Household
 from .plot import Plot
 
 
-class HouseholdStructure(SyncModelMixin, BaseUuidModel):
+class HouseholdStructure(BaseUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration
@@ -91,7 +89,7 @@ class HouseholdStructure(SyncModelMixin, BaseUuidModel):
 
     objects = HouseholdStructureManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __str__(self):
         return '{} {}'.format(self.household, self.survey.survey_abbrev)

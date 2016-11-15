@@ -1,7 +1,6 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 
 from ..choices import AGREE_STRONGLY
 

@@ -3,8 +3,6 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from simple_history.models import HistoricalRecords
-
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -17,11 +15,10 @@ from django_crypto_fields.fields import FirstnameField
 from django_crypto_fields.mask_encrypted import mask_encrypted
 
 from edc_base.model.fields import OtherCharField
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_constants.choices import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD, YES, NO
 from edc_map.site_mappers import site_mappers
-from edc_sync.model_mixins import SyncModelMixin
 
 from bcpp.models import RegisteredSubject
 from bcpp_household.models import HouseholdStructure
@@ -34,7 +31,7 @@ from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DE
 from ..managers import HouseholdMemberManager
 
 
-class HouseholdMember(SyncModelMixin, BaseUuidModel):
+class HouseholdMember(BaseUuidModel):
     """A model completed by the user to represent an enumerated household member."""
 
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
@@ -261,11 +258,11 @@ class HouseholdMember(SyncModelMixin, BaseUuidModel):
         choices=DETAILS_CHANGE_REASON,
         help_text=('if personal detail changed choice a reason above.'))
 
-    objects = HouseholdMemberManager()
-
     history = HistoricalRecords()
 
-    def __unicode__(self):
+    objects = HouseholdMemberManager()
+
+    def __str__(self):
         try:
             is_bhs = '' if self.is_bhs else 'non-BHS'
         except ValidationError:

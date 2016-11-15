@@ -2,33 +2,27 @@ from datetime import date
 
 from django.db import models
 from django_crypto_fields.fields import EncryptedTextField
-from simple_history.models import HistoricalRecords as AuditTrail
-
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.validators import date_not_future
 from edc_base.model.models import BaseUuidModel
-from edc_sync.model_mixins import SyncModelMixin
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 
 from .household_structure import HouseholdStructure
-from .plot import Plot
 
 
-class HouseholdLog(SyncModelMixin, BaseUuidModel):
+class HouseholdLog(BaseUuidModel):
     """A system model that links the household log to the household."""
 
     household_structure = models.ForeignKey(HouseholdStructure)
 
-    history = AuditTrail()
-
     objects = HouseholdLogManager()
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return str(self.household_structure)
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def natural_key(self):
         return self.household_structure.natural_key()
@@ -59,7 +53,7 @@ class HouseholdLog(SyncModelMixin, BaseUuidModel):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(SyncModelMixin, BaseUuidModel):
+class HouseholdLogEntry(BaseUuidModel):
     """A model completed by the user each time the household is visited."""
     household_log = models.ForeignKey(HouseholdLog)
 
@@ -92,17 +86,12 @@ class HouseholdLogEntry(SyncModelMixin, BaseUuidModel):
         null=True,
         blank=True)
 
-    history = AuditTrail()
-
     objects = HouseholdLogEntryManager()
+
+    history = HistoricalRecords()
 
     def natural_key(self):
         return (self.report_datetime, ) + self.household_log.natural_key()
-
-#     def save(self, *args, **kwargs):
-#         household = django_apps.get_model('bcpp_household', 'Household').objects.get(
-#             household_identifier=self.household_log.household_structure.household.household_identifier)
-#         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def __str__(self):
         household_log = self.household_log or None

@@ -1,14 +1,11 @@
-from dateutil.relativedelta import relativedelta
 from uuid import uuid4
-
-from simple_history.models import HistoricalRecords
 
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
 from edc_appointment.model_mixins import CreateAppointmentsMixin
-from edc_base.model.models.base_uuid_model import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 from edc_base.model.models.url_mixin import UrlMixin
 from edc_base.utils.age import formatted_age
 

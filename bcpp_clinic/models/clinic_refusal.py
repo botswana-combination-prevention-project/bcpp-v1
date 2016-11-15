@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import date_not_future, date_not_before_study_start

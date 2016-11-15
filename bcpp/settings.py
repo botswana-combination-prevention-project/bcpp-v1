@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'edc_locator.apps.AppConfig',
     'edc_offstudy.apps.AppConfig',
     'edc_rule_groups.apps.AppConfig',
+    'edc_sync.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
     'bcpp.apps.AppConfig',
     'bcpp.apps.EdcDeviceAppConfig',

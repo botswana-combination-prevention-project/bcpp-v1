@@ -1,6 +1,7 @@
 from django.db import models
 
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc_base.model.fields import InitialsField
 from edc.core.bhp_variables.models import StudySite

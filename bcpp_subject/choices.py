@@ -1113,3 +1113,38 @@ FIRST_PARTNER_HIV_CHOICE = (
     ('not_sure', _('I am not sure HIV status')),
     (DWTA, _('Don\'t want to answer')),
 )
+
+KEPT_APPT = (
+    ('Yes', 'Yes, kept appointment'),
+    ('No_refered_other_clinic', 'No but attended a visit at the HIV care clinic to which they were referred on another date'),
+    ('No_other_clinic', 'No but attended a visit at a different HIV clinic'),
+    ('diff_clininc', 'I went to a different clinic'),
+    ('No', 'No but tried to attend an HIV care clinic and left before I saw a healthcare provider'),
+    ('No', 'I have not been to any HIV care clinic [skip to #3]')
+)
+
+TYPE_OF_EVIDENCE = (
+    ("self_report_only", "Self-Report Only"),
+    ("opr_card", "OPD Card"),
+    ("clinic_paperwork", "Clinic paperwork"),
+    ("other", "Other ")
+)
+
+RECOMMENDED_THERAPY = (
+    ("Yes", "Yes"),
+    ("No", "No")
+)
+
+STARTERED_THERAPY = (
+    ("Yes", "Yes"),
+    ("No", "No")
+)
+
+REASON_RECOMMENDED = (
+    ("low_cd4", "Low CD4"),
+    ("high_viral_load", "High viral load"),
+    ("pregnancy_breastfeeding", "Pregnancy or breastfeeding"),
+    ("tuberculosis", "Tuberculosis"),
+    ("cancer", "Cancer"),
+    ("dnt_knw", "Do not know"),
+)

@@ -1,9 +1,7 @@
 from django.apps import apps as django_apps
 from django.db import models
 
-from simple_history.models import HistoricalRecords as AuditTrail
-
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel, HistoricalRecords
 
 from bcpp.model_mixins import RepresentativeEligibilityMixin
 
@@ -35,7 +33,7 @@ class RepresentativeEligibility(RepresentativeEligibilityMixin, BaseUuidModel):
 
     objects = RepresentativeEligibilityManager()
 
-    history = AuditTrail()
+    history = HistoricalRecords()
 
     def __unicode__(self):
         return str(self.household_structure)

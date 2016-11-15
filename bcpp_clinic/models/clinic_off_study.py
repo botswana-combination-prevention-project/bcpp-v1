@@ -1,4 +1,5 @@
-from simple_history.models import HistoricalRecords
+from edc_base.model.models import HistoricalRecords
+
 
 from edc.subject.off_study.models import BaseOffStudy
 

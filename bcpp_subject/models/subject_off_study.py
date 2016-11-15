@@ -1,5 +1,4 @@
-from simple_history.models import HistoricalRecords
-
+from edc_base.model.models import HistoricalRecords
 from edc_base.model.models.base_uuid_model import BaseUuidModel
 from edc_offstudy.model_mixins import OffStudyMixin
 
