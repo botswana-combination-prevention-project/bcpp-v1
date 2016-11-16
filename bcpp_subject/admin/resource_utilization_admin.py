@@ -29,4 +29,3 @@ class ResourceUtilizationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ("<H5>Read to Participant:</H5> Next, I will ask questions about health care visits over "
          "the past three months. Please think about all visits for any health issue, "
          "including pregnancy.")]
-admin.site.register(ResourceUtilization, ResourceUtilizationAdmin)
