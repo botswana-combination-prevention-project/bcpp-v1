@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..constants import ANNUAL
 from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
@@ -8,6 +9,7 @@ from ..models import ResidencyMobility
 from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
+@admin.register(ResidencyMobility, site=bcpp_subject_admin)
 class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResidencyMobilityForm
@@ -42,5 +44,3 @@ class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin
           " honest answer that you can. Please remember that all of "
           " your answers are confidential. If you do not wish to "
           " answer, you can skip any question.</p>")]
-
-admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)

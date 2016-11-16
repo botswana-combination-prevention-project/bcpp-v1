@@ -5,10 +5,12 @@ from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 from bcpp_household_member.models import HouseholdMember
 from bcpp_lab.models import SubjectRequisition
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import SubjectVisitForm
 from ..models import SubjectVisit
 
 
+@admin.register(SubjectVisit, site=bcpp_subject_admin)
 class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectVisitForm
@@ -54,5 +56,3 @@ class SubjectVisitAdmin(VisitModelAdminMixin, admin.ModelAdmin):
                 household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member', 0))
             kwargs["queryset"] = household_members
         return super(SubjectVisitAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-admin.site.register(SubjectVisit, SubjectVisitAdmin)

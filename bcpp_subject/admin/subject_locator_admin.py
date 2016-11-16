@@ -5,6 +5,7 @@ from django.contrib import admin
 from edc_locator.modeladmin_mixins import ModelAdminLocatorMixin
 
 from ..actions import export_locator_for_cdc_action
+from ..admin_site import bcpp_subject_admin
 from ..filters import SubjectLocatorIsReferredListFilter, SubjectCommunityListFilter
 from ..forms import SubjectLocatorForm
 from ..models import SubjectLocator
@@ -12,6 +13,7 @@ from ..models import SubjectLocator
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(SubjectLocator, site=bcpp_subject_admin)
 class SubjectLocatorAdmin(ModelAdminLocatorMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectLocatorForm
@@ -87,5 +89,3 @@ class SubjectLocatorAdmin(ModelAdminLocatorMixin, CrfModelAdminMixin, admin.Mode
             'export_locator_for_cdc_action',
             "Export Locator in CDC format (Manual)")
         return actions
-
-admin.site.register(SubjectLocator, SubjectLocatorAdmin)

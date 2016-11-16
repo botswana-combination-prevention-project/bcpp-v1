@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import TbSymptomsForm
 from ..models import TbSymptoms
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(TbSymptoms, site=bcpp_subject_admin)
 class TbSymptomsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = TbSymptomsForm
@@ -24,4 +26,3 @@ class TbSymptomsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "night_sweat": admin.VERTICAL,
         "weight_loss": admin.VERTICAL,
         "cough_blood": admin.VERTICAL, }
-admin.site.register(TbSymptoms, TbSymptomsAdmin)

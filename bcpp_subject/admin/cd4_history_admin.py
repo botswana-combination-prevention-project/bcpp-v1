@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..models import Cd4History
 from ..forms import Cd4HistoryForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(Cd4History, site=bcpp_subject_admin)
 class Cd4HistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = Cd4HistoryForm
@@ -16,4 +18,3 @@ class Cd4HistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'last_cd4_drawn_date',)
     radio_fields = {
         'record_available': admin.VERTICAL}
-admin.site.register(Cd4History, Cd4HistoryAdmin)

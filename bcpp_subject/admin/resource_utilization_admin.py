@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import ResourceUtilizationForm
 from ..models import ResourceUtilization
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(ResourceUtilization, site=bcpp_subject_admin)
 class ResourceUtilizationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ResourceUtilizationForm

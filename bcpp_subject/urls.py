@@ -1,10 +1,7 @@
-from django.conf.urls import url, patterns
+from django.conf.urls import url
 
-from edc_quota.override.views import OverrideCodeView
+from .admin_site import bcpp_subject_admin
 
-urlpatterns = patterns(
-    '',
-    url(r'^override_code/',
-        OverrideCodeView.as_view(template_name='override_code_bcpp.html'),
-        name='override_code_url_bcpp'),
-)
+urlpatterns = [
+    url(r'^admin/', bcpp_subject_admin.urls),
+]

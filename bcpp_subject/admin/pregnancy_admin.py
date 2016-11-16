@@ -1,11 +1,13 @@
 from django.contrib import admin
 
+from ..admin_site import bcpp_subject_admin
 from ..models import Pregnancy
 from ..forms import PregnancyForm
 
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(Pregnancy, site=bcpp_subject_admin)
 class PregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = PregnancyForm
@@ -22,4 +24,3 @@ class PregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "anc_last_pregnancy": admin.VERTICAL,
         "hiv_last_pregnancy": admin.VERTICAL,
         "preg_arv": admin.VERTICAL, }
-admin.site.register(Pregnancy, PregnancyAdmin)

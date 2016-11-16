@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..admin_site import bcpp_subject_admin
 from ..forms import ReproductiveHealthForm
 from ..models import ReproductiveHealth
 
 from .modeladmin_mixins import CrfModelAdminMixin, SubjectAdminExcludeMixin
 
 
+@admin.register(ReproductiveHealth, site=bcpp_subject_admin)
 class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admin.ModelAdmin):
 
     form = ReproductiveHealthForm
@@ -42,5 +44,3 @@ class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, CrfModelAdminMixin, admi
                      " completed by female participants. SKIP for male participants."),
                     _("Read to Participant: I am now going to ask you questions"
                       " about reproductive health and pregnancy.")]
-
-admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)

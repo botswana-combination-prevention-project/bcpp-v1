@@ -5,6 +5,7 @@ from django.contrib import admin
 from edc_export.actions import export_as_csv_action
 
 from ..actions import export_referrals_for_cdc_action
+from ..admin_site import bcpp_subject_admin
 from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
 from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
@@ -12,6 +13,7 @@ from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListF
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
+@admin.register(SubjectReferral, site=bcpp_subject_admin)
 class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectReferralForm
@@ -108,5 +110,3 @@ class SubjectReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'export_referrals_for_cdc_action',
             'Export Referrals in CDC format (Manual)')
         return actions
-
-admin.site.register(SubjectReferral, SubjectReferralAdmin)
