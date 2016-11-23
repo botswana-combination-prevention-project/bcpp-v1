@@ -34,10 +34,11 @@ class Command(BaseCommand):
     def omang_list(self):
         """Generate omang list of an ecc community."""
         omang_community_list = []
-        all_communities_omang_file = open('all_communities_omang_numbers.csv', 'wb')
+        all_communities_omang_file = open('/home/django/source/community_omangs/all_communities_omang_numbers.csv', 'wb')
         for community in ECC_COMMUNITIES:
-            community_omang_file = open(community + '_omang_numbers.csv', 'wb')
+            community_omang_file = open('/home/django/source/community_omangs/' + community + '_omang_numbers.csv', 'wb')
             omang_list = []
+            omang_data_list = []
             print "Attending {0} omang numbers".format(community)
             consents = SubjectConsent.objects.filter(household_member__household_structure__household__plot__community=community)
             cosents_count = consents.count()
@@ -46,6 +47,7 @@ class Command(BaseCommand):
             for consent in consents:
                 if consent.identity not in omang_list:
                     omang_list.append(consent.identity)
+                    omang_data_list = [[consent.identity]]
                     omang_community_list.append([consent.identity, community])
                     omang_total += 1
                     print "{0} omang numbers added out of {1} duplicates are ignored".format(omang_total, cosents_count)
@@ -53,7 +55,7 @@ class Command(BaseCommand):
                     print "{0} omang numbers added out of {1} duplicates are ignored".format(omang_total, cosents_count)
             print "Creating csv file for {0} community".format(community)
             community_csv = csv.writer(community_omang_file)
-            community_csv.writerows(omang_list)
+            community_csv.writerows(omang_data_list)
         print "Creating csv file for all community"
         all_communities = csv.writer(all_communities_omang_file)
         all_communities.writerows(omang_community_list)
