@@ -2621,3 +2621,19 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             appointment=self.subject_visit_male.appointment)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)
+
+    def test_neg_does_not_require_linkage_to_care(self):
+        """If previous result is NEG, does not require hiv linkage to care.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+        self.subject_visit_male = self.annual_subject_visit_y2
+
+        linkage_to_care_options = {}
+        linkage_to_care_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivlinkagetocare',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **linkage_to_care_options).count(), 1)

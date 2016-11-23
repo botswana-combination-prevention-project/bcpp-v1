@@ -234,6 +234,17 @@ def func_hiv_neg_bhs(visit_instance):
     return True if subject_status_helper.hiv_result == NEG else False
 
 
+def func_hiv_neg_linkage_to_care(visit_instance):
+    if func_is_baseline(visit_instance):
+        past_visit = visit_instance
+    else:
+        past_visit = func_previous_visit_instance(visit_instance)
+    subject_status_helper = SubjectStatusHelper(past_visit)
+    result_value = True if subject_status_helper.hiv_result == NEG else False
+    aa = func_art_naive_at_annual_or_defaulter(visit_instance)
+    return result_value or not aa
+
+
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result == POS
