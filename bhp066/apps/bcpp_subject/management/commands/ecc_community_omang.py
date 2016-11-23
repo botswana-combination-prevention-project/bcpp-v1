@@ -47,7 +47,7 @@ class Command(BaseCommand):
             for consent in consents:
                 if consent.identity not in omang_list:
                     omang_list.append(consent.identity)
-                    omang_data_list = [[consent.identity]]
+                    omang_data_list.append([consent.identity])
                     omang_community_list.append([consent.identity, community])
                     omang_total += 1
                     print "{0} omang numbers added out of {1} duplicates are ignored".format(omang_total, cosents_count)
